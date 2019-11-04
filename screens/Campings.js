@@ -11,6 +11,8 @@ import {
   Dimensions,
   Aninmated,
   SafeAreaView,
+  Alert,
+  Button,
 } from 'react-native';
 import { connect } from 'react-redux';
 import MapView, {
@@ -31,13 +33,23 @@ class Campings extends React.Component {
     header: null,
   };
 
-  componentDidMount() {
-    this.props.setCampings(mock.campings);
-  }
+componentDidMount() {
+  console.log("toto");
+  console.log("tata");
+  fetch('http://172.20.10.7:3000/markers')
+       .then(response => response.json())
+       .then(users =>  this.props.setCampings(users))
+       .catch((error) => {
+      console.error(error);
+    });
+  console.log("titi");
+
+}
 
   handleTab = (tabKey) => {
     this.props.setFilters({ type: tabKey });
   }
+
 
   renderHeader() {
     return (
@@ -46,7 +58,7 @@ class Campings extends React.Component {
           <View style={{flex: 2, flexDirection: 'row'}}>
             <View style={styles.settings}>
               <View style={styles.location}>
-                <FontAwesome name="location-arrow" size={14} color="white" />
+
               </View>
             </View>
             <View style={styles.options}>
@@ -54,7 +66,7 @@ class Campings extends React.Component {
                 Location detecté
               </Text>
               <Text style={{ fontSize: 14, fontWeight: '300', }}>
-                San Francisco
+                Northern Islands
               </Text>
             </View>
           </View>
@@ -105,8 +117,8 @@ class Campings extends React.Component {
               key={`marker-${marker.id}`}
               coordinate={marker.latlng}
               description={marker.description}
-              draggable
             >
+
               {campingMarker(marker)}
             </Marker>
           ))}
