@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View,Button,Linking } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,6 +30,7 @@ export default class App extends React.Component {
           <View style={styles.container}>
             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
             <AppNavigator />
+              <Button title='Click Here To Open Website URL' onPress={ ()=> Linking.openURL('http://10.0.2.2:8000/etudiant') } />
           </View>
         </Provider>
       );

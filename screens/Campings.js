@@ -11,6 +11,7 @@ import {
   Dimensions,
   Aninmated,
   SafeAreaView,
+  Button
 } from 'react-native';
 import { connect } from 'react-redux';
 import MapView, {
@@ -39,35 +40,46 @@ class Campings extends React.Component {
     this.props.setFilters({ type: tabKey });
   }
 
-  renderHeader() {
-    return (
-      <View style={styles.headerContainer}>
-        <View style={styles.header}>
-          <View style={{flex: 2, flexDirection: 'row'}}>
-            <View style={styles.settings}>
-              <View style={styles.location}>
-                <FontAwesome name="location-arrow" size={14} color="white" />
+  SampleFunction1(){
+
+      fetch('http://192.168.43.210:8000/etudiant')
+            .then(response => response.json())
+            .then(users => console.warn(users))
+  };
+
+
+
+
+    renderHeader() {
+      return (
+        <View style={styles.headerContainer}>
+          <View style={styles.header}>
+            <View style={{flex: 2, flexDirection: 'row'}}>
+              <View style={styles.settings}>
+                <View style={styles.location}>
+                  <Button onPress={ this.SampleFunction1.bind(this) } title=" Click Here To Call Function - 1 " />
+
+                </View>
+              </View>
+              <View style={styles.options}>
+                <Text style={{ fontSize: 12, color: '#A5A5A5', marginBottom: 5, }}>
+                  Location detecté
+                </Text>
+                <Text style={{ fontSize: 14, fontWeight: '300', }}>
+                  Northern Islands
+                </Text>
               </View>
             </View>
-            <View style={styles.options}>
-              <Text style={{ fontSize: 12, color: '#A5A5A5', marginBottom: 5, }}>
-                Location detecté
-              </Text>
-              <Text style={{ fontSize: 14, fontWeight: '300', }}>
-                San Francisco
-              </Text>
+            <View style={styles.settings}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('Settings')}>
+                <Ionicons name="ios-settings" size={24} color="black" />
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.settings}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('Settings')}>
-              <Ionicons name="ios-settings" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
+          {this.renderTabs()}
         </View>
-        {this.renderTabs()}
-      </View>
-    )
-  }
+      )
+    }
 
   renderMap() {
     const campingMarker = ({type}) => (
