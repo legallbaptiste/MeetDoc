@@ -35,6 +35,7 @@ app.get('/markers', function (req, res) {
   });
 });
 
+
 // Starting our server.
 app.listen(3000, () => {
  console.log('Go to http://localhost:3000/users so you can see the data.');

@@ -11,6 +11,7 @@ import {
   Dimensions,
   Aninmated,
   SafeAreaView,
+  Modal,
   Alert,
   Button,
 } from 'react-native';
@@ -18,6 +19,7 @@ import { connect } from 'react-redux';
 import MapView, {
   Marker
 } from 'react-native-maps';
+import Calendar from 'react-native-calendario';
 
 
 
@@ -32,11 +34,18 @@ class Campings extends React.Component {
   static navigationOptions = {
     header: null,
   };
+  state = {
+    modalVisible: false,
+  };
+
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
+  }
 
 componentDidMount() {
   console.log("toto");
   console.log("tata");
-  fetch('http://172.20.10.7:3000/markers')
+  fetch('http://192.168.1.72:3000/markers')
        .then(response => response.json())
        .then(users =>  this.props.setCampings(users))
        .catch((error) => {
@@ -186,13 +195,111 @@ componentDidMount() {
 
   renderList() {
     const { filters, campings } = this.props;
+    const truthyValue = true;
+
+    const DISABLED_DAYS = {
+      '2019-11-20': truthyValue,
+      '2019-11-11': truthyValue,
+    };
+
     const mapSpots = filters.type === 'all' ? campings
       : campings.filter(camping => camping.type === filters.type);
 
     return mapSpots.map(
       camping => {
         return (
+
+
           <View key={`camping-${camping.id}`} style={styles.camping}>
+       <Modal
+         animationType="slide"
+         transparent={false}
+         visible={this.state.modalVisible}
+         onRequestClose={() => {
+           Alert.alert('Modal has been closed.');
+         }}>
+
+         <SafeAreaView style={styles.container}>
+
+
+
+          <View style={{
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            height: height * 0.05,
+            width: width,
+            paddingHorizontal: 14,
+          }}>
+             <TouchableOpacity onPress={() => {this.setModalVisible(!this.state.modalVisible);}}>
+               <Ionicons name="md-arrow-back" size={24} />
+             </TouchableOpacity>
+          </View>
+
+          <View style={styles.headerImage}>
+            <ImageBackground
+              style={styles.modalImage}
+              imageStyle={styles.modalImage}
+              source={{ uri: camping.image }}
+            />
+          </View>
+          <View style={styles.modalBorder}></View>
+          <View style={styles.modalTitle}>
+            <Text style={styles.modalTitle}>
+              {camping.name}
+              </Text>
+            <Text style={styles.modalDescription}>
+              {camping.description}
+            </Text>
+          </View>
+          <View style={styles.modalText}>
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Ouverture : lundi au vendredi
+              </Text>
+              </View>
+            <View style={styles.modalText}>
+
+              <Text style={styles.modalTextSpace}>
+                Horraire : 8h-12h30 et 13h30-20h
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Qualifications requises : 3 ans d'expérience minimum
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Déplacement domicile : Non
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Description de l'annonceur : Dr Maboul
+              </Text>
+            </View>
+
+          </View>
+          <View style={styles.modalBorder}></View>
+
+          <Calendar
+              onChange={range => console.log(range)}
+              locale="fr"
+              minDate="2018-04-20"
+              startDate="2018-04-30"
+              endDate="2018-05-05"
+              disabledDays={DISABLED_DAYS}
+             theme={THEME}
+              />
+
+
+         </SafeAreaView>
+       </Modal>
+
+
             <ImageBackground
               style={styles.campingImage}
               imageStyle={styles.campingImage}
@@ -224,7 +331,12 @@ componentDidMount() {
               </View>
             </View>
             <View style={{ flex: 0.2, justifyContent: 'center' }}>
-              <SimpleLineIcons name="options-vertical" color="#A5A5A5" size={24} />
+              <TouchableOpacity
+                onPress={() => {
+                  this.setModalVisible(true);
+                }}>
+                <SimpleLineIcons name="options-vertical" color="#A5A5A5" size={24} />
+              </TouchableOpacity>
             </View>
           </View>
         )
@@ -258,6 +370,54 @@ const moduleActions = {
 
 export default connect(moduleState, moduleActions)(Campings);
 
+const THEME: ThemeType = {
+  monthTitleTextStyle: {
+    color: '#6d95da',
+    fontWeight: '300',
+    fontSize: 16,
+  },
+  emptyMonthContainerStyle: {},
+  emptyMonthTextStyle: {
+    fontWeight: '200',
+  },
+  weekColumnsContainerStyle: {},
+  weekColumnStyle: {
+    paddingVertical: 10,
+  },
+  weekColumnTextStyle: {
+    color: '#b6c1cd',
+    fontSize: 13,
+  },
+  nonTouchableDayContainerStyle: {
+    backgroundColor: "rgb(24, 74, 111)",
+  },
+  nonTouchableDayTextStyle: {
+    color:"white",
+
+  },
+  startDateContainerStyle: {},
+  endDateContainerStyle: {},
+  dayContainerStyle: {},
+  dayTextStyle: {
+    color: '#2d4150',
+    fontWeight: '200',
+    fontSize: 15,
+  },
+  dayOutOfRangeContainerStyle: {},
+  dayOutOfRangeTextStyle: {},
+  todayContainerStyle: {},
+  todayTextStyle: {
+    color: '#6d95da',
+  },
+  activeDayContainerStyle: {
+    backgroundColor: '#6d95da',
+  },
+  activeDayTextStyle: {
+    color: 'white',
+  },
+  nonTouchableLastMonthDayTextStyle: {},
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -275,6 +435,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: height * 0.15,
     paddingHorizontal: 14,
+  },
+  headerImage:{
+    top:0,
+    height: height*0.25,
+    width: width,
+    alignItems: 'center',
+    justifyContent:'center',
   },
   location: {
     height: 24,
@@ -370,5 +537,44 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 12,
     backgroundColor: '#3353FB'
+  },
+  modalImage: {
+    width: width,
+    height: width*0.50,
+  },
+  modalBorder: {
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 20,
+    marginRight: 20,
+    borderBottomColor: '#6d95da',
+    borderBottomWidth: 2,
+  },
+  modalTitle:  {
+    marginTop: 5,
+    marginBottom: 5,
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  modalDescription: {
+    marginTop: 5,
+    marginBottom: 5,
+    fontSize: 16,
+    alignItems:'center',
+    fontStyle: 'italic',
+  },
+  modalText: {
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 10,
+    fontSize: 14,
+    alignItems:'flex-start',
+    justifyContent:'center',
+  },
+  modalTextSpace: {
+    marginTop:3,
+    marginBottom:3,
   }
 });
