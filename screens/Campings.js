@@ -12,6 +12,7 @@ import {
   Aninmated,
   SafeAreaView,
   Modal,
+  TextInput,
   Alert,
   Button,
 } from 'react-native';
@@ -21,6 +22,7 @@ import MapView, {
 } from 'react-native-maps';
 import Calendar from 'react-native-calendario';
 
+import axios from 'axios';
 
 
 import { Ionicons, MaterialIcons, FontAwesome, Foundation, SimpleLineIcons } from '@expo/vector-icons';
@@ -52,8 +54,12 @@ componentDidMount() {
       console.error(error);
     });
   console.log("titi");
+  console.log(this.props);
 
 }
+
+
+
 
   handleTab = (tabKey) => {
     this.props.setFilters({ type: tabKey });
@@ -79,7 +85,13 @@ componentDidMount() {
               </Text>
             </View>
           </View>
+          <View>
+            <TouchableOpacity style={{marginLeft:4, marginRight:10}} onPress={() => this.props.navigation.navigate('Formulaire')}>
+              <Ionicons name="ios-add" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
           <View style={styles.settings}>
+
             <TouchableOpacity onPress={() => this.props.navigation.navigate('Settings')}>
               <Ionicons name="ios-settings" size={24} color="black" />
             </TouchableOpacity>
@@ -292,8 +304,8 @@ componentDidMount() {
               startDate="2018-04-30"
               endDate="2018-05-05"
               disabledDays={DISABLED_DAYS}
-             theme={THEME}
-              />
+              theme={THEME}
+          />
 
 
          </SafeAreaView>
@@ -344,12 +356,14 @@ componentDidMount() {
   }
 
   render() {
+
     return (
       <SafeAreaView style={styles.container}>
         {this.renderHeader()}
         <ScrollView style={styles.container}>
           {this.renderMap()}
           {this.renderList()}
+
         </ScrollView>
       </SafeAreaView>
     );

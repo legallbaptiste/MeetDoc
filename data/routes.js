@@ -13,6 +13,7 @@ const connection = mysql.createPool({
 
 // Starting our app.
 const app = express();
+var jsonParser = bodyParser.json()
 
 // Creating a GET route that returns data from the 'users' table.
 app.get('/markers', function (req, res) {
@@ -35,6 +36,31 @@ app.get('/markers', function (req, res) {
   });
 });
 
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.post('/markers', jsonParser, function(req, res){
+    var data = {
+      id:req.body.id,
+      type:req.body.type,
+      name:req.body.name,
+      description:req.body.description,
+      rating:req.body.rating,
+      distance:req.body.distance,
+      price:req.body.price,
+      image: req.body.image,
+      latitude:req.body.latitude,
+      longitude:req.body.longitude
+    };
+
+    var sql = 'INSERT INTO markers SET ?';
+    connection.query(sql, data, (err, result)=>{
+    if(err) throw err;
+    console.log(sql);
+    console.log(result);
+
+});
+});
 
 // Starting our server.
 app.listen(3000, () => {
