@@ -12,7 +12,7 @@ import {
 import { connect } from 'react-redux';
 import { Ionicons, MaterialIcons, Foundation, FontAwesome } from '@expo/vector-icons';
 
-import { setFilters } from '../modules/campings';
+import { setFilters } from '../../modules/campings';
 
 const { width, height } = Dimensions.get('screen');
 

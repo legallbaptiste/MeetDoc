@@ -27,7 +27,7 @@ class Formulaire extends React.Component {
 
 
   klikGet(){
-    var url = 'http://192.168.1.72:3000/markers';
+    var url = 'http://172.20.10.7:3000/Annonce';
     axios.get(url)
     .then((ambilData) => {
       console.log(ambilData.data);
@@ -39,14 +39,13 @@ class Formulaire extends React.Component {
 
   klikPost(){
 
-    fetch('http://192.168.1.72:3000/markers', {
+    fetch('http://172.20.10.7:3000/Annonce', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id: 7,
         type: this.state.input2,
         name: this.state.input3,
         description: this.state.input4,
@@ -85,14 +84,6 @@ class Formulaire extends React.Component {
                 <View>
       <View style={{flexDirection:'column', alignItems:'center'}}>
 
-
-
-      <TextInput
-      placeholder='ID'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input1) => this.setState({input1})}
-      value={this.state.input1}
-      />
 
       <TextInput
       placeholder='Type'
@@ -174,7 +165,7 @@ class Formulaire extends React.Component {
       </Text>
       </TouchableOpacity>
 
-      
+
       </View>
 
 

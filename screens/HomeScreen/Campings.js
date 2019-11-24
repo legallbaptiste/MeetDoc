@@ -27,8 +27,8 @@ import axios from 'axios';
 
 import { Ionicons, MaterialIcons, FontAwesome, Foundation, SimpleLineIcons } from '@expo/vector-icons';
 
-import { setLocation, setFilters, setCampings } from '../modules/campings';
-import * as mock from '../mock/campings';
+import { setLocation, setFilters, setCampings } from '../../modules/campings';
+import * as mock from '../../mock/campings';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -45,16 +45,13 @@ class Campings extends React.Component {
   }
 
 componentDidMount() {
-  console.log("toto");
-  console.log("tata");
-  fetch('http://192.168.1.72:3000/markers')
+
+  fetch('http://172.20.10.7:3000/Annonce')
        .then(response => response.json())
        .then(users =>  this.props.setCampings(users))
        .catch((error) => {
       console.error(error);
     });
-  console.log("titi");
-  console.log(this.props);
 
 }
 
@@ -121,8 +118,8 @@ componentDidMount() {
           style={{ flex: 1, height: height * 0.5, width }}
           showsMyLocationButton
           initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
+            latitude: 43.319,
+            longitude: -0.360603,
             latitudeDelta: 0.03,
             longitudeDelta: 0.03,
           }}
@@ -216,7 +213,7 @@ componentDidMount() {
 
     const mapSpots = filters.type === 'all' ? campings
       : campings.filter(camping => camping.type === filters.type);
-
+console.log(mapSpots);
     return mapSpots.map(
       camping => {
         return (
@@ -257,7 +254,7 @@ componentDidMount() {
           <View style={styles.modalBorder}></View>
           <View style={styles.modalTitle}>
             <Text style={styles.modalTitle}>
-              {camping.name}
+              {camping.titre}
               </Text>
             <Text style={styles.modalDescription}>
               {camping.description}
@@ -321,7 +318,7 @@ componentDidMount() {
             <View style={styles.campingDetails}>
               <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
                 <Text style={{ fontSize: 14, fontWeight: 'bold' }}>
-                  {camping.name}
+                  {camping.titre}
                 </Text>
                 <Text style={{ fontSize: 12, color: '#A5A5A5', paddingTop: 5 }}>
                   {camping.description}
