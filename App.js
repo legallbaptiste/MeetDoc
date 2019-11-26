@@ -1,71 +1,77 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { AppLoading } from 'expo';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
+import React, { Component } from 'react'
 
-import {Asset} from 'expo-asset';
-import AppNavigator from './navigation/AppNavigator';
+import AuthScreen from './screens/AuthScreen'
+import HomeScreen from './screens/HomeScreen'
 
-import store from './modules';
-
-export default class App extends React.Component {
+/**
+ * The root component of the application.
+ * In this component I am handling the entire application state, but in a real app you should
+ * probably use a state management library like Redux or MobX to handle the state (if your app gets bigger).
+ */
+export class LoginAnimation extends Component {
   state = {
-    isLoadingComplete: false,
-  };
-
-  render() {
-    if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
-      return (
-        <AppLoading
-          startAsync={this._loadResourcesAsync}
-          onError={this._handleLoadingError}
-          onFinish={this._handleFinishLoading}
-        />
-      );
-    } else {
-      return (
-        <Provider store={store}>
-          <View style={styles.container}>
-            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-            <AppNavigator />
-          </View>
-        </Provider>
-      );
-    }
+    isLoggedIn: false, // Is the user authenticated?
+    isLoading: false, // Is the user loggingIn/signinUp?
+    isAppReady: false // Has the app completed the login animation?
   }
 
-  _loadResourcesAsync = async () => {
-    return Promise.all([
-      Asset.loadAsync([
-        require('./assets/images/robot-dev.png'),
-        require('./assets/images/robot-prod.png'),
-      ]),
-      Font.loadAsync({
-        // This is the font that we are using for our tab bar
-        ...Icon.Ionicons.font,
-        // We include SpaceMono because we use it in HomeScreen.js. Feel free
-        // to remove this if you are not using it in your app
-        'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+  /**
+   * Two login function that waits 1000 ms and then authenticates the user succesfully.
+   * In your real app they should be replaced with an API call to you backend.
+   */
+  _simulateLogin = (username, password) => {
+
+    fetch('http://192.168.43.210:8000/userdata')
+         .then(response => response.json())
+         .then(users =>  this.setState(users))
+         .catch((error) => {
+        console.error(error);
+      });
+    console.log(this.state);
+    this.setState({ isLoading: true })
+    setTimeout(() => this.setState({ isLoggedIn: true, isLoading: false }), 1000)
+  }
+
+  _simulateSignup = (email, password, nom) => {
+    fetch('http://192.168.43.210:8000/userdata', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nom : nom,
+        email: email,
+        password : password,
       }),
-    ]);
-  };
+    });
+    this.setState({ isLoading: true })
+    setTimeout(() => this.setState({ isLoggedIn: true, isLoading: false }), 1000)
+  }
 
-  _handleLoadingError = error => {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
-    console.warn(error);
-  };
-
-  _handleFinishLoading = () => {
-    this.setState({ isLoadingComplete: true });
-  };
+  /**
+   * Simple routing.
+   * If the user is authenticated (isAppReady) show the HomeScreen, otherwise show the AuthScreen
+   */
+  render () {
+    if (this.state.isAppReady) {
+      return (
+        <HomeScreen
+          logout={() => this.setState({ isLoggedIn: false, isAppReady: false })}
+        />
+      )
+    } else {
+      return (
+        <AuthScreen
+          login={this._simulateLogin}
+          signup={this._simulateSignup}
+          isLoggedIn={this.state.isLoggedIn}
+          isLoading={this.state.isLoading}
+          onLoginAnimationCompleted={() => this.setState({ isAppReady: true })}
+        />
+      )
+    }
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
+export default LoginAnimation
