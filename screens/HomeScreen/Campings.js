@@ -51,6 +51,8 @@ componentDidMount() {
        .then(users =>  this.props.setCampings(users))
        .catch((error) => {
       console.error(error);
+      console.log("hello2");
+      console.log(this.props);
     });
 
 }

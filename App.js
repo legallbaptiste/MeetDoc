@@ -27,7 +27,8 @@ export class LoginAnimation extends Component {
          .catch((error) => {
         console.error(error);
       });
-    console.log(this.state);
+      console.log("Hello");
+    console.log(this.props);
     this.setState({ isLoading: true })
     setTimeout(() => this.setState({ isLoggedIn: true, isLoading: false }), 1000)
   }
