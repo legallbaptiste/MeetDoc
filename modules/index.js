@@ -5,9 +5,8 @@ import campings from './campings';
 const middlewares = [thunk];
 const store = createStore(
   combineReducers({
-    campings: campings,
+    campings: campings
   }),
   applyMiddleware(...middlewares)
 );
-
 export default store;

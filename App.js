@@ -19,9 +19,10 @@ export class LoginAnimation extends Component {
    * Two login function that waits 1000 ms and then authenticates the user succesfully.
    * In your real app they should be replaced with an API call to you backend.
    */
+
   _simulateLogin = (username, password) => {
 
-    fetch('http://172.20.10.7:3000/login')
+    fetch('http://192.168.1.18:3000/login')
          .then(response => response.json())
          .then(users =>  this.setState(users))
          .catch((error) => {
@@ -34,7 +35,7 @@ export class LoginAnimation extends Component {
   }
 
   _simulateSignup = (email, password, nom, prenom, adresse, tel) => {
-    fetch('http://172.20.10.7:3000/Profil', {
+    fetch('http://192.168.1.18:3000/Profil', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

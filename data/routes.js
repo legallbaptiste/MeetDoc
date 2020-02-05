@@ -40,6 +40,32 @@ app.get('/Annonce', function (req, res) {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.post('/Annonce', jsonParser, function (req, res) {
+    // Connecting to the database.
+    console.log(req.body.nom);
+    var data = {
+      titre : req.body.name,
+      description: req.body.description,
+      rating: req.body.rating,
+      distance: req.body.distance,
+      price:req.body.price,
+      image : req.body.image,
+      latitude : req.body.latitude,
+      longitude : req.body.longitude,
+      type : req.body.type,
+    };
+
+    var sql = 'INSERT INTO Annonce SET ?';
+    connection.query(sql, data, (err, result)=>{
+    if(err) throw err;
+      console.log(sql);
+      console.log(result);
+
+});
+
+});
+
+
 app.post('/Profil', jsonParser, function(req, res){
     console.log(req.body.nom);
     var data = {
@@ -69,7 +95,7 @@ app.get('/login', jsonParser, function (req, res) {
     connection.getConnection(function (err, connection) {
 
     // Executing the MySQL query (select all data from the 'users' table).
-    connection.query('SELECT * FROM Annonce', function (error, results, fields) {
+    connection.query('SELECT * FROM Profil', function (error, results, fields) {
       // If some error occurs, we throw an error.
       if (error) throw error;
         console.log(results);

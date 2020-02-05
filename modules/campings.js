@@ -2,7 +2,7 @@ const SET_CAMPINGS = "Spots/campings/SET_CAMPINGS";
 const SET_LOCATION = "Spots/campings/SET_LOCATION";
 const SET_FILTERS = "Spots/campings/SET_FILTERS";
 const SET_LOADING = "Spots/campings/SET_LOADING";
-
+const SET_USER = "Spots/campings/SET_USER";
 // Initial state
 const INITIAL_STATE = {
   spots: [],
@@ -19,11 +19,18 @@ const INITIAL_STATE = {
     option_free: false,
   },
   loading: false,
+  users: [],
 };
 
 // Reducer
 export default function reducer(state = INITIAL_STATE, action = {}) {
+  
   switch (action.type) {
+    case SET_USER:
+      return {
+        ...state,
+        users: action.payload
+      }
     case SET_CAMPINGS:
       return {
         ...state,
@@ -49,6 +56,15 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
       }
     default:
       return state;
+  }
+};
+
+export function setUsers(payload) {
+  return dispatch => {
+    dispatch({
+      type: SET_USER,
+      payload
+    })
   }
 };
 

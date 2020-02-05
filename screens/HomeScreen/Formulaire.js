@@ -38,7 +38,7 @@ class Formulaire extends React.Component {
   };
 
   klikPost(){
-
+    console.log("clique");
     fetch('http://172.20.10.7:3000/Annonce', {
       method: 'POST',
       headers: {

@@ -38,22 +38,27 @@ class Campings extends React.Component {
   };
   state = {
     modalVisible: false,
+    annonceList: []
   };
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
 
-componentDidMount() {
+async componentDidMount() {
+  try{
+    const {annonceList} = this.state;
+    console.log("1234");
+    console.log(annonceList);
+    const annonceFetch = await fetch('http://192.168.1.18:3000/Annonce');
+    const annonce = await annonceFetch.json();
+    this.setState({annonceList : annonce.results})
+    console.log(this.props);
+    this.props.setCampings(annonce);
+  } catch(err) {
+    console.log("Erreur avec le fetch ---->  ", err);
+  }
 
-  fetch('http://172.20.10.7:3000/Annonce')
-       .then(response => response.json())
-       .then(users =>  this.props.setCampings(users))
-       .catch((error) => {
-      console.error(error);
-      console.log("hello2");
-      console.log(this.props);
-    });
 
 }
 
@@ -72,7 +77,9 @@ componentDidMount() {
           <View style={{flex: 2, flexDirection: 'row'}}>
             <View style={styles.settings}>
               <View style={styles.location}>
-
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('Profil')}>
+                <Ionicons name="md-people" size={30} color="white" />
+              </TouchableOpacity>
               </View>
             </View>
             <View style={styles.options}>
@@ -80,7 +87,7 @@ componentDidMount() {
                 Location detecté
               </Text>
               <Text style={{ fontSize: 14, fontWeight: '300', }}>
-                Northern Islands
+                Pau, 64000
               </Text>
             </View>
           </View>
@@ -136,7 +143,7 @@ componentDidMount() {
             <Marker
               key={`marker-${marker.id}`}
               coordinate={marker.latlng}
-              description={marker.description}
+              description={marker.titre}
             >
 
               {campingMarker(marker)}
@@ -215,7 +222,6 @@ componentDidMount() {
 
     const mapSpots = filters.type === 'all' ? campings
       : campings.filter(camping => camping.type === filters.type);
-console.log(mapSpots);
     return mapSpots.map(
       camping => {
         return (
@@ -457,9 +463,9 @@ const styles = StyleSheet.create({
     justifyContent:'center',
   },
   location: {
-    height: 24,
-    width: 24,
-    borderRadius: 14,
+    height: 30,
+    width: 30,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#4287F5',
