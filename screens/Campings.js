@@ -38,24 +38,26 @@ class Campings extends React.Component {
   };
   state = {
     modalVisible: false,
+    annonceList: []
   };
 
   setModalVisible(visible) {
     this.setState({modalVisible: visible});
   }
 
-componentDidMount() {
-  console.log("toto");
-  console.log("tata");
-  fetch('http://192.168.1.72:3000/markers')
-       .then(response => response.json())
-       .then(users =>  this.props.setCampings(users))
-       .catch((error) => {
-      console.error(error);
-    });
-  console.log("titi");
-  console.log(this.props);
-
+async componentDidMount() {
+  try{
+    const {annonceList} = this.state;
+    console.log("1234");
+    console.log(annonceList);
+    const annonceFetch = await fetch('http://192.168.1.18:3000/Annonce');
+    const annonce = await annonceFetch.json();
+    this.setState({annonceList : annonce.results})
+    console.log(this.props);
+    this.props.setCampings(annonce);
+  } catch(err) {
+    console.log("Erreur avec le fetch ---->  ", err);
+  }
 }
 
 
@@ -73,7 +75,9 @@ componentDidMount() {
           <View style={{flex: 2, flexDirection: 'row'}}>
             <View style={styles.settings}>
               <View style={styles.location}>
-
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('Profil')}>
+                <Ionicons name="md-people" size={30} color="white" />
+              </TouchableOpacity>
               </View>
             </View>
             <View style={styles.options}>
@@ -81,7 +85,7 @@ componentDidMount() {
                 Location detecté
               </Text>
               <Text style={{ fontSize: 14, fontWeight: '300', }}>
-                Northern Islands
+                Pau, 64000
               </Text>
             </View>
           </View>
@@ -121,8 +125,8 @@ componentDidMount() {
           style={{ flex: 1, height: height * 0.5, width }}
           showsMyLocationButton
           initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
+            latitude: 43.319,
+            longitude: -0.360603,
             latitudeDelta: 0.03,
             longitudeDelta: 0.03,
           }}
@@ -137,7 +141,7 @@ componentDidMount() {
             <Marker
               key={`marker-${marker.id}`}
               coordinate={marker.latlng}
-              description={marker.description}
+              description={marker.titre}
             >
 
               {campingMarker(marker)}
@@ -216,7 +220,6 @@ componentDidMount() {
 
     const mapSpots = filters.type === 'all' ? campings
       : campings.filter(camping => camping.type === filters.type);
-
     return mapSpots.map(
       camping => {
         return (
@@ -257,7 +260,7 @@ componentDidMount() {
           <View style={styles.modalBorder}></View>
           <View style={styles.modalTitle}>
             <Text style={styles.modalTitle}>
-              {camping.name}
+              {camping.titre}
               </Text>
             <Text style={styles.modalDescription}>
               {camping.description}
@@ -321,7 +324,7 @@ componentDidMount() {
             <View style={styles.campingDetails}>
               <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
                 <Text style={{ fontSize: 14, fontWeight: 'bold' }}>
-                  {camping.name}
+                  {camping.titre}
                 </Text>
                 <Text style={{ fontSize: 12, color: '#A5A5A5', paddingTop: 5 }}>
                   {camping.description}
@@ -458,9 +461,9 @@ const styles = StyleSheet.create({
     justifyContent:'center',
   },
   location: {
-    height: 24,
-    width: 24,
-    borderRadius: 14,
+    height: 30,
+    width: 30,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#4287F5',
