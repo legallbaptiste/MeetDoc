@@ -51,7 +51,7 @@ app.get("/Profil", function(req, res) {
 			if (error) throw error;
 			console.log(results);
 			// Getting the 'response' from the database and sending it to our route. This is were the data is.
-			res.send(results);
+			res.send(results[0]);
 		});
 	});
 });

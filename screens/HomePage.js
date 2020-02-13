@@ -45,7 +45,7 @@ class HomePage extends React.Component {
 
 	async componentDidMount() {
 		try {
-			const annonceFetch = await fetch("http://192.168.1.18:3000/Annonce");
+			const annonceFetch = await fetch("http://192.168.1.14:3000/Annonce");
 			const annonce = await annonceFetch.json();
 			this.props.setMedCabs(annonce);
 		} catch (err) {
