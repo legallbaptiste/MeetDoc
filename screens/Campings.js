@@ -38,6 +38,7 @@ class Campings extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
+
 	state = {
 		modalVisible: false,
 		annonceList: []

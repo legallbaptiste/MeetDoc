@@ -16,13 +16,26 @@ import {
 import { connect } from 'react-redux';
 import { Ionicons, MaterialIcons, Foundation, FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
+import { setProfil} from '../modules/campings';
 
 const { width, height } = Dimensions.get('screen');
 
-export default class Profil extends Component {
+class Profil extends Component {
   static navigationOptions = {
     header: null,
   };
+
+  async componentDidMount() {
+    try{
+      console.log("ComponentDidMount");
+      const profilFetch = await fetch('http://172.20.10.7:3000/Profil');
+      const profil = await profilFetch.json();
+      this.props.setProfil(profil);
+      console.log(this.props);
+    } catch(err) {
+      console.log("Erreur avec le fetch ---->  ", err);
+    }
+  }
 
   renderHeader() {
     return (
@@ -40,6 +53,9 @@ export default class Profil extends Component {
     )
   }
   render() {
+    const { profil } = this.props;
+    console.log("TOTOTOTOTOTOTOTOTOTOTO");
+    console.log(this.props);
     return (
       <SafeAreaView style={styles.container}>
       {this.renderHeader()}
@@ -48,7 +64,7 @@ export default class Profil extends Component {
 
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-              <Text style={styles.name}>Michel médecin</Text>
+              <Text style={styles.name}>{this.props}</Text>
               <Text style={styles.info}>Remplacant</Text>
               <Text style={styles.info}>Pau</Text>
               <Text style={styles.info}>Spécialité : </Text>
@@ -70,6 +86,19 @@ export default class Profil extends Component {
     );
   }
 }
+
+
+const moduleState = state => ({
+  profil: state.profil,
+});
+
+const moduleActions = {
+  setProfil,
+}
+
+export default connect(moduleState, moduleActions)(Profil);
+
+
 
 const styles = StyleSheet.create({
   container:{
