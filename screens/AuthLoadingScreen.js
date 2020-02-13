@@ -7,7 +7,7 @@ import {
     View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { getUserToken } from '../modules/actions';
+import { getUserToken } from '../reducers/actions';
 
 class AuthLoadingScreen extends React.Component {
     static navigationOptions = {

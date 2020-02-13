@@ -19,8 +19,6 @@ import { connect } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
 import Calendar from "react-native-calendario";
 
-import axios from "axios";
-
 import {
 	Ionicons,
 	MaterialIcons,
@@ -29,19 +27,16 @@ import {
 	SimpleLineIcons
 } from "@expo/vector-icons";
 
-import { setLocation, setFilters, setCampings } from "../modules/campings";
-import * as mock from "../mock/campings";
+import { setLocation, setFilters, setMedCabs } from "../reducers/reducer";
 
 const { width, height } = Dimensions.get("screen");
 
-class Campings extends React.Component {
+class HomePage extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
-
 	state = {
-		modalVisible: false,
-		annonceList: []
+		modalVisible: false
 	};
 
 	setModalVisible(visible) {
@@ -50,14 +45,9 @@ class Campings extends React.Component {
 
 	async componentDidMount() {
 		try {
-			const { annonceList } = this.state;
-			console.log("1234");
-			console.log(annonceList);
 			const annonceFetch = await fetch("http://192.168.1.18:3000/Annonce");
 			const annonce = await annonceFetch.json();
-			this.setState({ annonceList: annonce.results });
-			console.log(this.props);
-			this.props.setCampings(annonce);
+			this.props.setMedCabs(annonce);
 		} catch (err) {
 			console.log("Erreur avec le fetch ---->  ", err);
 		}
@@ -112,20 +102,20 @@ class Campings extends React.Component {
 	}
 
 	renderMap() {
-		const campingMarker = ({ type }) => (
+		const medCabMarker = ({ type }) => (
 			<View style={[styles.marker, styles[`${type}Marker`]]}>
-				{type === "rv" ? (
+				{type === "hopital" ? (
 					<MaterialIcons name="local-hospital" size={18} color="#FFF" />
 				) : (
 					<Ionicons name="ios-person-add" size={18} color="#FFF" />
 				)}
 			</View>
 		);
-		const { filters, campings } = this.props;
+		const { filters, medcabs } = this.props;
 		const mapSpots =
 			filters.type === "all"
-				? campings
-				: campings.filter((camping) => camping.type === filters.type);
+				? medcabs
+				: medcabs.filter((medcab) => medcab.type === filters.type);
 
 		return (
 			<View style={styles.map}>
@@ -151,7 +141,7 @@ class Campings extends React.Component {
 							coordinate={marker.latlng}
 							description={marker.titre}
 						>
-							{campingMarker(marker)}
+							{medCabMarker(marker)}
 						</Marker>
 					))}
 				</MapView>
@@ -194,14 +184,17 @@ class Campings extends React.Component {
 					</Text>
 				</View>
 				<View
-					style={[styles.tab, filters.type === "rv" ? styles.activeTab : null]}
+					style={[
+						styles.tab,
+						filters.type === "hopital" ? styles.activeTab : null
+					]}
 				>
 					<Text
 						style={[
 							styles.tabTitle,
-							filters.type === "rv" ? styles.activeTabTitle : null
+							filters.type === "hopital" ? styles.activeTabTitle : null
 						]}
-						onPress={() => this.handleTab("rv")}
+						onPress={() => this.handleTab("hopital")}
 					>
 						Cabinet
 					</Text>
@@ -211,7 +204,7 @@ class Campings extends React.Component {
 	}
 
 	renderList() {
-		const { filters, campings } = this.props;
+		const { filters, medcabs } = this.props;
 		const truthyValue = true;
 
 		const DISABLED_DAYS = {
@@ -221,11 +214,11 @@ class Campings extends React.Component {
 
 		const mapSpots =
 			filters.type === "all"
-				? campings
-				: campings.filter((camping) => camping.type === filters.type);
-		return mapSpots.map((camping) => {
+				? medcabs
+				: medcabs.filter((medcab) => medcab.type === filters.type);
+		return mapSpots.map((medcab) => {
 			return (
-				<View key={`camping-${camping.id}`} style={styles.camping}>
+				<View key={`medcab-${medcab.id}`} style={styles.medcab}>
 					<Modal
 						animationType="slide"
 						transparent={false}
@@ -257,14 +250,14 @@ class Campings extends React.Component {
 								<ImageBackground
 									style={styles.modalImage}
 									imageStyle={styles.modalImage}
-									source={{ uri: camping.image }}
+									source={{ uri: medcab.image }}
 								/>
 							</View>
 							<View style={styles.modalBorder}></View>
 							<View style={styles.modalTitle}>
-								<Text style={styles.modalTitle}>{camping.titre}</Text>
+								<Text style={styles.modalTitle}>{medcab.titre}</Text>
 								<Text style={styles.modalDescription}>
-									{camping.description}
+									{medcab.description}
 								</Text>
 							</View>
 							<View style={styles.modalText}>
@@ -312,12 +305,12 @@ class Campings extends React.Component {
 					</Modal>
 
 					<ImageBackground
-						style={styles.campingImage}
-						imageStyle={styles.campingImage}
-						source={{ uri: camping.image }}
+						style={styles.medcabImage}
+						imageStyle={styles.medcabImage}
+						source={{ uri: medcab.image }}
 					/>
 
-					<View style={styles.campingDetails}>
+					<View style={styles.medcabDetails}>
 						<View
 							style={{
 								flex: 1,
@@ -326,29 +319,29 @@ class Campings extends React.Component {
 							}}
 						>
 							<Text style={{ fontSize: 14, fontWeight: "bold" }}>
-								{camping.titre}
+								{medcab.titre}
 							</Text>
 							<Text style={{ fontSize: 12, color: "#A5A5A5", paddingTop: 5 }}>
-								{camping.description}
+								{medcab.description}
 							</Text>
 						</View>
 						<View style={{ flex: 1, flexDirection: "row" }}>
-							<View style={styles.campingInfo}>
+							<View style={styles.medcabInfo}>
 								<FontAwesome name="star" color="#3C824C" size={12} />
 								<Text style={{ marginLeft: 4, color: "#3C824C" }}>
-									{camping.rating}
+									{medcab.rating}
 								</Text>
 							</View>
-							<View style={styles.campingInfo}>
+							<View style={styles.medcabInfo}>
 								<FontAwesome name="location-arrow" color="#4287F5" size={12} />
 								<Text style={{ marginLeft: 4, color: "#4287F5" }}>
-									{camping.distance} miles
+									{medcab.distance} miles
 								</Text>
 							</View>
-							<View style={styles.campingInfo}>
+							<View style={styles.medcabInfo}>
 								<Ionicons name="md-pricetag" color="black" size={12} />
 								<Text style={{ marginLeft: 4, color: "black" }}>
-									{camping.price}
+									{medcab.price}
 								</Text>
 							</View>
 						</View>
@@ -385,18 +378,18 @@ class Campings extends React.Component {
 }
 
 const moduleState = (state) => ({
-	campings: state.campings.spots,
-	filters: state.campings.filters,
-	mylocation: state.campings.mylocation
+	medcabs: state.medcabs.spots,
+	filters: state.medcabs.filters,
+	mylocation: state.medcabs.mylocation
 });
 
 const moduleActions = {
 	setLocation,
-	setCampings,
+	setMedCabs,
 	setFilters
 };
 
-export default connect(moduleState, moduleActions)(Campings);
+export default connect(moduleState, moduleActions)(HomePage);
 
 const THEME = {
 	monthTitleTextStyle: {
@@ -487,7 +480,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: "#FFF"
 	},
-	rvMarker: {
+	hopitalMarker: {
 		backgroundColor: "#3C824C"
 	},
 	tentMarker: {
@@ -527,25 +520,25 @@ const styles = StyleSheet.create({
 	map: {
 		flex: 1
 	},
-	camping: {
+	medcab: {
 		flex: 1,
 		flexDirection: "row",
 		borderBottomColor: "#A5A5A5",
 		borderBottomWidth: 0.5,
 		padding: 20
 	},
-	campingDetails: {
+	medcabDetails: {
 		flex: 2,
 		paddingLeft: 20,
 		flexDirection: "column",
 		justifyContent: "space-around"
 	},
-	campingInfo: {
+	medcabInfo: {
 		flexDirection: "row",
 		alignItems: "center",
 		marginRight: 14
 	},
-	campingImage: {
+	medcabImage: {
 		width: width * 0.3,
 		height: width * 0.25,
 		borderRadius: 6

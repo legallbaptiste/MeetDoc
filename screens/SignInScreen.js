@@ -6,7 +6,7 @@ import {
     AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
-import { saveUserToken } from '../modules/actions';
+import { saveUserToken } from '../reducers/actions';
 
 class SignInScreen extends React.Component {
     static navigationOptions = {
@@ -25,7 +25,7 @@ class SignInScreen extends React.Component {
       console.log(this.props);
         this.props.saveUserToken()
             .then(() => {
-                this.props.navigation.navigate('Campings');
+                this.props.navigation.navigate('HomePage');
             })
             .catch((error) => {
                 this.setState({ error })

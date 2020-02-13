@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import { connect } from 'react-redux';
-import { removeUserToken } from '../modules/actions';
+import { removeUserToken } from '../reducers/actions';
 
 class OtherScreen extends React.Component {
     static navigationOptions = {

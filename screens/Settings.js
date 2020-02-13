@@ -12,7 +12,7 @@ import {
 import { connect } from 'react-redux';
 import { Ionicons, MaterialIcons, Foundation, FontAwesome } from '@expo/vector-icons';
 
-import { setFilters } from '../modules/campings';
+import { setFilters } from '../reducers/reducer';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -34,7 +34,7 @@ class Settings extends React.Component {
     return (
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Campings')}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('HomePage')}>
             <Ionicons name="md-arrow-back" size={24} />
           </TouchableOpacity>
         </View>
@@ -42,7 +42,7 @@ class Settings extends React.Component {
           <Text style={styles.title}>Filter</Text>
         </View>
         <View style={{ flex: 1, alignItems: 'flex-end' }}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Campings')}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('HomePage')}>
             <Ionicons name="ios-search" size={24} />
           </TouchableOpacity>
         </View>
@@ -108,18 +108,18 @@ class Settings extends React.Component {
                 <Text style={[styles.buttonText, activeType('all') ? styles.activeText : null]}>Tous</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, activeType('tent') ? styles.active : null]}
-                onPress={() => this.props.setFilters({ type: 'tent' })}
+                style={[styles.button, activeType('medecin') ? styles.active : null]}
+                onPress={() => this.props.setFilters({ type: 'medecin' })}
               >
-                <MaterialIcons name="local-hospital" size={24} color={activeType('tent') ? '#FFF' : '#4287F5'} />
-                <Text style={[styles.buttonText, activeType('tent') ? styles.activeText : null]}>Remplacement médecin</Text>
+                <MaterialIcons name="local-hospital" size={24} color={activeType('medecin') ? '#FFF' : '#4287F5'} />
+                <Text style={[styles.buttonText, activeType('medecin') ? styles.activeText : null]}>Remplacement médecin</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, styles.last, activeType('rv') ? styles.active : null]}
-                onPress={() => this.props.setFilters({ type: 'rv' })}
+                style={[styles.button, styles.last, activeType('hopital') ? styles.active : null]}
+                onPress={() => this.props.setFilters({ type: 'hopital' })}
               >
-                <Ionicons name="ios-person-add" size={24} color={activeType('rv') ? '#FFF' : '#4287F5'}/>
-                <Text style={[styles.buttonText, activeType('rv') ? styles.activeText : null]}>Cabinet</Text>
+                <Ionicons name="ios-person-add" size={24} color={activeType('hopital') ? '#FFF' : '#4287F5'}/>
+                <Text style={[styles.buttonText, activeType('hopital') ? styles.activeText : null]}>Cabinet</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -197,8 +197,8 @@ class Settings extends React.Component {
 }
 
 const moduleState = state => ({
-  filters: state.campings.filters,
-  loading: state.campings.loading,
+  filters: state.medcabs.filters,
+  loading: state.medcabs.loading,
 });
 
 const moduleActions = {
