@@ -28,7 +28,6 @@ import axios from 'axios';
 import { Ionicons, MaterialIcons, FontAwesome, Foundation, SimpleLineIcons } from '@expo/vector-icons';
 
 import { setLocation, setFilters, setCampings } from '../modules/campings';
-import * as mock from '../mock/campings';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -50,11 +49,10 @@ async componentDidMount() {
     const {annonceList} = this.state;
     console.log("1234");
     console.log(annonceList);
-    const annonceFetch = await fetch('http://192.168.1.18:3000/Annonce');
+    const annonceFetch = await fetch('http://172.20.10.7:3000/Annonce');
     const annonce = await annonceFetch.json();
-    this.setState({annonceList : annonce.results})
-    console.log(this.props);
     this.props.setCampings(annonce);
+    console.log(this.props);
   } catch(err) {
     console.log("Erreur avec le fetch ---->  ", err);
   }

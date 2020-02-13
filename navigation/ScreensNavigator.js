@@ -1,16 +1,21 @@
 import React from 'react';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
-import LoginForm from '../screens/LoginForm';
 
 import Campings from '../screens/Campings';
 import Settings from '../screens/Settings';
 import Formulaire from '../screens/Formulaire';
-import Index from '../screens/';
 import Profil from '../screens/Profil'
+
+
+import SignInScreen from '../screens/SignInScreen'
+import AuthLoadingScreen from '../screens/AuthLoadingScreen';
+
+
 
 export default createStackNavigator(
   {
+    SignInScreen: SignInScreen,
     // Index: Index,
     // LoginForm: LoginForm,
     Campings: Campings,
