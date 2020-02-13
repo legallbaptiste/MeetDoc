@@ -16,7 +16,7 @@ import {
 import { connect } from 'react-redux';
 import { Ionicons, MaterialIcons, Foundation, FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
-import { setProfil} from '../modules/campings';
+import { setProfil} from '../reducers/reducer';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -28,8 +28,9 @@ class Profil extends Component {
   async componentDidMount() {
     try{
       console.log("ComponentDidMount");
-      const profilFetch = await fetch('http://172.20.10.7:3000/Profil');
+      const profilFetch = await fetch('http://192.168.1.18:3000/Profil');
       const profil = await profilFetch.json();
+      console.log(profil);
       this.props.setProfil(profil);
       console.log(this.props);
     } catch(err) {
@@ -41,7 +42,7 @@ class Profil extends Component {
     return (
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Campings')}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('HomePage')}>
             <Ionicons name="md-arrow-back" size={24} />
           </TouchableOpacity>
         </View>
@@ -52,10 +53,12 @@ class Profil extends Component {
       </View>
     )
   }
+
   render() {
-    const { profil } = this.props;
+    const { profils } = this.props;
+    console.log("JE SUIS LE CAMPING");
+console.log(this.props);
     console.log("TOTOTOTOTOTOTOTOTOTOTO");
-    console.log(this.props);
     return (
       <SafeAreaView style={styles.container}>
       {this.renderHeader()}
@@ -64,11 +67,12 @@ class Profil extends Component {
 
           <View style={styles.body}>
             <View style={styles.bodyContent}>
-              <Text style={styles.name}>{this.props}</Text>
-              <Text style={styles.info}>Remplacant</Text>
-              <Text style={styles.info}>Pau</Text>
-              <Text style={styles.info}>Spécialité : </Text>
-              <Text style={styles.description}>Description</Text>
+              <Text style={styles.name}></Text>
+              <Text style={styles.info}>Type : Remplacant</Text>
+              <Text style={styles.info}>Ville : Pau</Text>
+              <Text style={styles.info}>Spécialité : Chirugien dentaire</Text>
+              <Text style={styles.description}>Description
+              </Text>
             </View>
             <View style={styles.Contact}>
               <Text style={styles.contact}> Contacts </Text>
@@ -87,9 +91,8 @@ class Profil extends Component {
   }
 }
 
-
 const moduleState = state => ({
-  profil: state.profil,
+  profils: state.profils,
 });
 
 const moduleActions = {
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
     flex:1,
   },
   header2:{
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#3C824C",
   //  height:200,
    flex:1,
   },
@@ -131,7 +134,6 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:22,
-    color:"blue",
     fontWeight:'600',
     marginTop:49,
     flex:1,
@@ -145,7 +147,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: height * 0.1,
+    height: height * 0.05,
     width: width,
     paddingHorizontal: 14,
   },
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
   },
   contact:{
     fontSize:22,
-    color:"blue",
+    color:"#4287F5",
     fontWeight:'600',
   },
   telephone:{
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
   },
   titre:{
     fontSize:20,
-    color: "blue",
+    color: "#4287F5",
     padding:30,
   },
 
