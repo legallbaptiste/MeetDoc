@@ -1,11 +1,13 @@
-const SET_CAMPINGS = "Spots/campings/SET_CAMPINGS";
-const SET_LOCATION = "Spots/campings/SET_LOCATION";
-const SET_FILTERS = "Spots/campings/SET_FILTERS";
-const SET_LOADING = "Spots/campings/SET_LOADING";
+const SET_MEDCABS = "SET_MEDCABS";
+const SET_LOCATION = "SET_LOCATION";
+const SET_FILTERS = "SET_FILTERS";
+const SET_LOADING = "SET_LOADING";
+const SET_PROFIL = "SET_PROFIL";
 
 // Initial state
 const INITIAL_STATE = {
   spots: [],
+  profils: [],
   mylocation: {
     latitude: 37.79035,
     longitude: -122.4384,
@@ -23,8 +25,15 @@ const INITIAL_STATE = {
 
 // Reducer
 export default function reducer(state = INITIAL_STATE, action = {}) {
+console.log("reducer reducer");
+console.log(action);
   switch (action.type) {
-    case SET_CAMPINGS:
+    case SET_PROFIL:
+     return{
+       ...state,
+       profils: action.payload
+     }
+    case SET_MEDCABS:
       return {
         ...state,
         spots: action.payload
@@ -53,10 +62,10 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
 };
 
 // Actions
-export function setCampings(payload) {
+export function setMedCabs(payload) {
   return dispatch => {
     dispatch({
-      type: SET_CAMPINGS,
+      type: SET_MEDCABS,
       payload
     })
   }
@@ -84,6 +93,16 @@ export function setLoading(payload) {
   return dispatch => {
     dispatch({
       type: SET_LOADING,
+    })
+  }
+};
+
+export function setProfil(payload) {
+  console.log("reducer profil");
+
+  return dispatch => {
+    dispatch({
+      type: SET_PROFIL,
       payload
     })
   }
