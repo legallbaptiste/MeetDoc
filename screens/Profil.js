@@ -32,12 +32,9 @@ class Profil extends Component {
 
 	async componentDidMount() {
 		try {
-			console.log("ComponentDidMount");
-			const profilFetch = await fetch("http://192.168.1.14:3000/Profil");
+			const profilFetch = await fetch("http://172.20.10.7:3000/Profil");
 			const profil = await profilFetch.json();
-			console.log(profil);
 			this.props.setProfil(profil);
-			console.log(this.props);
 		} catch (err) {
 			console.log("Erreur avec le fetch ---->  ", err);
 		}
@@ -62,9 +59,6 @@ class Profil extends Component {
 
 	render() {
 		const { profils } = this.props;
-		console.log("JE SUIS LE CAMPING");
-		console.log(profils);
-		console.log("TOTOTOTOTOTOTOTOTOTOTO");
 		return (
 			<SafeAreaView style={styles.container}>
 				{this.renderHeader()}
@@ -76,9 +70,7 @@ class Profil extends Component {
 
 				<View style={styles.body}>
 					<View style={styles.bodyContent}>
-						<Text style={styles.name}>
-							{profils.id} et {profils.nom}
-						</Text>
+						<Text style={styles.name}>{profils.nom}</Text>
 						<Text style={styles.info}>Type : Remplacant</Text>
 						<Text style={styles.info}>Ville : Pau</Text>
 						<Text style={styles.info}>Spécialité : Chirugien dentaire</Text>
