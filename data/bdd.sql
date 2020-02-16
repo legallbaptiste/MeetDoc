@@ -8,14 +8,6 @@ CREATE TABLE Adresse (
   pays VARCHAR(30)
 );
 
-DROP TABLE IF EXISTS ZoneGeo;
-CREATE TABLE ZoneGeo (
-  id INTEGER PRIMARY KEY,
-  kmMax FLOAT,
-  latitude DOUBLE,
-  longitude DOUBLE
-);
-
 DROP TABLE IF EXISTS Periode;
 CREATE TABLE Periode (
   id INTEGER PRIMARY KEY,
@@ -62,8 +54,8 @@ CREATE TABLE Etablissement (
   visiteDomicile Boolean,
   activite VARCHAR(12) CHECK (activite in('Seul','Association')),
   descriptionLibre TEXT,
-  idZoneGeo INTEGER,
-  FOREIGN KEY (idZoneGeo) REFERENCES ZoneGeo(id)
+  idAdresse INTEGER,
+  FOREIGN KEY (idAdresse) REFERENCES Adresse(id)
 );
 
 DROP TABLE IF EXISTS Recruteur;
