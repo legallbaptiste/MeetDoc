@@ -29,6 +29,9 @@ import {
 
 import { setLocation, setFilters, setMedCabs } from "../reducers/reducer";
 
+// Import dev
+import devConst from "../constants/devConst";
+
 const { width, height } = Dimensions.get("screen");
 
 class HomePage extends React.Component {
@@ -45,7 +48,9 @@ class HomePage extends React.Component {
 
 	async componentDidMount() {
 		try {
-			const annonceFetch = await fetch("http://192.168.1.14:3000/Annonce");
+			const annonceFetch = await fetch(
+				"http://" + devConst.ip + ":3000/Annonce"
+			);
 			const annonce = await annonceFetch.json();
 			this.props.setMedCabs(annonce);
 		} catch (err) {

@@ -23,6 +23,8 @@ import {
 import axios from "axios";
 import { setProfil } from "../reducers/reducer";
 
+import devConst from "../constants/devConst";
+
 const { width, height } = Dimensions.get("screen");
 
 class Profil extends Component {
@@ -32,7 +34,7 @@ class Profil extends Component {
 
 	async componentDidMount() {
 		try {
-			const profilFetch = await fetch("http://172.20.10.7:3000/Profil");
+			const profilFetch = await fetch("http://" + devConst.ip + ":3000/Profil");
 			const profil = await profilFetch.json();
 			this.props.setProfil(profil);
 		} catch (err) {

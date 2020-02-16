@@ -1,116 +1,167 @@
+DROP TABLE IF EXISTS Adresse;
+CREATE TABLE Adresse (
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  voie VARCHAR(50),
+  numVoie INTEGER,
+  ville VARCHAR(50),
+  codePostale INTEGER(5),
+  pays VARCHAR(30)
+);
 
--- phpMyAdmin SQL Dump
--- version 4.7.7
--- https://www.phpmyadmin.net/
---
--- Hôte : localhost:3306
--- Généré le :  mar. 03 déc. 2019 à 19:30
--- Version du serveur :  5.6.38
--- Version de PHP :  7.2.1
+DROP TABLE IF EXISTS ZoneGeo;
+CREATE TABLE ZoneGeo (
+  id INTEGER PRIMARY KEY,
+  kmMax FLOAT,
+  latitude DOUBLE,
+  longitude DOUBLE
+);
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
+DROP TABLE IF EXISTS Periode;
+CREATE TABLE Periode (
+  id INTEGER PRIMARY KEY,
+  dDebut DATE,
+  dFin DATE
+);
 
---
--- Base de données :  `projetGI2`
---
+DROP TABLE IF EXISTS Horaire;
+CREATE TABLE Horaire (
+  id INTEGER PRIMARY KEY,
+  jour VARCHAR(9) CHECK(jour in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')),
+  hDebut TIME,
+  hFin TIME
+);
 
--- --------------------------------------------------------
+DROP TABLE IF EXISTS User;
+CREATE TABLE User (
+  id INTEGER PRIMARY KEY,
+  nom VARCHAR(50),
+  prenom VARCHAR(50),
+  email VARCHAR(50),
+  numTel VARCHAR(10),
+  idAdresse INTEGER,
+  cartePro VARCHAR(50),
+  FOREIGN KEY (idAdresse) REFERENCES Adresse(id)
+);
 
---
--- Structure de la table `Annonce`
---
+DROP TABLE IF EXISTS Remplacant;
+CREATE TABLE Remplacant (
+  id INTEGER PRIMARY KEY,
+  descriptionLibre TEXT,
+  cv VARCHAR(50),
+  specialite VARCHAR(50),
+  FOREIGN KEY (id) REFERENCES User(id)
+);
 
-CREATE TABLE `Annonce` (
-  `id` int(11) NOT NULL,
-  `titre` varchar(50) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `rating` float NOT NULL,
-  `distance` int(11) NOT NULL,
-  `salaire` varchar(255) NOT NULL,
-  `image` varchar(255) NOT NULL,
-  `latitude` float NOT NULL,
-  `longitude` float NOT NULL,
-  `profilRecherche` int(11) DEFAULT NULL,
-  `etat` int(11) DEFAULT NULL,
-  `type` varchar(255) NOT NULL,
-  `idCabinet` int(11) DEFAULT NULL,
-  `idRemplacant` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS Etablissement;
+CREATE TABLE Etablissement (
+  id INTEGER PRIMARY KEY,
+  adresse INTEGER,
+  secretaratBool Boolean,
+  typePatientele VARCHAR(50),
+  specialite VARCHAR(50),
+  visiteDomicile Boolean,
+  activite VARCHAR(12) CHECK (activite in('Seul','Association')),
+  descriptionLibre TEXT,
+  idZoneGeo INTEGER,
+  FOREIGN KEY (idZoneGeo) REFERENCES ZoneGeo(id)
+);
 
---
--- Déchargement des données de la table `Annonce`
---
+DROP TABLE IF EXISTS Recruteur;
+CREATE TABLE Recruteur (
+  id INTEGER PRIMARY KEY,
+  specialite VARCHAR(50),
+  descriptionLibre TEXT,
+  idEtablissement INTEGER,
+  FOREIGN KEY (idEtablissement) REFERENCES Etablissement(id),
+  FOREIGN KEY (id) REFERENCES User(id)
+);
 
-INSERT INTO `Annonce` (`id`, `titre`, `description`, `rating`, `distance`, `salaire`, `image`, `latitude`, `longitude`, `profilRecherche`, `etat`, `type`, `idCabinet`, `idRemplacant`) VALUES
-(1, 'Cabinet médical', 'Cabinet médical du Docteur LE GALL', 5, 3, '50€/heure', 'https://be-mydesk.com/img/cms/Articles%20de%20blog/amenagement-cabinet-medical.jpg', 43.3, -0.366667, 1, 1, 'rv', 1, 1);
+DROP TABLE IF EXISTS HoraireEtablissement;
+CREATE TABLE HoraireEtablissement (
+  id INTEGER PRIMARY KEY,
+  idHoraire INTEGER,
+  idEtablissement INTEGER,
+  FOREIGN KEY (idHoraire) REFERENCES Horaire(id),
+  FOREIGN KEY (idEtablissement) REFERENCES Etablissement(id)
+);
 
--- --------------------------------------------------------
+DROP TABLE IF EXISTS PeriodeRemplacant;
+CREATE TABLE PeriodeRemplacant (
+  id INTEGER PRIMARY KEY,
+  idPeriode INTEGER,
+  idRemplacant INTEGER,
+  FOREIGN KEY (idPeriode) REFERENCES Periode(id),
+  FOREIGN KEY (idRemplacant) REFERENCES Remplacant(id)
+);
 
---
--- Structure de la table `Profil`
---
+DROP TABLE IF EXISTS HoraireRemplacant;
+CREATE TABLE HoraireRemplacant (
+  id INTEGER PRIMARY KEY,
+  idHoraire INTEGER,
+  idRemplacant INTEGER,
+  FOREIGN KEY (idHoraire) REFERENCES Horaire(id),
+  FOREIGN KEY (idRemplacant) REFERENCES Remplacant(id)
+);
 
-CREATE TABLE `Profil` (
-  `id` int(11) NOT NULL,
-  `nom` varchar(100) DEFAULT NULL,
-  `prenom` varchar(100) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `adresse` varchar(255) DEFAULT NULL,
-  `tel` varchar(13) DEFAULT NULL,
-  `typeProfil` int(11) DEFAULT NULL,
-  `mdp` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS Annonce;
+CREATE TABLE Annonce (
+  id INTEGER PRIMARY KEY,
+  typeOffre VARCHAR(50),
+  Retrocession FLOAT,
+  idEtablissement INTEGER,
+  idRecruteur INTEGER,
+  FOREIGN KEY (idRecruteur) REFERENCES Recruteur(id),
+  FOREIGN KEY (idEtablissement) REFERENCES Etablissement(id)
+);
 
---
--- Déchargement des données de la table `Profil`
---
+-- Permet de creer un table avec tous les jours
 
-INSERT INTO `Profil` (`id`, `nom`, `prenom`, `email`, `adresse`, `tel`, `typeProfil`, `mdp`) VALUES
-(1, 'LE GALL', 'Baptiste', 'legallbapt@eisti.eu', '310 boulevard de la paix', '0629977341', 1, 'toto'),
-(2, 'lololo', 'lololo', 'baptiste.le.galll@gmail.com', 'lol', '', 1, NULL);
+DROP TABLE IF EXISTS time_dimension;
+CREATE TABLE time_dimension (
+        id                      INTEGER PRIMARY KEY,  -- year*10000+month*100+day
+        db_date                 DATE NOT NULL,
+        year                    INTEGER NOT NULL,
+        month                   INTEGER NOT NULL, -- 1 to 12
+        day                     INTEGER NOT NULL, -- 1 to 31
+        quarter                 INTEGER NOT NULL, -- 1 to 4
+        week                    INTEGER NOT NULL, -- 1 to 52/53
+        day_name                VARCHAR(9) NOT NULL, -- 'Monday', 'Tuesday'...
+        month_name              VARCHAR(9) NOT NULL, -- 'January', 'February'...
+        holiday_flag            CHAR(1) DEFAULT 'f' CHECK (holiday_flag in ('t', 'f')),
+        weekend_flag            CHAR(1) DEFAULT 'f' CHECK (weekday_flag in ('t', 'f')),
+        event                   VARCHAR(50),
+        UNIQUE td_ymd_idx (year,month,day),
+        UNIQUE td_dbdate_idx (db_date)
 
---
--- Index pour les tables déchargées
---
+) Engine=MyISAM;
 
---
--- Index pour la table `Annonce`
---
-ALTER TABLE `Annonce`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idCabinet` (`idCabinet`),
-  ADD KEY `idRemplacant` (`idRemplacant`);
+DROP PROCEDURE IF EXISTS fill_date_dimension;
+DELIMITER //
+CREATE PROCEDURE fill_date_dimension(IN startdate DATE,IN stopdate DATE)
+BEGIN
+    DECLARE currentdate DATE;
+    SET currentdate = startdate;
+    WHILE currentdate < stopdate DO
+        INSERT INTO time_dimension VALUES (
+                        YEAR(currentdate)*10000+MONTH(currentdate)*100 + DAY(currentdate),
+                        currentdate,
+                        YEAR(currentdate),
+                        MONTH(currentdate),
+                        DAY(currentdate),
+                        QUARTER(currentdate),
+                        WEEKOFYEAR(currentdate),
+                        DATE_FORMAT(currentdate,'%W'),
+                        DATE_FORMAT(currentdate,'%M'),
+                        'f',
+                        CASE DAYOFWEEK(currentdate) WHEN 1 THEN 't' WHEN 7 then 't' ELSE 'f' END,
+                        NULL);
+        SET currentdate = ADDDATE(currentdate,INTERVAL 1 DAY);
+    END WHILE;
+END
+//
+DELIMITER ;
 
---
--- Index pour la table `Profil`
---
-ALTER TABLE `Profil`
-  ADD PRIMARY KEY (`id`);
+TRUNCATE TABLE time_dimension;
 
---
--- AUTO_INCREMENT pour les tables déchargées
---
-
---
--- AUTO_INCREMENT pour la table `Annonce`
---
-ALTER TABLE `Annonce`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT pour la table `Profil`
---
-ALTER TABLE `Profil`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Contraintes pour les tables déchargées
---
-
---
--- Contraintes pour la table `Annonce`
---
-ALTER TABLE `Annonce`
-  ADD CONSTRAINT `annonce_ibfk_1` FOREIGN KEY (`idCabinet`) REFERENCES `Profil` (`id`),
-  ADD CONSTRAINT `annonce_ibfk_2` FOREIGN KEY (`idRemplacant`) REFERENCES `Profil` (`id`);
+CALL fill_date_dimension('2000-01-01','2100-01-01');
+OPTIMIZE TABLE time_dimension;
