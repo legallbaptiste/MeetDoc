@@ -6,7 +6,7 @@ const annonceRoutes = require("./routes/annonce");
 
 app.use(morgan("dev"));
 
-app.use("/annonce", annonceRoutes);
+app.use("/Annonce", annonceRoutes);
 
 app.use((req, res, next) => {
 	const error = new Error("Mauvaise route");
