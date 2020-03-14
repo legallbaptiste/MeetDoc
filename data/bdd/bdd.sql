@@ -10,14 +10,14 @@ CREATE TABLE Adresse (
 
 DROP TABLE IF EXISTS Periode;
 CREATE TABLE Periode (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   dDebut DATE,
   dFin DATE
 );
 
 DROP TABLE IF EXISTS Horaire;
 CREATE TABLE Horaire (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   jour VARCHAR(9) CHECK(jour in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')),
   hDebut TIME,
   hFin TIME
@@ -25,7 +25,7 @@ CREATE TABLE Horaire (
 
 DROP TABLE IF EXISTS User;
 CREATE TABLE User (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   nom VARCHAR(50),
   prenom VARCHAR(50),
   email VARCHAR(50),
@@ -37,7 +37,7 @@ CREATE TABLE User (
 
 DROP TABLE IF EXISTS Remplacant;
 CREATE TABLE Remplacant (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   descriptionLibre TEXT,
   cv VARCHAR(50),
   specialite VARCHAR(50),
@@ -46,7 +46,7 @@ CREATE TABLE Remplacant (
 
 DROP TABLE IF EXISTS Etablissement;
 CREATE TABLE Etablissement (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   adresse INTEGER,
   secretaratBool Boolean,
   typePatientele VARCHAR(50),
@@ -60,7 +60,7 @@ CREATE TABLE Etablissement (
 
 DROP TABLE IF EXISTS Recruteur;
 CREATE TABLE Recruteur (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   specialite VARCHAR(50),
   descriptionLibre TEXT,
   idEtablissement INTEGER,
@@ -70,7 +70,7 @@ CREATE TABLE Recruteur (
 
 DROP TABLE IF EXISTS HoraireEtablissement;
 CREATE TABLE HoraireEtablissement (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   idHoraire INTEGER,
   idEtablissement INTEGER,
   FOREIGN KEY (idHoraire) REFERENCES Horaire(id),
@@ -79,7 +79,7 @@ CREATE TABLE HoraireEtablissement (
 
 DROP TABLE IF EXISTS PeriodeRemplacant;
 CREATE TABLE PeriodeRemplacant (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   idPeriode INTEGER,
   idRemplacant INTEGER,
   FOREIGN KEY (idPeriode) REFERENCES Periode(id),
@@ -88,7 +88,7 @@ CREATE TABLE PeriodeRemplacant (
 
 DROP TABLE IF EXISTS HoraireRemplacant;
 CREATE TABLE HoraireRemplacant (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   idHoraire INTEGER,
   idRemplacant INTEGER,
   FOREIGN KEY (idHoraire) REFERENCES Horaire(id),
@@ -97,7 +97,7 @@ CREATE TABLE HoraireRemplacant (
 
 DROP TABLE IF EXISTS Annonce;
 CREATE TABLE Annonce (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
   typeOffre VARCHAR(50),
   Retrocession FLOAT,
   idEtablissement INTEGER,
