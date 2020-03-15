@@ -29,6 +29,7 @@ CREATE TABLE User (
   nom VARCHAR(50),
   prenom VARCHAR(50),
   email VARCHAR(50),
+  motDePasse VARCHAR(50),
   numTel VARCHAR(10),
   idAdresse INTEGER,
   cartePro VARCHAR(50),
