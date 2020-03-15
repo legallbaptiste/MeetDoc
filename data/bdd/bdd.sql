@@ -49,7 +49,7 @@ DROP TABLE IF EXISTS Etablissement;
 CREATE TABLE Etablissement (
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
   adresse INTEGER,
-  secretaratBool Boolean,
+  secretariatBool Boolean,
   typePatientele VARCHAR(50),
   specialite VARCHAR(50),
   visiteDomicile Boolean,
@@ -158,3 +158,8 @@ TRUNCATE TABLE time_dimension;
 
 CALL fill_date_dimension('2000-01-01','2100-01-01');
 OPTIMIZE TABLE time_dimension;
+
+ALTER TABLE `Etablissement`
+  DROP `adresse`;
+
+ALTER TABLE `Etablissement` CHANGE `secretaratBool` `secretariatBool` BOOLEAN NULL DEFAULT NULL;

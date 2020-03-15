@@ -157,4 +157,5 @@ router.get("/info/:email", (req, res) => {
 	});
 });
 
+connection.end((err) => {});
 module.exports = router;
