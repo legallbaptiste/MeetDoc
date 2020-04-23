@@ -1,3 +1,3 @@
 export default devConst = {
-	ip: "192.168.1.86"
+	ip: "172.20.10.7"
 };

@@ -3,10 +3,11 @@ const SET_LOCATION = "SET_LOCATION";
 const SET_FILTERS = "SET_FILTERS";
 const SET_LOADING = "SET_LOADING";
 const SET_PROFIL = "SET_PROFIL";
-
+const SET_USER = "SET_USER";
 // Initial state
 const INITIAL_STATE = {
 	spots: [],
+	user: [],
 	profils: {},
 	mylocation: {
 		latitude: 37.79035,
@@ -33,10 +34,15 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
 				...state,
 				profils: action.payload
 			};
+		case SET_USER:
+			return {
+				...state,
+				user: action.payload
+			};
 		case SET_MEDCABS:
 			return {
 				...state,
-				spots: action.payload
+				spots: action.payload.annonce
 			};
 		case SET_LOCATION:
 			return {
@@ -66,6 +72,15 @@ export function setMedCabs(payload) {
 	return (dispatch) => {
 		dispatch({
 			type: SET_MEDCABS,
+			payload
+		});
+	};
+}
+
+export function setUser(payload) {
+	return (dispatch) => {
+		dispatch({
+			type: SET_USER,
 			payload
 		});
 	};

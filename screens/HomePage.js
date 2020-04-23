@@ -13,7 +13,7 @@ import {
 	Modal,
 	TextInput,
 	Alert,
-	Button
+	Button,
 } from "react-native";
 import { connect } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
@@ -24,7 +24,7 @@ import {
 	MaterialIcons,
 	FontAwesome,
 	Foundation,
-	SimpleLineIcons
+	SimpleLineIcons,
 } from "@expo/vector-icons";
 
 import { setLocation, setFilters, setMedCabs } from "../reducers/reducer";
@@ -36,10 +36,10 @@ const { width, height } = Dimensions.get("screen");
 
 class HomePage extends React.Component {
 	static navigationOptions = {
-		header: null
+		header: null,
 	};
 	state = {
-		modalVisible: false
+		modalVisible: false,
 	};
 
 	setModalVisible(visible) {
@@ -131,7 +131,7 @@ class HomePage extends React.Component {
 						latitude: 43.319,
 						longitude: -0.360603,
 						latitudeDelta: 0.03,
-						longitudeDelta: 0.03
+						longitudeDelta: 0.03,
 					}}
 				>
 					<Marker coordinate={this.props.mylocation}>
@@ -165,7 +165,7 @@ class HomePage extends React.Component {
 					<Text
 						style={[
 							styles.tabTitle,
-							filters.type === "all" ? styles.activeTabTitle : null
+							filters.type === "all" ? styles.activeTabTitle : null,
 						]}
 						onPress={() => this.handleTab("all")}
 					>
@@ -175,13 +175,13 @@ class HomePage extends React.Component {
 				<View
 					style={[
 						styles.tab,
-						filters.type === "tent" ? styles.activeTab : null
+						filters.type === "tent" ? styles.activeTab : null,
 					]}
 				>
 					<Text
 						style={[
 							styles.tabTitle,
-							filters.type === "tent" ? styles.activeTabTitle : null
+							filters.type === "tent" ? styles.activeTabTitle : null,
 						]}
 						onPress={() => this.handleTab("tent")}
 					>
@@ -191,13 +191,13 @@ class HomePage extends React.Component {
 				<View
 					style={[
 						styles.tab,
-						filters.type === "hopital" ? styles.activeTab : null
+						filters.type === "hopital" ? styles.activeTab : null,
 					]}
 				>
 					<Text
 						style={[
 							styles.tabTitle,
-							filters.type === "hopital" ? styles.activeTabTitle : null
+							filters.type === "hopital" ? styles.activeTabTitle : null,
 						]}
 						onPress={() => this.handleTab("hopital")}
 					>
@@ -215,7 +215,7 @@ class HomePage extends React.Component {
 		console.log(medcabs);
 		const DISABLED_DAYS = {
 			"2019-11-20": truthyValue,
-			"2019-11-11": truthyValue
+			"2019-11-11": truthyValue,
 		};
 
 		const mapSpots =
@@ -240,7 +240,7 @@ class HomePage extends React.Component {
 									alignItems: "flex-start",
 									height: height * 0.05,
 									width: width,
-									paddingHorizontal: 14
+									paddingHorizontal: 14,
 								}}
 							>
 								<TouchableOpacity
@@ -321,7 +321,7 @@ class HomePage extends React.Component {
 							style={{
 								flex: 1,
 								flexDirection: "column",
-								justifyContent: "center"
+								justifyContent: "center",
 							}}
 						>
 							<Text style={{ fontSize: 14, fontWeight: "bold" }}>
@@ -386,13 +386,13 @@ class HomePage extends React.Component {
 const moduleState = (state) => ({
 	medcabs: state.medcabs.spots,
 	filters: state.medcabs.filters,
-	mylocation: state.medcabs.mylocation
+	mylocation: state.medcabs.mylocation,
 });
 
 const moduleActions = {
 	setLocation,
 	setMedCabs,
-	setFilters
+	setFilters,
 };
 
 export default connect(moduleState, moduleActions)(HomePage);
@@ -401,25 +401,25 @@ const THEME = {
 	monthTitleTextStyle: {
 		color: "#6d95da",
 		fontWeight: "300",
-		fontSize: 16
+		fontSize: 16,
 	},
 	emptyMonthContainerStyle: {},
 	emptyMonthTextStyle: {
-		fontWeight: "200"
+		fontWeight: "200",
 	},
 	weekColumnsContainerStyle: {},
 	weekColumnStyle: {
-		paddingVertical: 10
+		paddingVertical: 10,
 	},
 	weekColumnTextStyle: {
 		color: "#b6c1cd",
-		fontSize: 13
+		fontSize: 13,
 	},
 	nonTouchableDayContainerStyle: {
-		backgroundColor: "rgb(24, 74, 111)"
+		backgroundColor: "rgb(24, 74, 111)",
 	},
 	nonTouchableDayTextStyle: {
-		color: "white"
+		color: "white",
 	},
 	startDateContainerStyle: {},
 	endDateContainerStyle: {},
@@ -427,32 +427,32 @@ const THEME = {
 	dayTextStyle: {
 		color: "#2d4150",
 		fontWeight: "200",
-		fontSize: 15
+		fontSize: 15,
 	},
 	dayOutOfRangeContainerStyle: {},
 	dayOutOfRangeTextStyle: {},
 	todayContainerStyle: {},
 	todayTextStyle: {
-		color: "#6d95da"
+		color: "#6d95da",
 	},
 	activeDayContainerStyle: {
-		backgroundColor: "#6d95da"
+		backgroundColor: "#6d95da",
 	},
 	activeDayTextStyle: {
-		color: "white"
+		color: "white",
 	},
-	nonTouchableLastMonthDayTextStyle: {}
+	nonTouchableLastMonthDayTextStyle: {},
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff"
+		backgroundColor: "#fff",
 	},
 	headerContainer: {
 		top: 0,
 		height: height * 0.15,
-		width: width
+		width: width,
 	},
 	header: {
 		flex: 1,
@@ -460,14 +460,14 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		height: height * 0.15,
-		paddingHorizontal: 14
+		paddingHorizontal: 14,
 	},
 	headerImage: {
 		top: 0,
 		height: height * 0.25,
 		width: width,
 		alignItems: "center",
-		justifyContent: "center"
+		justifyContent: "center",
 	},
 	location: {
 		height: 30,
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
 		borderRadius: 18,
 		alignItems: "center",
 		justifyContent: "center",
-		backgroundColor: "#4287F5"
+		backgroundColor: "#4287F5",
 	},
 	marker: {
 		width: 40,
@@ -484,70 +484,70 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		borderWidth: 1,
-		borderColor: "#FFF"
+		borderColor: "#FFF",
 	},
 	hopitalMarker: {
-		backgroundColor: "#3C824C"
+		backgroundColor: "#3C824C",
 	},
 	tentMarker: {
-		backgroundColor: "#4287F5"
+		backgroundColor: "#4287F5",
 	},
 	settings: {
 		alignItems: "center",
-		justifyContent: "center"
+		justifyContent: "center",
 	},
 	options: {
 		flex: 1,
-		paddingHorizontal: 14
+		paddingHorizontal: 14,
 	},
 	tabs: {
 		flex: 1,
 		flexDirection: "row",
 		justifyContent: "center",
-		alignItems: "flex-end"
+		alignItems: "flex-end",
 	},
 	tab: {
 		paddingHorizontal: 14,
 		marginHorizontal: 10,
 		borderBottomWidth: 3,
-		borderBottomColor: "transparent"
+		borderBottomColor: "transparent",
 	},
 	tabTitle: {
 		fontWeight: "bold",
 		fontSize: 14,
-		marginBottom: 10
+		marginBottom: 10,
 	},
 	activeTab: {
-		borderBottomColor: "#4287F5"
+		borderBottomColor: "#4287F5",
 	},
 	activeTabTitle: {
-		color: "#4287F5"
+		color: "#4287F5",
 	},
 	map: {
-		flex: 1
+		flex: 1,
 	},
 	medcab: {
 		flex: 1,
 		flexDirection: "row",
 		borderBottomColor: "#A5A5A5",
 		borderBottomWidth: 0.5,
-		padding: 20
+		padding: 20,
 	},
 	medcabDetails: {
 		flex: 2,
 		paddingLeft: 20,
 		flexDirection: "column",
-		justifyContent: "space-around"
+		justifyContent: "space-around",
 	},
 	medcabInfo: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginRight: 14
+		marginRight: 14,
 	},
 	medcabImage: {
 		width: width * 0.3,
 		height: width * 0.25,
-		borderRadius: 6
+		borderRadius: 6,
 	},
 	myMarker: {
 		zIndex: 2,
@@ -556,17 +556,17 @@ const styles = StyleSheet.create({
 		borderRadius: 60,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "rgba(51, 83, 251, 0.2)"
+		backgroundColor: "rgba(51, 83, 251, 0.2)",
 	},
 	myMarkerDot: {
 		width: 12,
 		height: 12,
 		borderRadius: 12,
-		backgroundColor: "#3353FB"
+		backgroundColor: "#3353FB",
 	},
 	modalImage: {
 		width: width,
-		height: width * 0.5
+		height: width * 0.5,
 	},
 	modalBorder: {
 		marginTop: 5,
@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
 		marginLeft: 20,
 		marginRight: 20,
 		borderBottomColor: "#6d95da",
-		borderBottomWidth: 2
+		borderBottomWidth: 2,
 	},
 	modalTitle: {
 		marginTop: 5,
@@ -582,14 +582,14 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		fontWeight: "bold",
 		alignItems: "center",
-		justifyContent: "center"
+		justifyContent: "center",
 	},
 	modalDescription: {
 		marginTop: 5,
 		marginBottom: 5,
 		fontSize: 16,
 		alignItems: "center",
-		fontStyle: "italic"
+		fontStyle: "italic",
 	},
 	modalText: {
 		marginTop: 5,
@@ -597,10 +597,10 @@ const styles = StyleSheet.create({
 		marginLeft: 10,
 		fontSize: 14,
 		alignItems: "flex-start",
-		justifyContent: "center"
+		justifyContent: "center",
 	},
 	modalTextSpace: {
 		marginTop: 3,
-		marginBottom: 3
-	}
+		marginBottom: 3,
+	},
 });

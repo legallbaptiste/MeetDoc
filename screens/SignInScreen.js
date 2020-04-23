@@ -37,7 +37,7 @@ class SignInScreen extends React.Component {
         <View animation={'zoomIn'} delay={800} duration={400}>
           <CustomButton
             text={'Se connecter'}
-            onPress={this.props.onSignInPress}
+            onPress={this._connecter}
             buttonStyle={styles.signInButton}
             textStyle={styles.signInButtonText}
           />
@@ -51,6 +51,16 @@ class SignInScreen extends React.Component {
         this.props.saveUserToken()
             .then(() => {
                 this.props.navigation.navigate('HomePage');
+            })
+            .catch((error) => {
+                this.setState({ error })
+            })
+    };
+
+    _connecter = () => {
+        this.props.saveUserToken()
+            .then(() => {
+                this.props.navigation.navigate('Connexion');
             })
             .catch((error) => {
                 this.setState({ error })

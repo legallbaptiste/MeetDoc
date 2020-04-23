@@ -10,17 +10,17 @@ const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
 	password: "root",
-	database: "projetGI2Dev"
+	database: "projetGI2Dev",
 });
 
 //Permet de gerer l'inscription
-router.post("/", jsonParser, function(req, res) {
+router.post("/", jsonParser, function (req, res) {
 	// Connecting to the database.
 	const erreurMessage = {
 		erreur: "200",
-		message: "Aucune erreur"
+		message: "Aucune erreur",
 	};
-	connection.getConnection(function(err, connection) {
+	connection.getConnection(function (err, connection) {
 		if (err) throw err;
 		//Ajout d'une adresse
 		const adresse = {
@@ -28,7 +28,7 @@ router.post("/", jsonParser, function(req, res) {
 			numVoie: req.body.adresse.numVoie,
 			ville: req.body.adresse.ville,
 			codePostale: req.body.adresse.codePostale,
-			pays: req.body.adresse.pays
+			pays: req.body.adresse.pays,
 		};
 		var sqlAdresse = "INSERT INTO Adresse SET ?";
 		connection.query(sqlAdresse, adresse, (error, result) => {
@@ -43,7 +43,7 @@ router.post("/", jsonParser, function(req, res) {
 				motDePasse: req.body.user.motDePasse,
 				numTel: req.body.user.numTel,
 				idAdresse: idAdresse,
-				cartePro: req.body.user.cartePro
+				cartePro: req.body.user.cartePro,
 			};
 
 			//Verifie si l'email est déja utilisé :
@@ -68,7 +68,7 @@ router.post("/", jsonParser, function(req, res) {
 									id: idUser,
 									specialite: req.body.recruteur.specialite,
 									descriptionLibre: req.body.recruteur.descriptionLibre,
-									idEtablissement: req.body.recruteur.idEtablissement
+									idEtablissement: req.body.recruteur.idEtablissement,
 								};
 
 								var sqlRecruteur = "INSERT INTO Recruteur SET ?";
@@ -81,7 +81,7 @@ router.post("/", jsonParser, function(req, res) {
 										message: "User insert",
 										idAdresse: idAdresse,
 										idUser: idUser,
-										erreurMessage
+										erreurMessage,
 									});
 								});
 							} else if (req.body.remplacant) {
@@ -90,7 +90,7 @@ router.post("/", jsonParser, function(req, res) {
 									id: idUser,
 									descriptionLibre: req.body.descriptionLibre,
 									cv: req.body.cv,
-									specialite: req.body.specialite
+									specialite: req.body.specialite,
 								};
 								var sqlRemplacant = "INSERT INTO Remplacant SET ?";
 								connection.query(sqlRemplacant, remplacant, (err, result) => {
@@ -99,7 +99,7 @@ router.post("/", jsonParser, function(req, res) {
 										message: "User insert",
 										idAdresse: idAdresse,
 										idUser: idUser,
-										erreurMessage
+										erreurMessage,
 									});
 								});
 							} else {
@@ -110,7 +110,7 @@ router.post("/", jsonParser, function(req, res) {
 									message: "User insert",
 									idAdresse: idAdresse,
 									idUser: idUser,
-									erreurMessage
+									erreurMessage,
 								});
 							}
 						});
@@ -121,28 +121,29 @@ router.post("/", jsonParser, function(req, res) {
 	});
 });
 
-router.get("/:email", function(req, res) {
-	connection.getConnection(function(err, connection) {
+router.get("/:email", function (req, res) {
+	connection.getConnection(function (err, connection) {
 		if (err) throw err;
 		const email = req.params.email;
 
 		var sqlAdresse = "SELECT id,motDePasse FROM User WHERE ?";
 
 		connection.query(sqlAdresse, { email: email }, (err, result) => {
+			console.log(result);
 			if (err) throw err;
 			connection.release();
 			res.status(200).json({
 				message: "Get user work !",
 				email: email,
 				id: result[0]["id"],
-				motDePasse: result[0]["motDePasse"]
+				motDePasse: result[0]["motDePasse"],
 			});
 		});
 	});
 });
 
 router.get("/info/:email", (req, res) => {
-	connection.getConnection(function(err, connection) {
+	connection.getConnection(function (err, connection) {
 		if (err) throw err;
 
 		const email = req.params.email;
@@ -156,7 +157,7 @@ router.get("/info/:email", (req, res) => {
 
 			res.status(200).json({
 				message: "Get user work !",
-				user: user
+				user: user,
 			});
 		});
 	});
