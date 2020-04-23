@@ -9,7 +9,7 @@ const mysql = require("mysql");
 const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
-	password: "eisti0001",
+	password: "root",
 	database: "projetGI2Dev"
 });
 
@@ -21,6 +21,7 @@ router.post("/", jsonParser, function(req, res) {
 		message: "Aucune erreur"
 	};
 	connection.getConnection(function(err, connection) {
+		if (err) throw err;
 		//Ajout d'une adresse
 		const adresse = {
 			voie: req.body.adresse.voie,
@@ -122,12 +123,14 @@ router.post("/", jsonParser, function(req, res) {
 
 router.get("/:email", function(req, res) {
 	connection.getConnection(function(err, connection) {
+		if (err) throw err;
 		const email = req.params.email;
 
 		var sqlAdresse = "SELECT id,motDePasse FROM User WHERE ?";
 
 		connection.query(sqlAdresse, { email: email }, (err, result) => {
 			if (err) throw err;
+			connection.release();
 			res.status(200).json({
 				message: "Get user work !",
 				email: email,
@@ -140,6 +143,8 @@ router.get("/:email", function(req, res) {
 
 router.get("/info/:email", (req, res) => {
 	connection.getConnection(function(err, connection) {
+		if (err) throw err;
+
 		const email = req.params.email;
 
 		var sqlAdresse = "SELECT * FROM User WHERE ?";
@@ -157,5 +162,4 @@ router.get("/info/:email", (req, res) => {
 	});
 });
 
-connection.end((err) => {});
 module.exports = router;

@@ -19,6 +19,7 @@ router.get("/all", (req, res) => {
 			"SELECT Etablissement.id AS id, secretariatBool,typePatientele,specialite,visiteDomicile,activite,descriptionLibre,idAdresse,voie,numVoie,ville,codePostale,pays FROM Etablissement,Adresse WHERE Etablissement.idAdresse = Adresse.id",
 			(error, result) => {
 				if (error) throw error;
+				connection.release();
 				res.status(200).json({
 					etablissement: result
 				});
@@ -55,6 +56,7 @@ router.post("/", jsonParser, (req, res) => {
 		var sqlAdresse = "INSERT INTO Adresse SET ?";
 		connection.query(sqlAdresse, adresseData, (error, result) => {
 			if (error) throw error;
+			connection.release();
 			const idAdresse = result.insertId;
 
 			//Ajout d'un etablissement
@@ -71,6 +73,7 @@ router.post("/", jsonParser, (req, res) => {
 			const sqlEtablissement = "INSERT INTO Etablissement SET ?";
 			connection.query(sqlEtablissement, etablissementData, (err, result) => {
 				if (err) throw err;
+				connection.release();
 
 				res.status(200).json({
 					message: "Insert new etablissement",

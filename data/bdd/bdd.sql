@@ -163,3 +163,7 @@ ALTER TABLE `Etablissement`
   DROP `adresse`;
 
 ALTER TABLE `Etablissement` CHANGE `secretaratBool` `secretariatBool` BOOLEAN NULL DEFAULT NULL;
+
+ALTER TABLE `Annonce` ADD `image` VARCHAR(100) NULL DEFAULT NULL AFTER `idRecruteur`;
+
+ALTER TABLE `Annonce` ADD `description` TEXT NULL DEFAULT NULL AFTER `image`;

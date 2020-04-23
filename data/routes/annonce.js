@@ -7,28 +7,54 @@ const mysql = require("mysql");
 const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
-	password: "eisti0001",
-	database: "projetGI2"
+	password: "root",
+	database: "projetGI2Dev"
+});
+
+router.post("/", function(req, res) {
+	// Connecting to the database.
+
+	connection.getConnection(function(err, connection) {
+		const annonceData = {
+			typeOffre: req.body.typeOffre,
+			retrocession: req.body.retrocession,
+			idEtablissement: req.body.idEtablissement,
+			idRecruteur: req.body.idRecruteur,
+			image: req.body.image
+		};
+		// Executing the MySQL query (select all data from the 'users' table).
+		connection.query(
+			"INSERT INTO Annonce SET ?",
+			annonceData,
+			(error, results) => {
+				// If some error occurs, we throw an error.
+				if (error) throw error;
+
+				// Getting the 'response' from the database and sending it to our route. This is were the data is.
+				res.status(200).json({
+					message: "POST annonce work !",
+					idAnnonce: results.insertId
+				});
+			}
+		);
+	});
 });
 
 router.get("/", function(req, res) {
 	// Connecting to the database.
 	connection.getConnection(function(err, connection) {
 		// Executing the MySQL query (select all data from the 'users' table).
-		connection.query("SELECT * FROM Annonce", function(error, results, fields) {
+		var annonceSql =
+			"SELECT * FROM Annonce a, Recruteur r WHERE a.idRecruteur = r.id";
+		connection.query(annonceSql, function(error, results, fields) {
 			// If some error occurs, we throw an error.
 			if (error) throw error;
-			console.log(results);
-			for (var i = 0; i < results.length; i++) {
-				console.log(results[i].longitude);
-				results[i].latlng = {
-					latitude: results[i].latitude,
-					longitude: results[i].longitude
-				};
-			}
-			console.log(results);
+
 			// Getting the 'response' from the database and sending it to our route. This is were the data is.
-			res.send(results);
+			res.status(200).json({
+				message: "Ok",
+				res: results
+			});
 		});
 	});
 });
