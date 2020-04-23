@@ -171,7 +171,9 @@ CREATE TABLE time_dimension (
         holiday_flag CHAR(1) DEFAULT 'f' CHECK (holiday_flag in ('t', 'f')),
         weekend_flag CHAR(1) DEFAULT 'f' CHECK (weekday_flag in ('t', 'f')),
         event VARCHAR(50),
-        UNIQUE td_ymd_idx
+        UNIQUE td_ymd_idxALTER TABLE `Annonce`
+ADD `titre` VARCHAR
+(120) NOT NULL DEFAULT 'Titre' AFTER `id`;
 (year,month,day),
         UNIQUE td_dbdate_idx
 (db_date)

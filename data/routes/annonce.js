@@ -4,6 +4,8 @@ const router = express.Router();
 
 const mysql = require("mysql");
 
+const fetch = require("node-fetch");
+
 const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
@@ -51,10 +53,29 @@ router.get("/", function (req, res) {
 			// If some error occurs, we throw an error.
 			if (error) throw error;
 
-			// Getting the 'response' from the database and sending it to our route. This is were the data is.
-			res.status(200).json({
-				message: "Annonce get OK",
-				annonce: results,
+			// Mets l'addresse au format voulu pour l'API de openstreetmap
+			Promise.all(
+				results.map((elem) => {
+					var ad = elem.numVoie + "+" + elem.voie + "+" + elem.ville;
+
+					// Recupere les coordonnée pour afficher sur la map
+					return fetch(
+						"https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+							ad
+					)
+						.then((response) => response.json())
+						.then((json) => {
+							elem.latlng = {
+								lat: json[0].lat,
+								lng: json[0].lon,
+							};
+						});
+				})
+			).then(() => {
+				res.status(200).json({
+					message: "Annonce get OK",
+					annonce: results,
+				});
 			});
 		});
 	});
