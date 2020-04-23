@@ -46,7 +46,29 @@ router.get("/", function (req, res) {
 	connection.getConnection(function (err, connection) {
 		// Executing the MySQL query (select all data from the 'users' table).
 		var annonceSql =
-			"SELECT * FROM Annonce a, Recruteur r WHERE a.idRecruteur = r.id";
+			"SELECT * FROM Etablissement e, Adresse ad, Annonce a WHERE a.idEtablissement = e.id AND e.idAdresse = ad.id";
+		connection.query(annonceSql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) throw error;
+
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Annonce get OK",
+				annonce: results,
+			});
+		});
+	});
+});
+
+router.get("/:idAnnonce", function (req, res) {
+	const idAnnonce = req.params.idAnnonce;
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var annonceSql =
+			"SELECT * FROM Etablissement e, Adresse ad, Annonce a WHERE a.idEtablissement = e.id AND e.idAdresse = ad.id AND a.id = " +
+			idAnnonce;
+
 		connection.query(annonceSql, function (error, results, fields) {
 			// If some error occurs, we throw an error.
 			if (error) throw error;
