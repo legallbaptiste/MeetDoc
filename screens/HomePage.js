@@ -51,8 +51,11 @@ class HomePage extends React.Component {
 			const annonceFetch = await fetch(
 				"http://" + devConst.ip + ":3000/Annonce"
 			);
+			console.log("TOTO");
 			const annonce = await annonceFetch.json();
 			this.props.setMedCabs(annonce);
+			console.log("PROPS");
+			console.log(this.props);
 		} catch (err) {
 			console.log("Erreur avec le fetch ---->  ", err);
 		}
@@ -117,10 +120,7 @@ class HomePage extends React.Component {
 			</View>
 		);
 		const { filters, medcabs } = this.props;
-		const mapSpots =
-			filters.type === "all"
-				? medcabs
-				: medcabs.filter((medcab) => medcab.type === filters.type);
+		const mapSpots = filters.type === "all"	? medcabs	: medcabs.filter((medcab) => medcab.type === filters.type);
 
 		return (
 			<View style={styles.map}>
@@ -211,7 +211,8 @@ class HomePage extends React.Component {
 	renderList() {
 		const { filters, medcabs } = this.props;
 		const truthyValue = true;
-
+		console.log("MEDCABS");
+		console.log(medcabs);
 		const DISABLED_DAYS = {
 			"2019-11-20": truthyValue,
 			"2019-11-11": truthyValue
