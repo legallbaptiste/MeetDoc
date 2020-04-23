@@ -57,7 +57,6 @@ router.get("/", function (req, res) {
 			Promise.all(
 				results.map((elem) => {
 					var ad = elem.numVoie + "+" + elem.voie + "+" + elem.ville;
-					console.log(ad);
 
 					// Recupere les coordonnée pour afficher sur la map
 					return fetch(
