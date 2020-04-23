@@ -21,6 +21,10 @@ import MapView, {
   Marker
 } from 'react-native-maps';
 import Calendar from 'react-native-calendario';
+import { NetworkInfo } from "react-native-network-info";
+
+// Get Local IP
+
 
 
 
@@ -43,8 +47,9 @@ class HomePage extends React.Component {
   }
 
 async componentDidMount() {
+
   try{
-    const annonceFetch = await fetch('http://172.20.10.7:3000/Annonce');
+    const annonceFetch = await fetch('http://192.168.1.72:3000/Annonce');
     const annonce = await annonceFetch.json();
     this.props.setMedCabs(annonce);
   } catch(err) {
@@ -107,6 +112,8 @@ async componentDidMount() {
         }
       </View>
     )
+    console.log("totototototototototo");
+    console.log(medCabMarker);
     const { filters, medcabs } = this.props;
     const mapSpots = filters.type === 'all' ? medcabs
       : medcabs.filter(medcab => medcab.type === filters.type);
@@ -168,15 +175,15 @@ async componentDidMount() {
         <View
           style={[
             styles.tab,
-            filters.type === 'tent' ? styles.activeTab : null
+            filters.type === 'medecin' ? styles.activeTab : null
           ]}
         >
           <Text
             style={[
               styles.tabTitle,
-              filters.type === 'tent' ? styles.activeTabTitle : null
+              filters.type === 'medecin' ? styles.activeTabTitle : null
             ]}
-            onPress={() => this.handleTab('tent')}
+            onPress={() => this.handleTab('medecin')}
           >
             Remplacement médecin
           </Text>
@@ -215,8 +222,6 @@ async componentDidMount() {
     return mapSpots.map(
       medcab => {
         return (
-
-
           <View key={`medcab-${medcab.id}`} style={styles.medcab}>
        <Modal
          animationType="slide"
@@ -227,8 +232,6 @@ async componentDidMount() {
          }}>
 
          <SafeAreaView style={styles.container}>
-
-
 
           <View style={{
             flexDirection: 'row',
@@ -472,7 +475,7 @@ const styles = StyleSheet.create({
   hopitalMarker: {
     backgroundColor: '#3C824C',
   },
-  tentMarker: {
+  medecinMarker: {
     backgroundColor: '#4287F5',
   },
   settings: {

@@ -10,11 +10,12 @@ import Profil from '../screens/Profil'
 
 import SignInScreen from '../screens/SignInScreen'
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
-
+import Register from '../screens/Register'
 
 
 export default createStackNavigator(
   {
+    // Register : Register,
     SignInScreen: SignInScreen,
     // Index: Index,
     // LoginForm: LoginForm,

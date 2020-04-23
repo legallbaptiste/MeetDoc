@@ -25,7 +25,7 @@ class AuthLoadingScreen extends React.Component {
     _bootstrapAsync = () => {
 
         this.props.getUserToken().then(() => {
-            this.props.navigation.navigate(this.props.token.token !== null ? 'Campings' : 'Formulaire');
+            this.props.navigation.navigate(this.props.token.token !== null ? 'HomePage' : 'Formulaire');
         })
             .catch(error => {
                 this.setState({ error })

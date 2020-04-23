@@ -10,7 +10,7 @@ const connection = mysql.createPool({
 });
 
 // We're still in routes.js! Right below everything else.
-
+console.log(connection);
 // Starting our app.
 const app = express();
 var jsonParser = bodyParser.json()
