@@ -148,7 +148,8 @@ router.get("/info/:email", (req, res) => {
 
 		const email = req.params.email;
 
-		var sqlAdresse = "SELECT * FROM User WHERE ?";
+		var sqlAdresse =
+			"SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro FROM Adresse a, User u WHERE u.idAdresse = a.id AND ?";
 
 		connection.query(sqlAdresse, { email: email }, (err, result) => {
 			if (err) throw err;
