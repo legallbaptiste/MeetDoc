@@ -62,7 +62,18 @@ class Connexion extends React.Component {
 		} catch (err) {
 			console.log("Erreur avec le fetch ---->  ", err);
 		}
-  }
+	};
+
+	render() {
+		return (
+			<View style={styles.container}>
+				<Text style={styles.inputext}>Sample Login Form</Text>
+				<TextInput
+					value={this.state.username}
+					onChangeText={(username) => this.setState({ username })}
+					label="Email"
+					style={styles.input}
+				/>
 
   render() {
     const {showAlert} = this.state;
@@ -181,6 +192,8 @@ const styles = StyleSheet.create({
     borderColor: '#9B9FA4'
   },
 });
+
+
 const moduleState = (state) => ({
 	utilisateur: state.medcabs.user,
 });
@@ -188,6 +201,5 @@ const moduleState = (state) => ({
 const moduleActions = {
 	setUser,
 };
-
 
 export default connect(moduleState, moduleActions)(Connexion);
