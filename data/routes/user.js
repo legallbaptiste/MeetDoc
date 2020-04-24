@@ -126,17 +126,15 @@ router.get("/:email", function (req, res) {
 		if (err) throw err;
 		const email = req.params.email;
 
-		var sqlAdresse = "SELECT id,motDePasse FROM User WHERE ?";
+		var sqlAdresse = "SELECT email,id,motDePasse FROM User WHERE ?";
 
 		connection.query(sqlAdresse, { email: email }, (err, result) => {
-			console.log(result);
+			const user = result[0];
 			if (err) throw err;
 			connection.release();
 			res.status(200).json({
 				message: "Get user work !",
-				email: email,
-				id: result[0]["id"],
-				motDePasse: result[0]["motDePasse"],
+				user: user,
 			});
 		});
 	});
