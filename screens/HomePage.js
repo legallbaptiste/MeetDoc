@@ -66,6 +66,7 @@ class HomePage extends React.Component {
 	};
 
 	renderHeader() {
+		const {utilisateur} = this.props
 		return (
 			<View style={styles.headerContainer}>
 				<View style={styles.header}>
@@ -81,7 +82,7 @@ class HomePage extends React.Component {
 						</View>
 						<View style={styles.options}>
 							<Text style={{ fontSize: 12, color: "#A5A5A5", marginBottom: 5 }}>
-								Location detecté
+								{utilisateur.email}
 							</Text>
 							<Text style={{ fontSize: 14, fontWeight: "300" }}>
 								Pau, 64000
@@ -387,6 +388,7 @@ const moduleState = (state) => ({
 	medcabs: state.medcabs.spots,
 	filters: state.medcabs.filters,
 	mylocation: state.medcabs.mylocation,
+	utilisateur: state.medcabs.user,
 });
 
 const moduleActions = {

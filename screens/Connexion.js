@@ -1,14 +1,35 @@
 import React, { Component } from "react";
-import { Text, Alert, Button, View, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
+import {
+	Text,
+	Alert,
+	Button,
+	Dimensions,
+	View,
+	StyleSheet,
+	TextInput,
+} from "react-native";
 import { connect } from "react-redux";
 import devConst from "../constants/devConst";
 import { setUser } from "../reducers/reducer";
+import AwesomeAlert from "react-native-awesome-alerts";
+import CustomButton from "../components/CustomButton";
+const { width, height } = Dimensions.get("screen");
 
 class Connexion extends React.Component {
 	state = {
 		username: "",
 		password: "",
+	};
+
+	static navigationOptions = {
+		header: null,
+	};
+
+	state = {
+		message: "",
+		username: "",
+		password: "",
+		showAlert: false,
 	};
 
 	go = () => {
@@ -19,54 +40,99 @@ class Connexion extends React.Component {
 			alert();
 		}
 	};
+	showAlert = () => {
+		this.setState({
+			showAlert: true,
+		});
+	};
 
-	async api(url) {
-		const baseUrl = "http://" + devConst.ip + ":3000/";
-		const response = await fetch(baseUrl + url);
-		const data = await response.json();
-		return data;
-	}
+	hideAlert = () => {
+		this.setState({
+			showAlert: false,
+		});
+	};
 
-	onLogin = (nom, mdp) => {
+	async onLogin() {
 		try {
-			api("/User/" + nom).then((user) => {
-				if (username == user.email && mdp == user.motDePasse) {
-					console.log("YEYE EST UN FDP");
-
-					this.props.setUser(user);
-					this.props.navigation.navigate("HomePage");
-				} else {
-					console.log("Pas le bon mdp ou mail");
-				}
-			});
+			const userFetch = await fetch(
+				"http://" + devConst.ip + ":3000/User/" + this.state.username
+			);
+			const user = await userFetch.json();
+			if (
+				this.state.username == user.email &&
+				this.state.password == user.motDePasse
+			) {
+				this.props.setUser(user);
+				this.props.navigation.navigate("HomePage");
+			} else {
+				console.log("Pas le bon mdp ou mail");
+				this.showAlert();
+			}
 		} catch (err) {
 			console.log("Erreur avec le fetch ---->  ", err);
 		}
-	};
+	}
 
 	render() {
+		const { showAlert } = this.state;
+
 		return (
 			<View style={styles.container}>
-				<Text style={styles.inputext}>Sample Login Form</Text>
-				<TextInput
-					value={this.state.username}
-					onChangeText={(username) => this.setState({ username })}
-					label="Email"
-					style={styles.input}
-				/>
-
-				<TextInput
-					value={this.state.password}
-					onChangeText={(password) => this.setState({ password })}
-					label="Password"
-					secureTextEntry={true}
-					style={styles.input}
-				/>
-
-				<Button
-					title={"Login"}
-					style={styles.input}
-					onPress={this.onLogin.bind(this, "recruteur@eisti.eu", "toto")}
+				<Text style={styles.logo}>Adopte ton doc'</Text>
+				<View style={styles.inputView}>
+					<TextInput
+						value={this.state.username}
+						onChangeText={(username) => this.setState({ username })}
+						label="Email"
+						placeholder="Email"
+						placeholderTextColor="#003f5c"
+						style={styles.inputText}
+					/>
+				</View>
+				<View style={styles.inputView}>
+					<TextInput
+						value={this.state.password}
+						onChangeText={(password) => this.setState({ password })}
+						label="Mot de passe"
+						placeholder="Mot de passe"
+						placeholderTextColor="#003f5c"
+						secureTextEntry={true}
+						style={styles.inputText}
+					/>
+				</View>
+				<View
+					style={styles.separatorContainer}
+					animation={"zoomIn"}
+					delay={700}
+					duration={400}
+				>
+					<View style={styles.separatorLine} />
+					<View style={styles.separatorLine} />
+				</View>
+				<View animation={"zoomIn"} delay={800} duration={400}>
+					<CustomButton
+						text={"Se connecter"}
+						onPress={this.onLogin.bind(this)}
+						buttonStyle={styles.signInButton}
+						textStyle={styles.signInButtonText}
+					/>
+				</View>
+				<AwesomeAlert
+					show={showAlert}
+					showProgress={false}
+					title="Hop hop hop !"
+					message="Vous devez rentrer un mail ou un mot de passe valide"
+					closeOnTouchOutside={true}
+					closeOnHardwareBackPress={false}
+					showCancelButton={true}
+					cancelText="Ok"
+					confirmButtonColor="#DD6B55"
+					onCancelPressed={() => {
+						this.hideAlert();
+					}}
+					onConfirmPressed={() => {
+						this.hideAlert();
+					}}
 				/>
 			</View>
 		);
@@ -76,30 +142,57 @@ class Connexion extends React.Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		backgroundColor: "#003f5c",
 		alignItems: "center",
 		justifyContent: "center",
-		backgroundColor: "#00FFFF",
+		flex: 1,
 	},
-	input: {
-		width: 200,
-		height: 44,
-		padding: 10,
-		borderWidth: 1,
-		borderColor: "black",
-		marginBottom: 10,
-	},
-	inputext: {
-		width: 200,
-		height: 44,
-		padding: 10,
-		textAlign: "center",
+	logo: {
 		fontWeight: "bold",
-		borderWidth: 1,
-		borderColor: "black",
-		marginBottom: 10,
+		fontSize: 50,
+		color: "#fb5b5a",
+		marginBottom: 40,
+	},
+	inputView: {
+		width: "80%",
+		backgroundColor: "#465881",
+		borderRadius: 25,
+		height: 50,
+		marginBottom: 20,
+		justifyContent: "center",
+		padding: 20,
+	},
+	inputText: {
+		height: 50,
+		color: "white",
+	},
+	forgot: {
+		color: "white",
+		fontSize: 11,
+	},
+	loginText: {
+		color: "white",
+	},
+	signInButton: {
+		marginHorizontal: width * 0.1,
+		backgroundColor: "#1976D2",
+	},
+	signInButtonText: {
+		color: "white",
+	},
+	separatorContainer: {
+		marginHorizontal: width * 0.1,
+		alignItems: "center",
+		flexDirection: "row",
+		marginVertical: 20,
+	},
+	separatorLine: {
+		flex: 1,
+		borderWidth: StyleSheet.hairlineWidth,
+		height: StyleSheet.hairlineWidth,
+		borderColor: "#9B9FA4",
 	},
 });
-
 const moduleState = (state) => ({
 	utilisateur: state.medcabs.user,
 });
