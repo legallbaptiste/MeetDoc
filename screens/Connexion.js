@@ -16,11 +16,6 @@ import CustomButton from "../components/CustomButton";
 const { width, height } = Dimensions.get("screen");
 
 class Connexion extends React.Component {
-	state = {
-		username: "",
-		password: "",
-	};
-
 	static navigationOptions = {
 		header: null,
 	};
@@ -57,12 +52,20 @@ class Connexion extends React.Component {
 			const userFetch = await fetch(
 				"http://" + devConst.ip + ":3000/User/" + this.state.username
 			);
-			const user = await userFetch.json();
+			const user1 = await userFetch.json();
+			const user = user1.user;
 			if (
 				this.state.username == user.email &&
 				this.state.password == user.motDePasse
 			) {
-				this.props.setUser(user);
+				const userInfoFetch = await fetch(
+					"http://" + devConst.ip + ":3000/user/info/" + this.state.username
+				);
+				const userInfo1 = await userInfoFetch.json();
+
+				const userInfo = userInfo1.user;
+				this.props.setUser(userInfo);
+
 				this.props.navigation.navigate("HomePage");
 			} else {
 				console.log("Pas le bon mdp ou mail");

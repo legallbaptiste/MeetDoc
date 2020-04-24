@@ -51,11 +51,8 @@ class HomePage extends React.Component {
 			const annonceFetch = await fetch(
 				"http://" + devConst.ip + ":3000/Annonce"
 			);
-			console.log("TOTO");
 			const annonce = await annonceFetch.json();
 			this.props.setMedCabs(annonce);
-			console.log("PROPS");
-			console.log(this.props);
 		} catch (err) {
 			console.log("Erreur avec le fetch ---->  ", err);
 		}
@@ -66,7 +63,7 @@ class HomePage extends React.Component {
 	};
 
 	renderHeader() {
-		const {utilisateur} = this.props
+		const { utilisateur } = this.props;
 		return (
 			<View style={styles.headerContainer}>
 				<View style={styles.header}>
@@ -112,16 +109,12 @@ class HomePage extends React.Component {
 
 	renderMap() {
 		const medCabMarker = ({ type }) => (
-			<View style={[styles.marker, styles[`${type}Marker`]]}>
-				{type === "hopital" ? (
-					<MaterialIcons name="local-hospital" size={18} color="#FFF" />
-				) : (
-					<Ionicons name="ios-person-add" size={18} color="#FFF" />
-				)}
+			<View style={[styles.marker, styles.hopitalMarker]}>
+				<MaterialIcons name="local-hospital" size={18} color="#FFF" />
 			</View>
 		);
 		const { filters, medcabs } = this.props;
-		const mapSpots = filters.type === "all"	? medcabs	: medcabs.filter((medcab) => medcab.type === filters.type);
+		const mapSpots = medcabs;
 
 		return (
 			<View style={styles.map}>
@@ -144,7 +137,10 @@ class HomePage extends React.Component {
 					{mapSpots.map((marker) => (
 						<Marker
 							key={`marker-${marker.id}`}
-							coordinate={marker.latlng}
+							coordinate={{
+								latitude: Number(marker.latlng.lat),
+								longitude: Number(marker.latlng.lng),
+							}}
 							description={marker.titre}
 						>
 							{medCabMarker(marker)}
@@ -212,17 +208,12 @@ class HomePage extends React.Component {
 	renderList() {
 		const { filters, medcabs } = this.props;
 		const truthyValue = true;
-		console.log("MEDCABS");
-		console.log(medcabs);
 		const DISABLED_DAYS = {
 			"2019-11-20": truthyValue,
 			"2019-11-11": truthyValue,
 		};
 
-		const mapSpots =
-			filters.type === "all"
-				? medcabs
-				: medcabs.filter((medcab) => medcab.type === filters.type);
+		const mapSpots = medcabs;
 		return mapSpots.map((medcab) => {
 			return (
 				<View key={`medcab-${medcab.id}`} style={styles.medcab}>
