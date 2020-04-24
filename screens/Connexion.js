@@ -64,16 +64,7 @@ class Connexion extends React.Component {
 		}
 	};
 
-	render() {
-		return (
-			<View style={styles.container}>
-				<Text style={styles.inputext}>Sample Login Form</Text>
-				<TextInput
-					value={this.state.username}
-					onChangeText={(username) => this.setState({ username })}
-					label="Email"
-					style={styles.input}
-				/>
+
 
   render() {
     const {showAlert} = this.state;
