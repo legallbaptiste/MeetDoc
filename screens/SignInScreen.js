@@ -15,7 +15,7 @@ const { width, height } = Dimensions.get('screen');
 
 class SignInScreen extends React.Component {
     static navigationOptions = {
-        title: 'Please sign in',
+      header: null,
     };
 
     render () {
@@ -50,7 +50,7 @@ class SignInScreen extends React.Component {
       console.log(this.props);
         this.props.saveUserToken()
             .then(() => {
-                this.props.navigation.navigate('HomePage');
+                this.props.navigation.navigate('Inscription');
             })
             .catch((error) => {
                 this.setState({ error })
@@ -71,16 +71,18 @@ class SignInScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
       flex: 1,
-      marginHorizontal: width * 0.1,
-      justifyContent: 'center'
+      justifyContent: 'center',
+      backgroundColor: "#003f5c"
     },
     createAccountButton: {
+      marginHorizontal: width * 0.1,
       backgroundColor: '#9B9FA4'
     },
     createAccountButtonText: {
       color: 'white'
     },
     separatorContainer: {
+      marginHorizontal: width * 0.1,
       alignItems: 'center',
       flexDirection: 'row',
       marginVertical: 20
@@ -96,6 +98,7 @@ const styles = StyleSheet.create({
       marginHorizontal: 8
     },
     signInButton: {
+      marginHorizontal: width * 0.1,
       backgroundColor: '#1976D2'
     },
     signInButtonText: {

@@ -7,7 +7,7 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import CustomButton from '../components/CustomButton'
 const { width, height } = Dimensions.get('screen');
 
-class Connexion extends React.Component {
+class Inscription extends React.Component {
 
   static navigationOptions = {
     header: null,
@@ -66,6 +66,36 @@ class Connexion extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.logo}>Adopte ton doc'</Text>
+        <View style={styles.inputView}>
+          <TextInput
+            value={this.state.username}
+            onChangeText={(username) => this.setState({ username })}
+            label='Nom'
+            placeholder="Nom"
+            placeholderTextColor="#003f5c"
+            style={styles.inputText}
+          />
+        </View>
+        <View style={styles.inputView}>
+          <TextInput
+            value={this.state.username}
+            onChangeText={(username) => this.setState({ username })}
+            label='Prenom'
+            placeholder="Prenom"
+            placeholderTextColor="#003f5c"
+            style={styles.inputText}
+          />
+        </View>
+        <View style={styles.inputView}>
+          <TextInput
+            value={this.state.username}
+            onChangeText={(username) => this.setState({ username })}
+            label='Email'
+            placeholder="Email"
+            placeholderTextColor="#003f5c"
+            style={styles.inputText}
+          />
+        </View>
           <View style={styles.inputView}>
             <TextInput
               value={this.state.username}
@@ -186,4 +216,4 @@ const moduleActions = {
 };
 
 
-export default connect(moduleState, moduleActions)(Connexion);
+export default connect(moduleState, moduleActions)(Inscription);
