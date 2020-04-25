@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import {
 	ScrollView,
 	StyleSheet,
+	Linking,
 	Image,
 	Button,
 	Alert,
@@ -32,15 +33,7 @@ class Profil extends Component {
 		header: null
 	};
 
-	async componentDidMount() {
-		try {
-			const profilFetch = await fetch("http://" + devConst.ip + ":3000/Profil");
-			const profil = await profilFetch.json();
-			this.props.setProfil(profil);
-		} catch (err) {
-			console.log("Erreur avec le fetch ---->  ", err);
-		}
-	}
+
 
 	renderHeader() {
 		return (
@@ -60,7 +53,7 @@ class Profil extends Component {
 	}
 
 	render() {
-		const { profils } = this.props;
+		const {utilisateur} = this.props;
 		return (
 			<SafeAreaView style={styles.container}>
 				{this.renderHeader()}
@@ -72,26 +65,22 @@ class Profil extends Component {
 
 				<View style={styles.body}>
 					<View style={styles.bodyContent}>
-						<Text style={styles.name}>{profils.nom}</Text>
+						<Text style={styles.name}>{utilisateur.nom} {utilisateur.Prenom}</Text>
 						<Text style={styles.info}>Type : Remplacant</Text>
-						<Text style={styles.info}>Ville : Pau</Text>
+						<Text style={styles.info}>Ville : {utilisateur.ville}</Text>
 						<Text style={styles.info}>Spécialité : Chirugien dentaire</Text>
-						<Text style={styles.description}>Description</Text>
+						<Text style={styles.description}>{utilisateur.description}</Text>
 					</View>
 					<View style={styles.Contact}>
 						<Text style={styles.contact}> Contacts </Text>
-						<Text style={styles.telephone}> +33 688034444</Text>
-						<Text style={styles.mail}> michelmedecin@gmail.com </Text>
+						<Text style={styles.telephone}>Téléphone : {utilisateur.numTel}</Text>
+						<Text style={styles.mail}>Email : {utilisateur.email}</Text>
 					</View>
 					<View style={styles.Annonces}>
 						<Text style={styles.titre}> Mes annonces </Text>
 					</View>
 					<View style={styles.Contacter}>
-						<Button
-							style={styles.bouton}
-							title="Contacter"
-							onPress={() => Alert.alert("Simple Button pressed")}
-						/>
+
 					</View>
 				</View>
 			</SafeAreaView>
@@ -100,11 +89,10 @@ class Profil extends Component {
 }
 
 const moduleState = (state) => ({
-	profils: state.medcabs.profils
+	utilisateur: state.medcabs.user,
 });
 
 const moduleActions = {
-	setProfil
 };
 
 export default connect(moduleState, moduleActions)(Profil);

@@ -84,7 +84,7 @@ class HomePage extends React.Component {
 						</View>
 						<View style={styles.options}>
 							<Text style={{ fontSize: 12, color: "#A5A5A5", marginBottom: 5 }}>
-								{utilisateur.user.prenom} {utilisateur.user.nom}
+								{utilisateur.prenom} {utilisateur.nom}
 							</Text>
 							<Text style={{ fontSize: 14, fontWeight: "300" }}>
 								Pau, 64000
@@ -114,16 +114,12 @@ class HomePage extends React.Component {
 
 	renderMap() {
 		const medCabMarker = ({ type }) => (
-			<View style={[styles.marker, styles[`${type}Marker`]]}>
-				{type === "hopital" ? (
+			<View style={[styles.marker, styles.hopitalMarker]}>
 					<MaterialIcons name="local-hospital" size={18} color="#FFF" />
-				) : (
-					<Ionicons name="ios-person-add" size={18} color="#FFF" />
-				)}
 			</View>
 		);
 		const { filters, medcabs } = this.props;
-		const mapSpots = filters.type === "all"	? medcabs	: medcabs.filter((medcab) => medcab.type === filters.type);
+		const mapSpots = medcabs;
 
 		return (
 			<View style={styles.map}>
@@ -146,7 +142,12 @@ class HomePage extends React.Component {
 					{mapSpots.map((marker) => (
 						<Marker
 							key={`marker-${marker.id}`}
-							coordinate={marker.latlng}
+							coordinate={
+								{
+								latitude: Number(marker.latlng.lat),
+								longitude: Number(marker.latlng.lng)
+								}
+						}
 							description={marker.titre}
 						>
 							{medCabMarker(marker)}
@@ -221,10 +222,9 @@ class HomePage extends React.Component {
 			"2019-11-11": truthyValue,
 		};
 
-		const mapSpots =
-			filters.type === "all"
-				? medcabs
-				: medcabs.filter((medcab) => medcab.type === filters.type);
+		const mapSpots = medcabs;
+		console.log("TOTOTOTOTOTITITITITITITITI");
+		console.log(mapSpots);
 		return mapSpots.map((medcab) => {
 			return (
 				<View key={`medcab-${medcab.id}`} style={styles.medcab}>
