@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import {Asset} from 'expo-asset';
 import AppNavigator from './navigation/AppNavigator';
 
-import store from './modules';
+import store from './reducers';
 
 export default class App extends React.Component {
   state = {
