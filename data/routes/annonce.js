@@ -9,7 +9,7 @@ const fetch = require("node-fetch");
 const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
-	password: "root",
+	password: "eisti0001",
 	database: "projetGI2Dev",
 });
 
