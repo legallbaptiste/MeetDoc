@@ -9,8 +9,8 @@ const mysql = require("mysql");
 const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
-	password: "root",
-	database: "projetGI2Dev",
+	password: "eisti0001",
+	database: "projetGi2Dev",
 });
 
 router.get("/all", (req, res) => {
