@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const annonceRoutes = require("./routes/annonce");
 const userRoutes = require("./routes/user");
 const etablissementRoutes = require("./routes/etablissement");
+
 app.use(morgan("dev"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -25,8 +26,8 @@ app.use((error, req, res, next) => {
 	res.status(error.status || 500);
 	res.json({
 		error: {
-			message: error.message
-		}
+			message: error.message,
+		},
 	});
 });
 

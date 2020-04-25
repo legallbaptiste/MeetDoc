@@ -266,7 +266,7 @@ class HomePage extends React.Component {
 								</View>
 								<View style={styles.modalText}>
 									<Text style={styles.modalTextSpace}>
-										Horraire : 8h-12h30 et 13h30-20h
+										Horaire : 8h-12h30 et 13h30-20h
 									</Text>
 								</View>
 
