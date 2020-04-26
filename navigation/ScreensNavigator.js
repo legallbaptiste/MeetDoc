@@ -16,10 +16,10 @@ import Register from '../screens/Register';
 export default createStackNavigator(
   {
     // Register : Register,
-    HomePage: HomePage,
     SignInScreen: SignInScreen,
     Opening : Opening,
     Connexion: Connexion,
+    HomePage: HomePage,
     Inscription: Inscription,
     Settings: Settings,
     Formulaire: Formulaire,

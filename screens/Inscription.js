@@ -112,7 +112,8 @@ inscription(){
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(bodyRecruteur),
-      }).then((response) => response.text()).then((responseJsonFromServer) =>
+      }).then((response) => response.text())
+        .then((responseJsonFromServer) =>
             {
                 alert(responseJsonFromServer);
 

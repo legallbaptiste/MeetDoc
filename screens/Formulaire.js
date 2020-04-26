@@ -13,6 +13,8 @@ import {
 import { connect } from 'react-redux';
 import { Ionicons, MaterialIcons, Foundation, FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
+import { setMedCabs, setEtablissement } from "../reducers/reducer";
+import Select2 from "react-native-select-two";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -22,42 +24,52 @@ class Formulaire extends React.Component {
   };
 
   state = {
-    dataku: [],
+    data:[],
   }
 
 
-  klikGet(){
-    var url = 'http://192.168.1.72:3000/markers';
-    axios.get(url)
-    .then((ambilData) => {
-      console.log(ambilData.data);
-      this.setState({
-        dataku: ambilData.data,
-      })
-    })
-  };
+  async componentDidMount() {
+    try {
+      const etablissementFetch = await fetch(
+        "http://" + devConst.ip + ":3000/Etablissement/all"
+      );
+      const etablissement = await etablissementFetch.json();
+      this.props.setEtablissement(etablissement.etablissement);
+      console.log("SALUT JE SUIS UN Etablissement");
+      console.log(etablissement.etablissement);
+    } catch (err) {
+      console.log("Erreur avec le fetch ---->  ", err);
+    }
+  }
 
-  klikPost(){
-
-    fetch('http://192.168.1.72:3000/markers', {
+  ajoutAnnonce(){
+    const {utilisateur} = this.props;
+    bodyAnnonce = {
+      titre: this.state.titre,
+      typeOffre: this.state.typeOffre,
+      retrocession: this.state.retrocession,
+      idEtablissement: this.state.data[0].toString(),
+      idRecruteur: utilisateur.id,
+      image: "https://loremflickr.com/320/240/medicaloffice?random=1"
+    };
+    console.log(bodyAnnonce);
+    fetch('http://'+devConst.ip+':3000/Annonce/', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        id: 7,
-        type: this.state.input2,
-        name: this.state.input3,
-        description: this.state.input4,
-        rating: this.state.input5,
-        distance : this.state.input6,
-        price: this.state.input7,
-        image: this.state.input8,
-        latitude: this.state.input9,
-        longitude: this.state.input10,
-      }),
-    });
+      body: JSON.stringify(bodyAnnonce),
+    }).then((response) => response.text())
+    .then((responseJsonFromServer) =>
+          {
+            console.log(responseJsonFromServer);
+          }).catch((error) =>
+          {
+              console.error(error);
+          });
+    console.log("Ajout annonce OK");
+    this.props.navigation.navigate("HomePage");
   }
 
 
@@ -66,12 +78,12 @@ class Formulaire extends React.Component {
     return (
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('Campings')}>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('HomePage')}>
             <Ionicons name="md-arrow-back" size={24} />
           </TouchableOpacity>
         </View>
         <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.title}>Formulaire ajout médecin/cabinet</Text>
+          <Text style={styles.title}>Formulaire ajout annonce</Text>
         </View>
 
       </View>
@@ -79,85 +91,70 @@ class Formulaire extends React.Component {
   }
 
   render() {
+    const listEtablissement=[];
+    const {data} = this.state;
+    const {etablissement} = this.props;
+
+    etablissement.forEach((item, i) => {
+      listEtablissement.push({id: item.id , name: item.nomEtablissement})
+    });
     return (
       <SafeAreaView style={styles.container}>
         {this.renderHeader()}
                 <View>
       <View style={{flexDirection:'column', alignItems:'center'}}>
+        <TextInput
+          placeholder='Titre'
+          style={{height: 55, width: 350, fontSize: 15}}
+          onChangeText={(titre) => this.setState({titre})}
+          value={this.state.titre}
+        />
 
+        <TextInput
+          placeholder="Type d'offre"
+          style={{height: 55, width: 350, fontSize: 15}}
+          onChangeText={(typeOffre) => this.setState({typeOffre})}
+          value={this.state.typeOffre}
+        />
 
+        <TextInput
+          placeholder="Retrocession"
+          style={{height: 55, width: 350, fontSize: 15}}
+          onChangeText={(retrocession) => this.setState({retrocession})}
+          value={this.state.retrocession}
+        />
 
-      <TextInput
-      placeholder='ID'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input1) => this.setState({input1})}
-      value={this.state.input1}
-      />
+        <TextInput
+          placeholder='Description'
+          style={{height: 55, width: 350, fontSize: 15}}
+          onChangeText={(description) => this.setState({description})}
+          value={this.state.description}
+        />
 
-      <TextInput
-      placeholder='Type'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input2) => this.setState({input2})}
-      value={this.state.input2}
-      />
-
-      <TextInput
-      placeholder='Name'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input3) => this.setState({input3})}
-      value={this.state.input3}
-      />
-
-      <TextInput
-      placeholder='Description'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input4) => this.setState({input4})}
-      value={this.state.input4}
-      />
-
-      <TextInput
-      placeholder='Rating'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input5) => this.setState({input5})}
-      value={this.state.input5}
-      />
-
-      <TextInput
-      placeholder='Distance'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input6) => this.setState({input6})}
-      value={this.state.input6}
-      />
-
-      <TextInput
-      placeholder='Price'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input7) => this.setState({input7})}
-      value={this.state.input7}
-      />
-
-
-      <TextInput
-      placeholder='Image'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input8) => this.setState({input8})}
-      value={this.state.input8}
-      />
-
-      <TextInput
-      placeholder='Longitude'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input9) => this.setState({input9})}
-      value={this.state.input9}
-      />
-
-      <TextInput
-      placeholder='Latitude'
-      style={{height: 55, width: 350, fontSize: 15}}
-      onChangeText={(input10) => this.setState({input10})}
-      value={this.state.input10}
-      />
+        <TextInput
+          placeholder="Insérer le lien de l'image"
+          style={{height: 55, width: 350, fontSize: 15}}
+          onChangeText={(image) => this.setState({image})}
+          value={this.state.image}
+        />
       </View>
+
+      <Select2
+       isSelectSingle
+       colorTheme="#003f5c"
+       popupTitle="Choisir votre établissement"
+       listEmptyTitle="Il n'y a pas d'établissement"
+       title="Choisir votre établissement"
+       selectButtonText="Valider"
+       cancelButtonText="Annuler"
+       data={listEtablissement}
+       onSelect={data => {
+         this.setState({ data })
+       }}
+       onRemoveItem={data => {
+         this.setState({ data })
+       }}
+     />
 
       <View style={{flexDirection:'row', justifyContent:'center'}}>
       <TouchableOpacity
@@ -167,7 +164,7 @@ class Formulaire extends React.Component {
           flexDirection:'row', justifyContent:'center',
           alignItems:'center'
           }}
-      onPress={this.klikPost.bind(this)}
+      onPress={this.ajoutAnnonce.bind(this)}
       >
       <Text style={{fontSize:20,color:'white',fontWeight:'bold'}}>
       Soumettre
@@ -186,13 +183,18 @@ class Formulaire extends React.Component {
   }
 }
 
-const moduleState = state => ({
-  filters: state.campings.filters,
-  loading: state.campings.loading,
+const moduleState = (state) => ({
+    utilisateur: state.medcabs.user,
+    annonce: state.medcabs.spots,
+    etablissement: state.medcabs.etablissement,
 });
 
+const moduleActions = {
+    setMedCabs,
+    setEtablissement,
+};
 
-export default connect(moduleState)(Formulaire);
+export default connect(moduleState, moduleActions)(Formulaire);
 
 const styles = StyleSheet.create({
   container: {

@@ -12,12 +12,14 @@ import {
 	SafeAreaView,
 	Modal,
 	TextInput,
+	RefreshControl,
 	Alert,
-	Button,
 } from "react-native";
 import { connect } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
 import Calendar from "react-native-calendario";
+import { Button } from "react-native-elements";
+import { NavigationEvents } from 'react-navigation';
 
 import {
 	Ionicons,
@@ -31,7 +33,7 @@ import { setLocation, setFilters, setMedCabs } from "../reducers/reducer";
 
 // Import dev
 import devConst from "../constants/devConst";
-
+import styleMap from "../constants/styleMap"
 const { width, height } = Dimensions.get("screen");
 
 class HomePage extends React.Component {
@@ -42,6 +44,9 @@ class HomePage extends React.Component {
 		modalVisible: false,
 		selectedData: [],
 	};
+
+
+
 
 	setModalVisible(visible) {
 		this.setState({ modalVisible: visible });
@@ -67,9 +72,6 @@ class HomePage extends React.Component {
 		}
 	}
 
-	displayAnnonce = () => {
-		this
-	}
 
 	handleTab = (tabKey) => {
 		this.props.setFilters({ type: tabKey });
@@ -81,6 +83,7 @@ class HomePage extends React.Component {
 		console.log(utilisateur);
 		return (
 			<View style={styles.headerContainer}>
+
 				<View style={styles.header}>
 					<View style={{ flex: 2, flexDirection: "row" }}>
 						<View style={styles.settings}>
@@ -102,19 +105,15 @@ class HomePage extends React.Component {
 						</View>
 					</View>
 					<View>
-						<TouchableOpacity
-							style={{ marginLeft: 4, marginRight: 10 }}
-							onPress={() => this.props.navigation.navigate("Formulaire")}
-						>
-							<Ionicons name="ios-add" size={24} color="black" />
-						</TouchableOpacity>
-					</View>
-					<View style={styles.settings}>
-						<TouchableOpacity
-							onPress={() => this.props.navigation.navigate("Settings")}
-						>
-							<Ionicons name="ios-settings" size={24} color="black" />
-						</TouchableOpacity>
+					<Button
+						buttonStyle={{backgroundColor:"#4F7942", height: 40}}
+						onPress={() => this.props.navigation.navigate("Formulaire")}
+						icon={{
+								name: "add",
+								size: 25,
+								color: "white"
+							}}
+							title='Créer une annonce' />
 					</View>
 				</View>
 			</View>
@@ -129,169 +128,9 @@ class HomePage extends React.Component {
 		);
 		const { filters, medcabs } = this.props;
 		const mapSpots = medcabs;
-		console.log("LALALALALALALALALAOLOLOLOLOLOL");
+		console.log("MAPSPOTS");
 		console.log(mapSpots);
-		const generatedMapStyle = [
-  {
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#242f3e"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#746855"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#242f3e"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.locality",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#d59563"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#d59563"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#263c3f"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#6b9a76"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#38414e"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#212a37"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#9ca5b3"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#746855"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#1f2835"
-      }
-    ]
-  },
-  {
-    "featureType": "road.highway",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#f3d19c"
-      }
-    ]
-  },
-  {
-    "featureType": "transit",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#2f3948"
-      }
-    ]
-  },
-  {
-    "featureType": "transit.station",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#d59563"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#17263c"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#515c6d"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#17263c"
-      }
-    ]
-  }
-]
+		const generatedMapStyle = styleMap.generatedMapStyle
 		return (
 			<View style={styles.map}>
 				<MapView
@@ -397,8 +236,6 @@ class HomePage extends React.Component {
 		}
 
 		const mapSpots = medcabs;
-		console.log("TOTOTOTOTOTITITITITITITITI");
-		console.log(mapSpots);
 		return mapSpots.map((medcab) => {
 			console.log(medcab);
 			return (
@@ -482,23 +319,35 @@ class HomePage extends React.Component {
 									}}
 								>
 									<SafeAreaView style={styles.container}>
-										<View
-											style={{
-												flexDirection: "row",
-												alignItems: "flex-start",
-												height: height * 0.05,
-												width: width,
-												paddingHorizontal: 14,
-											}}
-										>
-											<TouchableOpacity
-												onPress={() => {
-													this.setModalVisible(!this.state.modalVisible);
-												}}
-											>
-												<Ionicons name="md-arrow-back" size={24} />
-											</TouchableOpacity>
+									<View style={styles.headerContainer}>
+										<View style={styles.header}>
+											<View style={{ flex: 2, flexDirection: "row" }}>
+												<View style={styles.settings}>
+													<View style={styles.location}>
+													<TouchableOpacity
+														onPress={() => {
+															this.setModalVisible(!this.state.modalVisible);
+														}}
+													>
+														<Ionicons color="white" name="md-arrow-back" size={24} />
+													</TouchableOpacity>
+
+													</View>
+												</View>
+											</View>
+
+											<View style={styles.settings}>
+											<Button
+												buttonStyle={{backgroundColor:"#4F7942", color:"white"}}
+												icon={{
+												    name: "check",
+												    size: 25,
+												    color: "white"
+												  }}
+													title='Demander une reservation' />
+											</View>
 										</View>
+									</View>
 
 										<View style={styles.headerImage}>
 											<ImageBackground
@@ -545,16 +394,6 @@ class HomePage extends React.Component {
 											</View>
 										</View>
 										<View style={styles.modalBorder}></View>
-
-										<Calendar
-											onChange={(range) => console.log(range)}
-											locale="fr"
-											minDate="2018-04-20"
-											startDate="2018-04-30"
-											endDate="2018-05-05"
-											disabledDays={DISABLED_DAYS}
-											theme={THEME}
-										/>
 									</SafeAreaView>
 								</Modal>
 		)
@@ -562,10 +401,19 @@ class HomePage extends React.Component {
 
 	render() {
 
+
 		return (
 			<SafeAreaView style={styles.container}>
 				{this.renderHeader()}
-				<ScrollView style={styles.container}>
+				<ScrollView
+				style={styles.container}
+				refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }
+				>
 					{this.renderMap()}
 					{this.renderList()}
 					{this.renderModal()}
@@ -670,6 +518,14 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: "#465881",
+	},
+	location2: {
+		height: 40,
+		width: 40,
+		borderRadius: 50,
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "green",
 	},
 	marker: {
 		width: 40,
