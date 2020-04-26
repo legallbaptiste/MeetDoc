@@ -54,6 +54,7 @@ class Connexion extends React.Component {
 			);
 			const user1 = await userFetch.json();
 			const user = user1.user;
+			console.log(user);
 			if (
 				this.state.username == user.email &&
 				this.state.password == user.motDePasse
@@ -62,10 +63,12 @@ class Connexion extends React.Component {
 					"http://" + devConst.ip + ":3000/user/info/" + this.state.username
 				);
 				const userInfo1 = await userInfoFetch.json();
+				console.log("TOTOTOTOTOTOTO");
+				console.log(this.state.username);
 
 				const userInfo = userInfo1.user;
+				console.log(userInfo);
 				this.props.setUser(userInfo);
-
 				this.props.navigation.navigate("HomePage");
 			} else {
 				console.log("Pas le bon mdp ou mail");
@@ -88,7 +91,7 @@ class Connexion extends React.Component {
 						onChangeText={(username) => this.setState({ username })}
 						label="Email"
 						placeholder="Email"
-						placeholderTextColor="#003f5c"
+						placeholderTextColor="#465881"
 						style={styles.inputText}
 					/>
 				</View>
@@ -98,7 +101,7 @@ class Connexion extends React.Component {
 						onChangeText={(password) => this.setState({ password })}
 						label="Mot de passe"
 						placeholder="Mot de passe"
-						placeholderTextColor="#003f5c"
+						placeholderTextColor="#465881"
 						secureTextEntry={true}
 						style={styles.inputText}
 					/>
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
 	},
 	inputView: {
 		width: "80%",
-		backgroundColor: "#465881",
+		backgroundColor: "#fff",
 		borderRadius: 25,
 		height: 50,
 		marginBottom: 20,
@@ -167,7 +170,7 @@ const styles = StyleSheet.create({
 	},
 	inputText: {
 		height: 50,
-		color: "white",
+		color: "#465881",
 	},
 	forgot: {
 		color: "white",

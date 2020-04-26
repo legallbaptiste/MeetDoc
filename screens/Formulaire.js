@@ -174,7 +174,7 @@ class Formulaire extends React.Component {
       </Text>
       </TouchableOpacity>
 
-      
+
       </View>
 
 

@@ -4,8 +4,10 @@ const SET_FILTERS = "SET_FILTERS";
 const SET_LOADING = "SET_LOADING";
 const SET_PROFIL = "SET_PROFIL";
 const SET_USER = "SET_USER";
+const SET_ETABLISSEMENT = "SET_ETABLISSEMENT";
 // Initial state
 const INITIAL_STATE = {
+	etablissement:[],
 	spots: [],
 	user: [],
 	profils: {},
@@ -62,6 +64,11 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
 				...state,
 				loading: action.payload
 			};
+		case SET_ETABLISSEMENT:
+			return {
+				...state,
+				etablissement: action.payload
+			};
 		default:
 			return state;
 	}
@@ -76,6 +83,16 @@ export function setMedCabs(payload) {
 		});
 	};
 }
+
+export function setEtablissement(payload) {
+	return (dispatch) => {
+		dispatch({
+			type: SET_ETABLISSEMENT,
+			payload
+		});
+	};
+}
+
 
 export function setUser(payload) {
 	return (dispatch) => {

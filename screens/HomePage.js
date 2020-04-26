@@ -64,6 +64,8 @@ class HomePage extends React.Component {
 
 	renderHeader() {
 		const { utilisateur } = this.props;
+		console.log("UTILISATEUR");
+		console.log(utilisateur);
 		return (
 			<View style={styles.headerContainer}>
 				<View style={styles.header}>
@@ -79,7 +81,7 @@ class HomePage extends React.Component {
 						</View>
 						<View style={styles.options}>
 							<Text style={{ fontSize: 12, color: "#A5A5A5", marginBottom: 5 }}>
-								{utilisateur.email}
+								{utilisateur.prenom} {utilisateur.nom}
 							</Text>
 							<Text style={{ fontSize: 14, fontWeight: "300" }}>
 								Pau, 64000
@@ -214,6 +216,8 @@ class HomePage extends React.Component {
 		};
 
 		const mapSpots = medcabs;
+		console.log("TOTOTOTOTOTITITITITITITITI");
+		console.log(mapSpots);
 		return mapSpots.map((medcab) => {
 			return (
 				<View key={`medcab-${medcab.id}`} style={styles.medcab}>
@@ -293,9 +297,9 @@ class HomePage extends React.Component {
 							<Calendar
 								onChange={(range) => console.log(range)}
 								locale="fr"
-								minDate="2018-04-20"
-								startDate="2018-04-30"
-								endDate="2018-05-05"
+								minDate="2020-04-20"
+								startDate="2020-04-30"
+								endDate="2020-05-05"
 								disabledDays={DISABLED_DAYS}
 								theme={THEME}
 							/>

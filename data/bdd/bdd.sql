@@ -12,13 +12,6 @@ CREATE TABLE Adresse (
 (30)
 );
 
-DROP TABLE IF EXISTS Periode;
-CREATE TABLE Periode (
-  id INTEGER PRIMARY KEY AUTO_INCREMENT,
-  dDebut DATE,
-  dFin DATE
-);
-
 DROP TABLE IF EXISTS Horaire;
 CREATE TABLE Horaire (
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -82,6 +75,21 @@ CREATE TABLE Etablissement (
   idAdresse INTEGER,
   FOREIGN KEY
 (idAdresse) REFERENCES Adresse
+(id)
+);
+
+DROP TABLE IF EXISTS Periode;
+CREATE TABLE Periode (
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  dDebut DATE,
+  dFin DATE,
+  idRemplacant INTEGER,
+  idEtablissement INTEGER,
+    FOREIGN KEY
+(idRemplacant) REFERENCES Remplacant
+(id),
+    FOREIGN KEY
+(idEtablissement) REFERENCES Etablissement
 (id)
 );
 
@@ -233,3 +241,20 @@ ADD `description` TEXT NULL DEFAULT NULL AFTER `image`;
 ALTER TABLE `Annonce`
 ADD `titre` VARCHAR
 (120) NOT NULL DEFAULT 'Titre' AFTER `id`;
+
+ALTER TABLE `Etablissement`
+ADD `nomEtablissement` VARCHAR
+(100) NOT NULL DEFAULT 'Nom de l\'etablissement' AFTER `id`;
+
+DROP TABLE IF EXISTS AnnonceRemplacant;
+CREATE TABLE AnnonceRemplacant (
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  idAnnonce INTEGER,
+  idRemplacant INTEGER,
+  FOREIGN KEY
+(idRemplacant) REFERENCES Remplacant
+(id),
+  FOREIGN KEY
+(idAnnonce) REFERENCES Annonce
+(id)
+);
