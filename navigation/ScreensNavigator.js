@@ -13,13 +13,12 @@ import SignInScreen from '../screens/SignInScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import Register from '../screens/Register';
 
-
 export default createStackNavigator(
   {
     // Register : Register,
+    HomePage: HomePage,
     SignInScreen: SignInScreen,
     Opening : Opening,
-    HomePage: HomePage,
     Connexion: Connexion,
     Inscription: Inscription,
     Settings: Settings,

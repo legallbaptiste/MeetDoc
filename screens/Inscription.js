@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Text, Alert, Button, ScrollView, Dimensions,View, StyleSheet, TextInput } from 'react-native';
+import { Text, Alert, Button, ScrollView, Dimensions,View, ActivityIndicator,StyleSheet, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import devConst from "../constants/devConst";
 import { setUser,setEtablissement } from "../reducers/reducer";
 import AwesomeAlert from 'react-native-awesome-alerts';
 import CustomButton from '../components/CustomButton'
-import {CheckBox} from "native-base"
-import Select2 from "react-native-select-two"
+import {CheckBox} from "native-base";
+import Select2 from "react-native-select-two";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -17,6 +17,7 @@ class Inscription extends React.Component {
   };
 
   state = {
+    ActivityIndicator_Loading: false,
     nom:"",
     prenom:"",
     username: "",
@@ -35,8 +36,6 @@ class Inscription extends React.Component {
     showAlert: false,
     data:[],
   };
-
-
 
 
   go = () => {
@@ -66,9 +65,9 @@ async componentDidMount() {
       "http://" + devConst.ip + ":3000/Etablissement/all"
     );
     const etablissement = await etablissementFetch.json();
-    this.props.setEtablissement(etablissement);
-    console.log("PREMIER ETA");
-    console.log(etablissement);
+    this.props.setEtablissement(etablissement.etablissement);
+    console.log("SALUT JE SUIS UN Etablissement");
+    console.log(etablissement.etablissement);
   } catch (err) {
     console.log("Erreur avec le fetch ---->  ", err);
   }
@@ -79,85 +78,114 @@ onSelectedItemsChange = selectedItems => {
   };
 
 
-  inscription(){
-  if(this.state.selectedStatus){
+inscription(){
+  this.setState({ ActivityIndicator_Loading : true }, () =>
+  {
+    if(!this.state.selectedStatus){
+      const bodyRecruteur = {
+      user : {
+        nom : this.state.nom,
+        prenom : this.state.prenom,
+        email : this.state.username,
+        motDePasse : this.state.password,
+        numTel : this.state.numTel,
+        cartePro : "lienVersCartePro"
+      },
+      adresse : {
+        voie: this.state.voie,
+        numVoie: this.state.numVoie,
+        ville: this.state.ville,
+        codePostale: this.state.codePostale,
+        pays: this.state.pays
+      },
+      recruteur : {
+        specialite : this.state.specialite,
+        descriptionLibre : this.state.description,
+        idEtablissement : this.state.data[0].toString()
+      }
+    };
+    console.log(bodyRecruteur);
+      fetch("http://"+devConst.ip+":3000/user/", {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodyRecruteur),
+      }).then((response) => response.text()).then((responseJsonFromServer) =>
+            {
+                alert(responseJsonFromServer);
 
-    fetch("http://"+devConst.ip+"/user", {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+                this.setState({ ActivityIndicator_Loading : false });
+
+            }).catch((error) =>
+            {
+                console.error(error);
+
+                this.setState({ ActivityIndicator_Loading : false});
+            });
+      console.log("Inscription Recruteur OK");
+      this.showAlert();
+      this.props.navigation.navigate('SignInScreen');
+    }else {
+      const bodyRemplacant = {
+      user : {
+        nom : this.state.nom,
+        prenom : this.state.prenom,
+        email : this.state.username,
+        motDePasse : this.state.password,
+        numTel : this.state.numTel,
+        cartePro : "lienVersCartePro"
       },
-      body: JSON.stringify(
-        {
-        user : {
-      		nom : this.state.nom,
-      		prenom : this.state.prenom,
-      		email : this.state.username,
-      		motDePasse : this.state.password,
-      		numTel : this.state.numTel,
-      		cartePro : "lienVersCartePro"
-	      },
-	      adresse : {
-      		voie: this.state.voie,
-      		numVoie: this.state.numVoie,
-      		ville: this.state.ville,
-      		codePostale: this.state.codePostale,
-      		pays: this.state.pays
-	      },
-        recruteur : {
-      		specialite : this.state.specialite,
-      		descriptionLibre : this.state.description,
-      		idEtablissement : "42"
-	      }
-      }),
-    });
-  }else {
-    fetch("http://"+devConst.ip+"/user", {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+      adresse : {
+        voie: this.state.voie,
+        numVoie: this.state.numVoie,
+        ville: this.state.ville,
+        codePostale: this.state.codePostale,
+        pays: this.state.pays
       },
-      body: JSON.stringify(
-        {
-        user : {
-          nom : this.state.nom,
-          prenom : this.state.prenom,
-          email : this.state.username,
-          motDePasse : this.state.password,
-          numTel : this.state.numTel,
-          cartePro : "lienVersCartePro"
+      remplacant : {
+        specialite : this.state.specialite,
+        descriptionLibre : this.state.description,
+        cv : this.state.cv
+      }
+    };
+    console.log(bodyRemplacant);
+      fetch("http://"+devConst.ip+":3000/user/", {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
-        adresse : {
-          voie: this.state.voie,
-          numVoie: this.state.numVoie,
-          ville: this.state.ville,
-          codePostale: this.state.codePostale,
-          pays: this.state.pays
-        },
-        remplacant : {
-          specialite : this.state.specialite,
-          descriptionLibre : this.state.description,
-          cv : "lienVersLeCv"
-        }
-      }),
-    });
-  }
+        body: JSON.stringify(bodyRemplacant),
+      }).then((response) => response.text()).then((responseJsonFromServer) =>
+            {
+
+                this.setState({ ActivityIndicator_Loading : false });
+
+            }).catch((error) =>
+            {
+                console.error(error);
+
+                this.setState({ ActivityIndicator_Loading : false});
+            });
+      console.log("Inscription Remplacant OK");
+      this.showAlert();
+      this.props.navigation.navigate('SignInScreen');
+    }
+  });
 }
 
   render() {
-    const mockData = [
-      { id: 1, name: "React Native Developer"}, // set default checked for render option item
-      { id: 2, name: "Android Developer" },
-      { id: 3, name: "iOS Developer" }
-    ]
+    const listEtablissement=[];
+
     const {showAlert} = this.state;
     const {etablissement} = this.props;
     const { selectedItems } = this.state;
     const {data} = this.state;
-    console.log("TOTOTOTOTOTOTOTOTOTOTOTOTOTOTUTUTUTUTUTUTUTUTU");
-    console.log(etablissement);
+    etablissement.forEach((item, i) => {
+      listEtablissement.push({id: item.id , name: item.nomEtablissement})
+    });
     return (
       <ScrollView>
 
@@ -341,7 +369,7 @@ onSelectedItemsChange = selectedItems => {
              title="Choisir votre établissement"
              selectButtonText="Valider"
              cancelButtonText="Annuler"
-             data={mockData}
+             data={listEtablissement}
              onSelect={data => {
                this.setState({ data })
              }}
@@ -349,12 +377,27 @@ onSelectedItemsChange = selectedItems => {
                this.setState({ data })
              }}
            />
-           {console.log(data)}
           </View>)
 
         }
 
-
+        <AwesomeAlert
+            show={showAlert}
+            showProgress={false}
+            title="Bravo vous êtes inscris !"
+            message="Vous pouvez maintenant vous connecter sur l'application ! "
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showCancelButton={true}
+            cancelText="Ok"
+            confirmButtonColor="#DD6B55"
+            onCancelPressed={() => {
+                this.hideAlert();
+            }}
+            onConfirmPressed={() => {
+                this.hideAlert();
+            }}
+        />
 
 
         <View style={styles.separatorContainer} animation={'zoomIn'} delay={700} duration={400}>
@@ -370,23 +413,11 @@ onSelectedItemsChange = selectedItems => {
           />
 
         </View>
-        <AwesomeAlert
-            show={showAlert}
-            showProgress={false}
-            title="Hop hop hop !"
-            message="Vous devez rentrer un mail ou un mot de passe valide"
-            closeOnTouchOutside={true}
-            closeOnHardwareBackPress={false}
-            showCancelButton={true}
-            cancelText="Ok"
-            confirmButtonColor="#DD6B55"
-            onCancelPressed={() => {
-              this.hideAlert();
-            }}
-            onConfirmPressed={() => {
-              this.hideAlert();
-            }}
-          />
+        {
+          this.state.ActivityIndicator_Loading ?
+          <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> :
+          null
+          }
 
       </View>
       </ScrollView>
@@ -401,6 +432,11 @@ const styles = StyleSheet.create({
   alignItems: 'center',
   justifyContent: 'center',
   flex: 1,
+  },
+  containerSelect: {
+        width: '100%', minHeight: 45, borderRadius: 2, paddingHorizontal: 16,
+        flexDirection: 'row', alignItems: 'center', borderWidth: 1,
+        borderColor: '#cacaca', paddingVertical: 4
   },
   logo:{
     marginTop: "9%",
@@ -421,6 +457,18 @@ const styles = StyleSheet.create({
   inputText:{
     height:50,
     color:"#465881"
+  },
+
+    ActivityIndicatorStyle:{
+
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center'
+
   },
   forgot:{
     color:"white",

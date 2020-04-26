@@ -40,11 +40,17 @@ class HomePage extends React.Component {
 	};
 	state = {
 		modalVisible: false,
+		selectedData: [],
 	};
 
 	setModalVisible(visible) {
 		this.setState({ modalVisible: visible });
 	}
+
+	_selectedItem = (data) => {
+	    this.setState({selectedData: data});
+	    this.setModalVisible(true);
+	  }
 
 	async componentDidMount() {
 		try {
@@ -59,6 +65,10 @@ class HomePage extends React.Component {
 		} catch (err) {
 			console.log("Erreur avec le fetch ---->  ", err);
 		}
+	}
+
+	displayAnnonce = () => {
+		this
 	}
 
 	handleTab = (tabKey) => {
@@ -78,7 +88,7 @@ class HomePage extends React.Component {
 								<TouchableOpacity
 									onPress={() => this.props.navigation.navigate("Profil")}
 								>
-									<Ionicons name="md-people" size={30} color="white" />
+									<Ionicons name="md-people" size={40} color="white" />
 								</TouchableOpacity>
 							</View>
 						</View>
@@ -107,7 +117,6 @@ class HomePage extends React.Component {
 						</TouchableOpacity>
 					</View>
 				</View>
-				{this.renderTabs()}
 			</View>
 		);
 	}
@@ -120,12 +129,176 @@ class HomePage extends React.Component {
 		);
 		const { filters, medcabs } = this.props;
 		const mapSpots = medcabs;
-
+		console.log("LALALALALALALALALAOLOLOLOLOLOL");
+		console.log(mapSpots);
+		const generatedMapStyle = [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.locality",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#263c3f"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#6b9a76"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#38414e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#212a37"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9ca5b3"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#1f2835"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#f3d19c"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#2f3948"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#515c6d"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  }
+]
 		return (
 			<View style={styles.map}>
 				<MapView
 					style={{ flex: 1, height: height * 0.5, width }}
 					showsMyLocationButton
+					provider={MapView.PROVIDER_GOOGLE}
+					customMapStyle = { generatedMapStyle }
 					initialRegion={{
 						latitude: 43.319,
 						longitude: -0.360603,
@@ -213,6 +386,7 @@ class HomePage extends React.Component {
 	}
 
 	renderList() {
+		const medcab = this.state.selectedData
 		const { filters, medcabs } = this.props;
 		const truthyValue = true;
 		console.log("MEDCABS");
@@ -220,98 +394,16 @@ class HomePage extends React.Component {
 		const DISABLED_DAYS = {
 			"2019-11-20": truthyValue,
 			"2019-11-11": truthyValue,
-		};
+		}
 
 		const mapSpots = medcabs;
 		console.log("TOTOTOTOTOTITITITITITITITI");
 		console.log(mapSpots);
 		return mapSpots.map((medcab) => {
+			console.log(medcab);
 			return (
+
 				<View key={`medcab-${medcab.id}`} style={styles.medcab}>
-					<Modal
-						animationType="slide"
-						transparent={false}
-						visible={this.state.modalVisible}
-						onRequestClose={() => {
-							Alert.alert("Modal has been closed.");
-						}}
-					>
-						<SafeAreaView style={styles.container}>
-							<View
-								style={{
-									flexDirection: "row",
-									alignItems: "flex-start",
-									height: height * 0.05,
-									width: width,
-									paddingHorizontal: 14,
-								}}
-							>
-								<TouchableOpacity
-									onPress={() => {
-										this.setModalVisible(!this.state.modalVisible);
-									}}
-								>
-									<Ionicons name="md-arrow-back" size={24} />
-								</TouchableOpacity>
-							</View>
-
-							<View style={styles.headerImage}>
-								<ImageBackground
-									style={styles.modalImage}
-									imageStyle={styles.modalImage}
-									source={{ uri: medcab.image }}
-								/>
-							</View>
-							<View style={styles.modalBorder}></View>
-							<View style={styles.modalTitle}>
-								<Text style={styles.modalTitle}>{medcab.titre}</Text>
-								<Text style={styles.modalDescription}>
-									{medcab.description}
-								</Text>
-							</View>
-							<View style={styles.modalText}>
-								<View style={styles.modalText}>
-									<Text style={styles.modalTextSpace}>
-										Ouverture : lundi au vendredi
-									</Text>
-								</View>
-								<View style={styles.modalText}>
-									<Text style={styles.modalTextSpace}>
-										Horraire : 8h-12h30 et 13h30-20h
-									</Text>
-								</View>
-
-								<View style={styles.modalText}>
-									<Text style={styles.modalTextSpace}>
-										Qualifications requises : 3 ans d'expérience minimum
-									</Text>
-								</View>
-
-								<View style={styles.modalText}>
-									<Text style={styles.modalTextSpace}>
-										Déplacement domicile : Non
-									</Text>
-								</View>
-
-								<View style={styles.modalText}>
-									<Text style={styles.modalTextSpace}>
-										Description de l'annonceur : Dr Maboul
-									</Text>
-								</View>
-							</View>
-							<View style={styles.modalBorder}></View>
-
-							<Calendar
-								onChange={(range) => console.log(range)}
-								locale="fr"
-								minDate="2018-04-20"
-								startDate="2018-04-30"
-								endDate="2018-05-05"
-								disabledDays={DISABLED_DAYS}
-								theme={THEME}
-							/>
-						</SafeAreaView>
-					</Modal>
 
 					<ImageBackground
 						style={styles.medcabImage}
@@ -358,7 +450,7 @@ class HomePage extends React.Component {
 					<View style={{ flex: 0.2, justifyContent: "center" }}>
 						<TouchableOpacity
 							onPress={() => {
-								this.setModalVisible(true);
+								this._selectedItem(medcab);
 							}}
 						>
 							<SimpleLineIcons
@@ -372,16 +464,114 @@ class HomePage extends React.Component {
 			);
 		});
 	}
+	renderModal(){
+		const data = this.state.selectedData;
+		const truthyValue = true;
+		const DISABLED_DAYS = {
+			"2019-11-20": truthyValue,
+			"2019-11-11": truthyValue,
+		}
+		return(
+								<Modal
+									animationType="slide"
+									key={data.id}
+									transparent={false}
+									visible={this.state.modalVisible}
+									onRequestClose={() => {
+										Alert.alert("Modal has been closed.");
+									}}
+								>
+									<SafeAreaView style={styles.container}>
+										<View
+											style={{
+												flexDirection: "row",
+												alignItems: "flex-start",
+												height: height * 0.05,
+												width: width,
+												paddingHorizontal: 14,
+											}}
+										>
+											<TouchableOpacity
+												onPress={() => {
+													this.setModalVisible(!this.state.modalVisible);
+												}}
+											>
+												<Ionicons name="md-arrow-back" size={24} />
+											</TouchableOpacity>
+										</View>
+
+										<View style={styles.headerImage}>
+											<ImageBackground
+												style={styles.modalImage}
+												imageStyle={styles.modalImage}
+												source={{ uri: data.image }}
+											/>
+										</View>
+										<View style={styles.modalBorder}></View>
+										<View style={styles.modalTitle}>
+											<Text style={styles.modalTitle}>{data.titre}</Text>
+											<Text style={styles.modalDescription}>
+												{data.description}
+											</Text>
+										</View>
+										<View style={styles.modalText}>
+											<View style={styles.modalText}>
+												<Text style={styles.modalTextSpace}>
+													Ouverture : lundi au vendredi
+												</Text>
+											</View>
+											<View style={styles.modalText}>
+												<Text style={styles.modalTextSpace}>
+													Horraire : 8h-12h30 et 13h30-20h
+												</Text>
+											</View>
+
+											<View style={styles.modalText}>
+												<Text style={styles.modalTextSpace}>
+													Qualifications requises : 3 ans d'expérience minimum
+												</Text>
+											</View>
+
+											<View style={styles.modalText}>
+												<Text style={styles.modalTextSpace}>
+													Déplacement domicile : Non
+												</Text>
+											</View>
+
+											<View style={styles.modalText}>
+												<Text style={styles.modalTextSpace}>
+													Description de l'annonceur : Dr Maboul
+												</Text>
+											</View>
+										</View>
+										<View style={styles.modalBorder}></View>
+
+										<Calendar
+											onChange={(range) => console.log(range)}
+											locale="fr"
+											minDate="2018-04-20"
+											startDate="2018-04-30"
+											endDate="2018-05-05"
+											disabledDays={DISABLED_DAYS}
+											theme={THEME}
+										/>
+									</SafeAreaView>
+								</Modal>
+		)
+	}
 
 	render() {
+
 		return (
 			<SafeAreaView style={styles.container}>
 				{this.renderHeader()}
 				<ScrollView style={styles.container}>
 					{this.renderMap()}
 					{this.renderList()}
+					{this.renderModal()}
 				</ScrollView>
 			</SafeAreaView>
+
 		);
 	}
 }
@@ -455,7 +645,7 @@ const styles = StyleSheet.create({
 	},
 	headerContainer: {
 		top: 0,
-		height: height * 0.15,
+		height: height * 0.10,
 		width: width,
 	},
 	header: {
@@ -474,12 +664,12 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	location: {
-		height: 30,
-		width: 30,
-		borderRadius: 18,
+		height: 40,
+		width: 40,
+		borderRadius: 50,
 		alignItems: "center",
 		justifyContent: "center",
-		backgroundColor: "#4287F5",
+		backgroundColor: "#465881",
 	},
 	marker: {
 		width: 40,
@@ -522,10 +712,10 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	activeTab: {
-		borderBottomColor: "#4287F5",
+		borderBottomColor: "#465881",
 	},
 	activeTabTitle: {
-		color: "#4287F5",
+		color: "#465881",
 	},
 	map: {
 		flex: 1,
