@@ -54,7 +54,6 @@ class Connexion extends React.Component {
 			);
 			const user1 = await userFetch.json();
 			const user = user1.user;
-			console.log(user);
 			if (
 				this.state.username == user.email &&
 				this.state.password == user.motDePasse
@@ -63,12 +62,14 @@ class Connexion extends React.Component {
 					"http://" + devConst.ip + ":3000/user/info/" + this.state.username
 				);
 				const userInfo1 = await userInfoFetch.json();
-				console.log("TOTOTOTOTOTOTO");
-				console.log(this.state.username);
-
 				const userInfo = userInfo1.user;
-				console.log(userInfo);
-				this.props.setUser(userInfo);
+        if(userInfo.recruteur){
+          userInfo.recruteur.type = "recruteur";
+          this.props.setUser(userInfo.recruteur);
+        }else{
+          userInfo.remplacant.type = "remplacant";
+          this.props.setUser(userInfo.remplacant);
+        }
 				this.props.navigation.navigate("HomePage");
 			} else {
 				console.log("Pas le bon mdp ou mail");

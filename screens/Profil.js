@@ -54,6 +54,7 @@ class Profil extends Component {
 
 	render() {
 		const {utilisateur} = this.props;
+		console.log(utilisateur);
 		return (
 			<SafeAreaView style={styles.container}>
 				{this.renderHeader()}
