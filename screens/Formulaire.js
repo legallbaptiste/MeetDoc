@@ -44,6 +44,7 @@ class Formulaire extends React.Component {
 
   ajoutAnnonce(){
     const {utilisateur} = this.props;
+    console.log(utilisateur);
     bodyAnnonce = {
       titre: this.state.titre,
       typeOffre: this.state.typeOffre,
@@ -75,6 +76,9 @@ class Formulaire extends React.Component {
 
 
   renderHeader() {
+    const {utilisateur} = this.props;
+    console.log("TATATATATATATOTOTOTOTOTOTOTO");
+    console.log(utilisateur);
     return (
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
@@ -83,7 +87,7 @@ class Formulaire extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.title}>Formulaire ajout annonce</Text>
+          <Text style={styles.title}>Ajout d'une annonce</Text>
         </View>
 
       </View>

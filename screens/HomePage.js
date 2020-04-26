@@ -72,8 +72,7 @@ class HomePage extends React.Component {
 
 	renderHeader() {
 		const { utilisateur } = this.props;
-		console.log("UTILISATEUR");
-		console.log(utilisateur);
+
 		return (
 			<View style={styles.headerContainer}>
 				<View style={styles.header}>
@@ -92,11 +91,12 @@ class HomePage extends React.Component {
 								{utilisateur.prenom} {utilisateur.nom}
 							</Text>
 							<Text style={{ fontSize: 14, fontWeight: "300" }}>
-								Pau, 64000
+								{utilisateur.ville}, {utilisateur.codePostale}
 							</Text>
 						</View>
 					</View>
-					<View>
+					{console.log(utilisateur.type === "recruteur")}
+					{(utilisateur.type === "recruteur") ? (<View>
 						<Button
 							buttonStyle={{ backgroundColor: "#4F7942", height: 40 }}
 							onPress={() => this.props.navigation.navigate("Formulaire")}
@@ -107,7 +107,7 @@ class HomePage extends React.Component {
 							}}
 							title="Créer une annonce"
 						/>
-					</View>
+					</View>) : (<View></View>) }
 				</View>
 			</View>
 		);
@@ -121,8 +121,6 @@ class HomePage extends React.Component {
 		);
 		const { filters, medcabs } = this.props;
 		const mapSpots = medcabs;
-		console.log("MAPSPOTS");
-		console.log(mapSpots);
 		const generatedMapStyle = styleMap.generatedMapStyle;
 		return (
 			<View style={styles.map}>
@@ -226,6 +224,7 @@ class HomePage extends React.Component {
 
 		const mapSpots = medcabs;
 		return mapSpots.map((medcab) => {
+			console.log("TOTOTOTOTOTOTO");
 			console.log(medcab);
 			return (
 				<View key={`medcab-${medcab.id}`} style={styles.medcab}>
@@ -254,19 +253,13 @@ class HomePage extends React.Component {
 							<View style={styles.medcabInfo}>
 								<FontAwesome name="star" color="#3C824C" size={12} />
 								<Text style={{ marginLeft: 4, color: "#3C824C" }}>
-									{medcab.rating}
+									{medcab.typeOffre}
 								</Text>
 							</View>
 							<View style={styles.medcabInfo}>
 								<FontAwesome name="location-arrow" color="#4287F5" size={12} />
 								<Text style={{ marginLeft: 4, color: "#4287F5" }}>
-									{medcab.distance} miles
-								</Text>
-							</View>
-							<View style={styles.medcabInfo}>
-								<Ionicons name="md-pricetag" color="black" size={12} />
-								<Text style={{ marginLeft: 4, color: "black" }}>
-									{medcab.price}
+									{medcab.codePostale}, {medcab.ville}
 								</Text>
 							</View>
 						</View>
@@ -288,7 +281,39 @@ class HomePage extends React.Component {
 			);
 		});
 	}
+
+
+		ajoutReservation(){
+			const {utilisateur} = this.props;
+			const data = this.state.selectedData;
+			console.log(utilisateur);
+			bodyAnnonce = {
+				idAnnonce: data.id.toString(),
+				idUser: utilisateur.id.toString(),
+			};
+			console.log(bodyAnnonce);
+			fetch('http://'+devConst.ip+':3000/Annonce/postuler/', {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(bodyAnnonce),
+			}).then((response) => response.text())
+			.then((responseJsonFromServer) =>
+						{
+							console.log(responseJsonFromServer);
+						}).catch((error) =>
+						{
+								console.error(error);
+						});
+			console.log("Ajout reservation OK");
+			// this.props.navigation.navigate("HomePage");
+		}
+
+
 	renderModal() {
+		const {utilisateur} = this.props;
 		const data = this.state.selectedData;
 		const truthyValue = true;
 		const DISABLED_DAYS = {
@@ -322,9 +347,11 @@ class HomePage extends React.Component {
 								</View>
 							</View>
 
-							<View style={styles.settings}>
+							{(utilisateur.type==="remplacant") ?
+							(<View style={styles.settings}>
 								<Button
-									buttonStyle={{ backgroundColor: "#4F7942", color: "white" }}
+								onPress={this.ajoutReservation.bind(this)}
+									buttonStyle={{ backgroundColor: "#4F7942"}}
 									icon={{
 										name: "check",
 										size: 25,
@@ -332,7 +359,7 @@ class HomePage extends React.Component {
 									}}
 									title="Demander une reservation"
 								/>
-							</View>
+							</View>) : (<View></View>)}
 						</View>
 					</View>
 

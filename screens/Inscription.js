@@ -66,8 +66,6 @@ async componentDidMount() {
     );
     const etablissement = await etablissementFetch.json();
     this.props.setEtablissement(etablissement.etablissement);
-    console.log("SALUT JE SUIS UN Etablissement");
-    console.log(etablissement.etablissement);
   } catch (err) {
     console.log("Erreur avec le fetch ---->  ", err);
   }
@@ -104,7 +102,6 @@ inscription(){
         idEtablissement : this.state.data[0].toString()
       }
     };
-    console.log(bodyRecruteur);
       fetch("http://"+devConst.ip+":3000/user/", {
         method: 'POST',
         headers: {
@@ -151,7 +148,6 @@ inscription(){
         cv : this.state.cv
       }
     };
-    console.log(bodyRemplacant);
       fetch("http://"+devConst.ip+":3000/user/", {
         method: 'POST',
         headers: {
@@ -335,7 +331,7 @@ inscription(){
             value={this.state.specialite}
             onChangeText={(specialite) => this.setState({ specialite })}
             label='Specialite'
-            placeholder="Sprecialite"
+            placeholder="Specialité"
             placeholderTextColor="#003f5c"
             style={styles.inputText}
           />
