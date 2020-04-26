@@ -112,8 +112,6 @@ router.get("/getByRemplacant/:idRemplacant", function (req, res) {
 		var sql =
 			"SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,u.nom,u.prenom,u.email,u.numTel,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM AnnonceRemplacant ar, Annonce a, Recruteur re, Etablissement e,Adresse adr, User u  WHERE a.id = ar.idAnnonce AND re.id = a.idRecruteur AND u.id = re.id AND e.id = a.idEtablissement AND adr.id = e.idAdresse AND ar.idRemplacant = " +
 			idRemplacant;
-		console.log(sql);
-
 		connection.query(sql, function (error, results, fields) {
 			// If some error occurs, we throw an error.
 			if (error) throw error;
