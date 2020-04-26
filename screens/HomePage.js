@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
 import Calendar from "react-native-calendario";
 import { Button } from "react-native-elements";
-import { NavigationEvents } from 'react-navigation';
+import { NavigationEvents } from "react-navigation";
 
 import {
 	Ionicons,
@@ -33,7 +33,7 @@ import { setLocation, setFilters, setMedCabs } from "../reducers/reducer";
 
 // Import dev
 import devConst from "../constants/devConst";
-import styleMap from "../constants/styleMap"
+import styleMap from "../constants/styleMap";
 const { width, height } = Dimensions.get("screen");
 
 class HomePage extends React.Component {
@@ -45,45 +45,37 @@ class HomePage extends React.Component {
 		selectedData: [],
 	};
 
-
-
-
 	setModalVisible(visible) {
 		this.setState({ modalVisible: visible });
 	}
 
 	_selectedItem = (data) => {
-	    this.setState({selectedData: data});
-	    this.setModalVisible(true);
-	  }
+		this.setState({ selectedData: data });
+		this.setModalVisible(true);
+	};
 
 	async componentDidMount() {
 		try {
 			const annonceFetch = await fetch(
 				"http://" + devConst.ip + ":3000/Annonce"
 			);
-			console.log("TOTO");
 			const annonce = await annonceFetch.json();
 			this.props.setMedCabs(annonce);
-			console.log("PROPS");
-			console.log(this.props);
 		} catch (err) {
 			console.log("Erreur avec le fetch ---->  ", err);
 		}
 	}
-
 
 	handleTab = (tabKey) => {
 		this.props.setFilters({ type: tabKey });
 	};
 
 	renderHeader() {
-		const {utilisateur} = this.props
+		const { utilisateur } = this.props;
 		console.log("UTILISATEUR");
 		console.log(utilisateur);
 		return (
 			<View style={styles.headerContainer}>
-
 				<View style={styles.header}>
 					<View style={{ flex: 2, flexDirection: "row" }}>
 						<View style={styles.settings}>
@@ -105,15 +97,16 @@ class HomePage extends React.Component {
 						</View>
 					</View>
 					<View>
-					<Button
-						buttonStyle={{backgroundColor:"#4F7942", height: 40}}
-						onPress={() => this.props.navigation.navigate("Formulaire")}
-						icon={{
+						<Button
+							buttonStyle={{ backgroundColor: "#4F7942", height: 40 }}
+							onPress={() => this.props.navigation.navigate("Formulaire")}
+							icon={{
 								name: "add",
 								size: 25,
-								color: "white"
+								color: "white",
 							}}
-							title='Créer une annonce' />
+							title="Créer une annonce"
+						/>
 					</View>
 				</View>
 			</View>
@@ -123,21 +116,21 @@ class HomePage extends React.Component {
 	renderMap() {
 		const medCabMarker = ({ type }) => (
 			<View style={[styles.marker, styles.hopitalMarker]}>
-					<MaterialIcons name="local-hospital" size={18} color="#FFF" />
+				<MaterialIcons name="local-hospital" size={18} color="#FFF" />
 			</View>
 		);
 		const { filters, medcabs } = this.props;
 		const mapSpots = medcabs;
 		console.log("MAPSPOTS");
 		console.log(mapSpots);
-		const generatedMapStyle = styleMap.generatedMapStyle
+		const generatedMapStyle = styleMap.generatedMapStyle;
 		return (
 			<View style={styles.map}>
 				<MapView
 					style={{ flex: 1, height: height * 0.5, width }}
 					showsMyLocationButton
 					provider={MapView.PROVIDER_GOOGLE}
-					customMapStyle = { generatedMapStyle }
+					customMapStyle={generatedMapStyle}
 					initialRegion={{
 						latitude: 43.319,
 						longitude: -0.360603,
@@ -154,12 +147,10 @@ class HomePage extends React.Component {
 					{mapSpots.map((marker) => (
 						<Marker
 							key={`marker-${marker.id}`}
-							coordinate={
-								{
+							coordinate={{
 								latitude: Number(marker.latlng.lat),
-								longitude: Number(marker.latlng.lng)
-								}
-						}
+								longitude: Number(marker.latlng.lng),
+							}}
 							description={marker.titre}
 						>
 							{medCabMarker(marker)}
@@ -225,23 +216,19 @@ class HomePage extends React.Component {
 	}
 
 	renderList() {
-		const medcab = this.state.selectedData
+		const medcab = this.state.selectedData;
 		const { filters, medcabs } = this.props;
 		const truthyValue = true;
-		console.log("MEDCABS");
-		console.log(medcabs);
 		const DISABLED_DAYS = {
 			"2019-11-20": truthyValue,
 			"2019-11-11": truthyValue,
-		}
+		};
 
 		const mapSpots = medcabs;
 		return mapSpots.map((medcab) => {
 			console.log(medcab);
 			return (
-
 				<View key={`medcab-${medcab.id}`} style={styles.medcab}>
-
 					<ImageBackground
 						style={styles.medcabImage}
 						imageStyle={styles.medcabImage}
@@ -301,107 +288,103 @@ class HomePage extends React.Component {
 			);
 		});
 	}
-	renderModal(){
+	renderModal() {
 		const data = this.state.selectedData;
 		const truthyValue = true;
 		const DISABLED_DAYS = {
 			"2019-11-20": truthyValue,
 			"2019-11-11": truthyValue,
-		}
-		return(
-								<Modal
-									animationType="slide"
-									key={data.id}
-									transparent={false}
-									visible={this.state.modalVisible}
-									onRequestClose={() => {
-										Alert.alert("Modal has been closed.");
-									}}
-								>
-									<SafeAreaView style={styles.container}>
-									<View style={styles.headerContainer}>
-										<View style={styles.header}>
-											<View style={{ flex: 2, flexDirection: "row" }}>
-												<View style={styles.settings}>
-													<View style={styles.location}>
-													<TouchableOpacity
-														onPress={() => {
-															this.setModalVisible(!this.state.modalVisible);
-														}}
-													>
-														<Ionicons color="white" name="md-arrow-back" size={24} />
-													</TouchableOpacity>
-
-													</View>
-												</View>
-											</View>
-
-											<View style={styles.settings}>
-											<Button
-												buttonStyle={{backgroundColor:"#4F7942", color:"white"}}
-												icon={{
-												    name: "check",
-												    size: 25,
-												    color: "white"
-												  }}
-													title='Demander une reservation' />
-											</View>
-										</View>
+		};
+		return (
+			<Modal
+				animationType="slide"
+				key={data.id}
+				transparent={false}
+				visible={this.state.modalVisible}
+				onRequestClose={() => {
+					Alert.alert("Modal has been closed.");
+				}}
+			>
+				<SafeAreaView style={styles.container}>
+					<View style={styles.headerContainer}>
+						<View style={styles.header}>
+							<View style={{ flex: 2, flexDirection: "row" }}>
+								<View style={styles.settings}>
+									<View style={styles.location}>
+										<TouchableOpacity
+											onPress={() => {
+												this.setModalVisible(!this.state.modalVisible);
+											}}
+										>
+											<Ionicons color="white" name="md-arrow-back" size={24} />
+										</TouchableOpacity>
 									</View>
+								</View>
+							</View>
 
-										<View style={styles.headerImage}>
-											<ImageBackground
-												style={styles.modalImage}
-												imageStyle={styles.modalImage}
-												source={{ uri: data.image }}
-											/>
-										</View>
-										<View style={styles.modalBorder}></View>
-										<View style={styles.modalTitle}>
-											<Text style={styles.modalTitle}>{data.titre}</Text>
-											<Text style={styles.modalDescription}>
-												{data.description}
-											</Text>
-										</View>
-										<View style={styles.modalText}>
-											<View style={styles.modalText}>
-												<Text style={styles.modalTextSpace}>
-													Ouverture : lundi au vendredi
-												</Text>
-											</View>
-											<View style={styles.modalText}>
-												<Text style={styles.modalTextSpace}>
-													Horraire : 8h-12h30 et 13h30-20h
-												</Text>
-											</View>
+							<View style={styles.settings}>
+								<Button
+									buttonStyle={{ backgroundColor: "#4F7942", color: "white" }}
+									icon={{
+										name: "check",
+										size: 25,
+										color: "white",
+									}}
+									title="Demander une reservation"
+								/>
+							</View>
+						</View>
+					</View>
 
-											<View style={styles.modalText}>
-												<Text style={styles.modalTextSpace}>
-													Qualifications requises : 3 ans d'expérience minimum
-												</Text>
-											</View>
+					<View style={styles.headerImage}>
+						<ImageBackground
+							style={styles.modalImage}
+							imageStyle={styles.modalImage}
+							source={{ uri: data.image }}
+						/>
+					</View>
+					<View style={styles.modalBorder}></View>
+					<View style={styles.modalTitle}>
+						<Text style={styles.modalTitle}>{data.titre}</Text>
+						<Text style={styles.modalDescription}>{data.description}</Text>
+					</View>
+					<View style={styles.modalText}>
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Ouverture : lundi au vendredi
+							</Text>
+						</View>
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Horraire : 8h-12h30 et 13h30-20h
+							</Text>
+						</View>
 
-											<View style={styles.modalText}>
-												<Text style={styles.modalTextSpace}>
-													Déplacement domicile : Non
-												</Text>
-											</View>
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Qualifications requises : 3 ans d'expérience minimum
+							</Text>
+						</View>
 
-											<View style={styles.modalText}>
-												<Text style={styles.modalTextSpace}>
-													Description de l'annonceur : Dr Maboul
-												</Text>
-											</View>
-										</View>
-										<View style={styles.modalBorder}></View>
-									</SafeAreaView>
-								</Modal>
-		)
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Déplacement domicile : Non
+							</Text>
+						</View>
+
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Description de l'annonceur : Dr Maboul
+							</Text>
+						</View>
+					</View>
+					<View style={styles.modalBorder}></View>
+				</SafeAreaView>
+			</Modal>
+		);
 	}
 
 	render() {
-
-
 		return (
 			<SafeAreaView style={styles.container}>
 				{this.renderHeader()}
@@ -413,7 +396,6 @@ class HomePage extends React.Component {
 					{this.renderModal()}
 				</ScrollView>
 			</SafeAreaView>
-
 		);
 	}
 }
@@ -487,7 +469,7 @@ const styles = StyleSheet.create({
 	},
 	headerContainer: {
 		top: 0,
-		height: height * 0.10,
+		height: height * 0.1,
 		width: width,
 	},
 	header: {

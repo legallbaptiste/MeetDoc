@@ -103,4 +103,57 @@ router.get("/:idAnnonce", function (req, res) {
 	});
 });
 
+router.get("/getByRemplacant/:idRemplacant", function (req, res) {
+	const idRemplacant = req.params.idRemplacant;
+
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,u.nom,u.prenom,u.email,u.numTel,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM AnnonceRemplacant ar, Annonce a, Recruteur re, Etablissement e,Adresse adr, User u  WHERE a.id = ar.idAnnonce AND re.id = a.idRecruteur AND u.id = re.id AND e.id = a.idEtablissement AND adr.id = e.idAdresse AND ar.idRemplacant = " +
+			idRemplacant;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) throw error;
+
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Annonce get OK",
+				annonce: results,
+			});
+		});
+	});
+});
+
+//SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,r.id,u.nom,u.prenom,u.email,u.numTel,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM AnnonceRemplacant ar, Annonce a, Remplacant r, Recruteur re, Etablissement e,Adresse adr, User u  WHERE a.id = ar.idAnnonce AND r.id = ar.idRemplacant AND re.id = a.idRecruteur AND u.id = re.id AND e.id = a.idEtablissement AND adr.id = e.idAdresse
+
+router.post("/postuler", function (req, res) {
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	const data = {
+		idAnnonce: req.body.idAnnonce,
+		idRemplacant: req.body.idUser,
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql = "INSERT INTO  AnnonceRemplacant SET ?";
+		connection.query(sql, data, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			data.id = results.insertId;
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Ajout AnnonceRemplacant POST OK",
+				data: data,
+				error: erreur,
+			});
+		});
+	});
+});
+
 module.exports = router;

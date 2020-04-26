@@ -145,20 +145,34 @@ router.get("/:email", function (req, res) {
 router.get("/info/:email", (req, res) => {
 	connection.getConnection(function (err, connection) {
 		if (err) throw err;
-
+		var user = {};
 		const email = req.params.email;
 
-		var sqlAdresse =
-			"SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro FROM Adresse a, User u WHERE u.idAdresse = a.id AND ?";
+		var sqlRemplacant =
+			"SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro,descriptionLibre,cv,specialite FROM Adresse a, Remplacant rem, User u WHERE u.idAdresse = a.id AND rem.id = u.id AND ?";
+		//SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro,descriptionLibre,cv,specialite FROM Adresse a, Remplacant rem, User u WHERE u.idAdresse = a.id AND rem.id = u.id AND email = "remplacant@eisti.eu"
 
-		connection.query(sqlAdresse, { email: email }, (err, result) => {
+		connection.query(sqlRemplacant, { email: email }, (err, result) => {
 			if (err) throw err;
-			const user = result[0];
-			delete user.motDePasse;
+			const userRemplacant = result;
 
-			res.status(200).json({
-				message: "Get user work !",
-				user: user,
+			var sqlRecruteur =
+				"SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro,descriptionLibre,specialite FROM Adresse a, Recruteur rec, User u WHERE u.idAdresse = a.id AND rec.id = u.id AND ?";
+
+			connection.query(sqlRecruteur, { email: email }, (err, result) => {
+				if (err) throw err;
+				const userRecruteur = result;
+
+				if (userRemplacant.length != 0) {
+					user.remplacant = userRemplacant[0];
+				} else {
+					user.recruteur = userRecruteur[0];
+				}
+
+				res.status(200).json({
+					message: "Get user work !",
+					user: user,
+				});
 			});
 		});
 	});
