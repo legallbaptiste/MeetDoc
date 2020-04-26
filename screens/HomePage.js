@@ -407,12 +407,6 @@ class HomePage extends React.Component {
 				{this.renderHeader()}
 				<ScrollView
 				style={styles.container}
-				refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
-          />
-        }
 				>
 					{this.renderMap()}
 					{this.renderList()}
