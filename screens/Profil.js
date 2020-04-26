@@ -13,6 +13,9 @@ import {
 	Switch,
 	TextInput
 } from "react-native";
+import Carousel from 'react-native-snap-carousel';
+import AwesomeAlert from 'react-native-awesome-alerts';
+
 import { connect } from "react-redux";
 import {
 	Ionicons,
@@ -59,6 +62,108 @@ class Profil extends Component {
 		);
 	}
 
+	constructor(props){
+        super(props);
+
+        this.state = {
+					showAlert : false,
+          activeIndex:0,
+          carouselItems: [
+          {
+              title:"Item 1",
+              text: "Text 1",
+							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
+          },
+          {
+              title:"Item 2",
+              text: "Text 2",
+							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
+					},
+          {
+              title:"Item 3",
+              text: "Text 3",
+							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
+          },
+          {
+              title:"Item 4",
+              text: "Text 4",
+							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
+          },
+          {
+              title:"Item 5",
+              text: "Text 5",
+							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
+          },
+        ]
+      }
+    }
+
+		showAlert = () => {
+		    this.setState({
+		      showAlert: true
+		    });
+		  };
+
+		  hideAlert = () => {
+		    this.setState({
+		      showAlert: false
+		    });
+		  };
+
+    _renderItem({item,index}){
+			console.log("caca");
+			console.log(this.state);
+			const {showAlert} = this.state;
+
+
+        return (
+          <View style={{
+              backgroundColor:'floralwhite',
+              borderRadius: 5,
+              height: 90,
+              padding: 5,
+              marginLeft: 5,
+              marginRight: 5, }}>
+							<Image
+								style={styles.avatarAnnonce}
+								source={ {uri: item.image} }
+							/>
+            <Text style={{fontSize: 10}}>{item.title}</Text>
+            <Text>{item.text}</Text>
+	<View style={styles.Contacter}>
+						<Text>I'm AwesomeAlert</Text>
+        			<TouchableOpacity onPress={() => {
+          			this.showAlert();
+        				}}>
+          		<View style={styles.button}>
+            	<Text style={styles.text}>Try me!</Text>
+          		</View>
+        		</TouchableOpacity>
+						<AwesomeAlert
+          show={showAlert}
+          showProgress={false}
+          title="AwesomeAlert"
+          message="I have a message for you!"
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          cancelText="No, cancel"
+          confirmText="Yes, delete it"
+          confirmButtonColor="#DD6B55"
+          onCancelPressed={() => {
+            this.hideAlert();
+          }}
+          onConfirmPressed={() => {
+            this.hideAlert();
+          }}
+        />
+				</View>
+          </View>
+
+        )
+    }
+
 	render() {
 		const { profils } = this.props;
 		return (
@@ -85,13 +190,22 @@ class Profil extends Component {
 					</View>
 					<View style={styles.Annonces}>
 						<Text style={styles.titre}> Mes annonces </Text>
+						<Carousel
+							layout={"default"}
+						  ref={ref => this.carousel = ref}
+						  data={this.state.carouselItems}
+						  sliderWidth={300}
+						  itemWidth={100}
+						  renderItem={this._renderItem}
+						  onSnapToItem = { index => this.setState({activeIndex:index}) } />
 					</View>
 					<View style={styles.Contacter}>
 						<Button
 							style={styles.bouton}
 							title="Contacter"
-							onPress={() => Alert.alert("Simple Button pressed")}
+							onPress={() => Alert.alert(profils.nom)}
 						/>
+
 					</View>
 				</View>
 			</SafeAreaView>
@@ -128,6 +242,15 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 		position: "absolute",
 		marginTop: 130
+	},
+	avatarAnnonce: {
+		width: 10,
+		height: 10,
+		borderColor: "white",
+		marginBottom: 1,
+		alignSelf: "center",
+		position: "absolute",
+		marginTop: 1
 	},
 	body: {
 		flex: 3
@@ -180,6 +303,7 @@ const styles = StyleSheet.create({
 		marginVertical: 14
 	},
 	Annonces: {
+		justifyContent : 'center',
 		flex: 5
 	},
 	titre: {
@@ -191,8 +315,13 @@ const styles = StyleSheet.create({
 	Contacter: {
 		flex: 1
 	},
-	bouton: {}
+	bouton: {},
+	text: {
+    color: '#fff',
+    fontSize: 15
+  }
 });
+
 
 const THEME: ThemeType = {
   monthTitleTextStyle: {

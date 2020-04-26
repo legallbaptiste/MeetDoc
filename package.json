@@ -46,6 +46,7 @@
     "react-native-network-info": "^5.2.1",
     "react-native-paper": "^3.8.0",
     "react-native-screens": "^2.7.0",
+    "react-native-snap-carousel": "^3.9.0",
     "react-native-web": "^0.11.7",
     "react-navigation": "^3.13.0",
     "react-redux": "^7.2.0",
