@@ -16,7 +16,7 @@ const connection = mysql.createPool({
 router.get("/all", (req, res) => {
 	connection.getConnection(function (err, connection) {
 		connection.query(
-			"SELECT Etablissement.id AS id, secretariatBool,typePatientele,specialite,visiteDomicile,activite,descriptionLibre,idAdresse,voie,numVoie,ville,codePostale,pays FROM Etablissement,Adresse WHERE Etablissement.idAdresse = Adresse.id",
+			"SELECT Etablissement.id AS id, nomEtablissement, secretariatBool,typePatientele,specialite,visiteDomicile,activite,descriptionLibre,idAdresse,voie,numVoie,ville,codePostale,pays FROM Etablissement,Adresse WHERE Etablissement.idAdresse = Adresse.id",
 			(error, result) => {
 				if (error) throw error;
 				connection.release();

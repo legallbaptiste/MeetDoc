@@ -13,9 +13,11 @@ const connection = mysql.createPool({
 	database: "projetGI2Dev",
 });
 
+
 //Permet de gerer l'inscription
 router.post("/", jsonParser, function (req, res) {
 	// Connecting to the database.
+	console.log(req.body);
 	const erreurMessage = {
 		erreur: "200",
 		message: "Aucune erreur",
