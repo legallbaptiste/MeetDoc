@@ -6,12 +6,17 @@ const router = express.Router();
 
 const mysql = require("mysql");
 
+const multer = require("multer");
+
 const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
 	password: "root",
 	database: "projetGI2Dev",
 });
+
+const upload = multer({ dest: "images" });
+const uploadDocument = multer({ dest: "document" });
 
 //Permet de gerer l'inscription
 router.post("/", jsonParser, function (req, res) {
