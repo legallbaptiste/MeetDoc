@@ -82,7 +82,7 @@ class HomePage extends React.Component {
 								<TouchableOpacity
 									onPress={() => this.props.navigation.navigate("Profil")}
 								>
-									<Ionicons name="md-people" size={40} color="white" />
+									<Ionicons name="md-people" size={30} color="white" />
 								</TouchableOpacity>
 							</View>
 						</View>

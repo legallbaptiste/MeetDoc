@@ -12,6 +12,7 @@ import Connexion from '../screens/Connexion';
 import SignInScreen from '../screens/SignInScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import Register from '../screens/Register';
+import ImagePickerExample from '../screens/ImagePickerExample';
 
 export default createStackNavigator(
   {
