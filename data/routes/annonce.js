@@ -156,4 +156,74 @@ router.post("/postuler", function (req, res) {
 	});
 });
 
+router.get("/actived", function (req, res) {
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var annonceSql =
+			"SELECT * FROM Etablissement e, Adresse ad, Annonce a WHERE a.idEtablissement = e.id AND e.idAdresse = ad.id AND a.actived = 1";
+		connection.query(annonceSql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) throw error;
+
+			// Mets l'addresse au format voulu pour l'API de openstreetmap
+			Promise.all(
+				results.map((elem) => {
+					var ad = elem.numVoie + "+" + elem.voie + "+" + elem.ville;
+
+					// Recupere les coordonnée pour afficher sur la map
+					return fetch(
+						"https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+							ad
+					)
+						.then((response) => response.json())
+						.then((json) => {
+							elem.latlng = {
+								lat: json[0].lat,
+								lng: json[0].lon,
+							};
+						});
+				})
+			).then(() => {
+				res.status(200).json({
+					message: "Annonce get OK",
+					annonce: results,
+				});
+			});
+		});
+	});
+});
+
+router.post("/changeEtat", function (req, res) {
+	var data = {
+		idAnnonce: req.body.idAnnonce,
+		etat: req.body.etat,
+	};
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"UPDATE Annonce SET actived = " +
+			data.etat +
+			" WHERE id = " +
+			data.idAnnonce;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Modification etat annonce POST OK",
+				data: results,
+				error: erreur,
+			});
+		});
+	});
+});
+
 module.exports = router;
