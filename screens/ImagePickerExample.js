@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import * as DocumentPicker from 'expo-document-picker';
+import devConst from "../constants/devConst";
 
 export default class ImagePickerExample extends React.Component {
   state = {
@@ -66,7 +67,7 @@ handleUploadPhoto = () => {
   };
   console.log("FETCH BODY");
     console.log(createFormData(this.state.image, { userId: "123" }));
-    fetch("http://172.20.10.7:3000/upload/image", {
+    fetch("http://"+devConst.ip+":3000/upload/image", {
       method: "POST",
       body: createFormData(this.state.image, { userId: "123" })
     })
@@ -130,6 +131,7 @@ handleUploadPhoto = () => {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
+        exif: false,
       });
       if (!result.cancelled) {
         this.setState({ image: result.uri });

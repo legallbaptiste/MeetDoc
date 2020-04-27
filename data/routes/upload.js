@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
   res.status(200).send('You can post to /image')
 })
 
-router.post('/image', uploadImage.array('photo', 3), (req, res) => {
+router.post('/image', uploadImage.single('photo'), (req, res) => {
   console.log('file', req.files)
   console.log('body', req.body)
   res.status(200).json({
@@ -49,7 +49,7 @@ router.post('/image', uploadImage.array('photo', 3), (req, res) => {
   })
 })
 
-router.post('/document', uploadDocument.array('file', 3), (req, res) => {
+router.post('/document', uploadDocument.single('file'), (req, res) => {
   console.log('file', req.files)
   console.log('body', req.body)
   res.status(200).json({

@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Card, Icon } from 'react-native-elements'
+import React, { Component } from "react";
+import { Card, Icon } from "react-native-elements";
 import {
   Image,
   ImageBackground,
@@ -9,136 +9,128 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  Modal,
+  SafeAreaView,
+  Dimensions,
+  TouchableOpacity,
   View,
-} from 'react-native'
-import PropTypes from 'prop-types'
+} from "react-native";
+import { Button } from "react-native-elements";
 
-import mainColor from '../constants/constant'
+import PropTypes from "prop-types";
+import Carousel from "react-native-snap-carousel";
+import mainColor from "../constants/constant";
+import { connect } from "react-redux";
+import { setRemplacantAnnonce } from "../reducers/reducer";
 
-import Email from '../components/Email'
-import Separator from '../components/Separator'
-import Tel from '../components/Tel'
+import {
+  Ionicons,
+  MaterialIcons,
+  FontAwesome,
+  Foundation,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
+const { width, height } = Dimensions.get("screen");
 
-const styles = StyleSheet.create({
-  cardContainer: {
-    backgroundColor: '#FFF',
-    borderWidth: 0,
-    flex: 1,
-    margin: 0,
-    padding: 0,
-  },
-  container: {
-    flex: 1,
-  },
-  emailContainer: {
-    backgroundColor: '#FFF',
-    flex: 1,
-    paddingTop: 30,
-  },
-  headerBackgroundImage: {
-    paddingBottom: 20,
-    paddingTop: 35,
-  },
-  headerContainer: {},
-  headerColumn: {
-    backgroundColor: 'transparent',
-    ...Platform.select({
-      ios: {
-        alignItems: 'center',
-        elevation: 1,
-        marginTop: -1,
-      },
-      android: {
-        alignItems: 'center',
-      },
-    }),
-  },
-  placeIcon: {
-    color: 'white',
-    fontSize: 26,
-  },
-  scroll: {
-    backgroundColor: '#FFF',
-  },
-  telContainer: {
-    backgroundColor: '#FFF',
-    flex: 1,
-    paddingTop: 30,
-  },
-  userAddressRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  userCityRow: {
-    backgroundColor: 'transparent',
-  },
-  userCityText: {
-    color: '#A5A5A5',
-    fontSize: 15,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  userImage: {
-    borderColor: mainColor,
-    borderRadius: 85,
-    borderWidth: 3,
-    height: 170,
-    marginBottom: 15,
-    width: 170,
-  },
-  userNameText: {
-    color: '#FFF',
-    fontSize: 22,
-    fontWeight: 'bold',
-    paddingBottom: 8,
-    textAlign: 'center',
-  },
-})
+import Email from "../components/Email";
+import Separator from "../components/Separator";
+import Tel from "../components/Tel";
 
-class Contact extends Component {
-	static navigationOptions = {
-		header: null,
-	};
+const SLIDER_WIDTH = Dimensions.get("window").width;
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
+const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 3) / 4);
+
+class Profil extends React.Component {
+  static navigationOptions = {
+    header: null,
+  };
 
   state = {
+    modalVisible: false,
+    activeIndex: 0,
+    selectedData: [],
+    remplacantAnnonce: [],
+  };
 
+  async componentDidMount() {
+    const { utilisateur } = this.props;
+    try {
+      const remplacantAnnonceFetch = await fetch(
+        "http://" +
+          devConst.ip +
+          ":3000/Annonce/getRemplacantAnnonce/" +
+          utilisateur.id
+      );
+      const remplacantAnnonce = await remplacantAnnonceFetch.json();
+      this.props.setRemplacantAnnonce(remplacantAnnonce);
+    } catch (err) {
+      console.log("Erreur avec le fetch ---->  ", err);
+    }
+  }
+  _renderItem({ item, index }) {
+    return (
+      <View style={styles.itemContainer}>
+        <Image style={styles.avatarAnnonce} source={{ uri: item.image }} />
+        <Text style={{ fontSize: 18, color: "white", marginTop: 5 }}>
+          {item.title}
+        </Text>
+        <Text style={{ fontSize: 13, color: "white", marginTop: 5 }}>
+          {item.text}
+        </Text>
+        <Button
+          buttonStyle={styles.bouton}
+          title="Voir le profil"
+          onPress={() => this._selectedItem(item)}
+        />
+      </View>
+    );
   }
 
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
+  }
+
+  _selectedItem = (data) => {
+    this.setState({ selectedData: data });
+    this.setModalVisible(true);
+  };
   onPressPlace = () => {
-    console.log('place')
-  }
+    console.log("place");
+  };
 
-  onPressTel = number => {
-    Linking.openURL(`tel://${number}`).catch(err => console.log('Error:', err))
-  }
+  onPressTel = (number) => {
+    Linking.openURL(`tel://${number}`).catch((err) =>
+      console.log("Error:", err)
+    );
+  };
 
   onPressSms = () => {
-    console.log('sms')
-  }
+    console.log("sms");
+  };
 
-  onPressEmail = email => {
-    Linking.openURL(`mailto://${email}?subject=subject&body=body`).catch(err =>
-      console.log('Error:', err)
-    )
-  }
+  onPressEmail = (email) => {
+    Linking.openURL(
+      `mailto://${email}?subject=subject&body=body`
+    ).catch((err) => console.log("Error:", err));
+  };
 
   renderHeader = () => {
-
-
     return (
       <View style={styles.headerContainer}>
         <ImageBackground
           style={styles.headerBackgroundImage}
           blurRadius={10}
           source={{
-            uri: "https://orig00.deviantart.net/dcd7/f/2014/027/2/0/mountain_background_by_pukahuna-d73zlo5.png",
+            uri:
+              "https://orig00.deviantart.net/dcd7/f/2014/027/2/0/mountain_background_by_pukahuna-d73zlo5.png",
           }}
         >
           <View style={styles.headerColumn}>
             <Image
               style={styles.userImage}
               source={{
-                uri: "https://scontent.fcdg2-1.fna.fbcdn.net/v/t1.0-9/206299_140273562710584_2239187_n.jpg?_nc_cat=111&_nc_sid=cdbe9c&_nc_oc=AQkOH2ujJiCQh0t81p9NI2RUVwwjaVQZ-Xn4JWp6TikQYD_JH9RjOF9gxwdqiwAthgU&_nc_ht=scontent.fcdg2-1.fna&oh=bb7d750cd61a3fa58a785f3be9ddc149&oe=5EC9A6D5",
+                uri:
+                  "https://scontent.fcdg2-1.fna.fbcdn.net/v/t1.0-9/206299_140273562710584_2239187_n.jpg?_nc_cat=111&_nc_sid=cdbe9c&_nc_oc=AQkOH2ujJiCQh0t81p9NI2RUVwwjaVQZ-Xn4JWp6TikQYD_JH9RjOF9gxwdqiwAthgU&_nc_ht=scontent.fcdg2-1.fna&oh=bb7d750cd61a3fa58a785f3be9ddc149&oe=5EC9A6D5",
               }}
             />
             <Text style={styles.userNameText}>Nom</Text>
@@ -152,42 +144,135 @@ class Contact extends Component {
                 />
               </View>
               <View style={styles.userCityRow}>
-                <Text style={styles.userCityText}>
-                  Ville, Pays
-                </Text>
+                <Text style={styles.userCityText}>Ville, Pays</Text>
               </View>
             </View>
           </View>
         </ImageBackground>
       </View>
-    )
+    );
+  };
+  renderModal() {
+    const { utilisateur } = this.props;
+    const data = this.state.selectedData;
+    return (
+      <Modal
+        animationType="slide"
+        key={data.id}
+        transparent={false}
+        visible={this.state.modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+        }}
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.headerContainer2}>
+            <View style={styles.header2}>
+              <View style={{ flex: 2, flexDirection: "row" }}>
+                <View style={styles.settings}>
+                  <View style={styles.location}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setModalVisible(!this.state.modalVisible);
+                      }}
+                    >
+                      <Ionicons color="black" name="md-arrow-back" size={24} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+              {utilisateur.type === "remplacant" ? (
+                <View style={styles.settings}>
+                  <Button
+                    onPress={this.ajoutReservation.bind(this)}
+                    buttonStyle={{ backgroundColor: "#4F7942" }}
+                    icon={{
+                      name: "check",
+                      size: 25,
+                      color: "white",
+                    }}
+                    title="Demander une reservation"
+                  />
+                </View>
+              ) : (
+                <View></View>
+              )}
+            </View>
+          </View>
+
+          <View style={styles.headerImage2}>
+            <ImageBackground
+              style={styles.modalImage}
+              imageStyle={styles.modalImage}
+              source={{ uri: data.image }}
+            />
+          </View>
+          <View style={styles.modalBorder}></View>
+          <View style={styles.modalTitle}>
+            <Text style={styles.modalTitle}>{data.titre}</Text>
+            <Text style={styles.modalDescription}>{data.description}</Text>
+          </View>
+          <View style={styles.modalText}>
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Ouverture : lundi au vendredi
+              </Text>
+            </View>
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Horraire : 8h-12h30 et 13h30-20h
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Qualifications requises : 3 ans d'expérience minimum
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Déplacement domicile : Non
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Description de l'annonceur : Dr Maboul
+              </Text>
+            </View>
+          </View>
+          <View style={styles.modalBorder}></View>
+        </SafeAreaView>
+      </Modal>
+    );
   }
 
   renderTel = () => {
-
-        return (
-          <Tel
-            key={`tel-${"1"}`}
-            index={1}
-            name={"Mobile"}
-            number={"0629977341"}
-            onPressSms={this.onPressSms}
-            onPressTel={this.onPressTel}
-          />
-        )
-  }
+    return (
+      <Tel
+        key={`tel-${"1"}`}
+        index={1}
+        name={"Mobile"}
+        number={"0629977341"}
+        onPressSms={this.onPressSms}
+        onPressTel={this.onPressTel}
+      />
+    );
+  };
 
   renderEmail = () => {
-        return (
-          <Email
-            key={`email-${"1"}`}
-            index={1}
-            name={"Email personnel"}
-            email={"legallbapt@eisti.eu"}
-            onPressEmail={this.onPressEmail}
-          />
-        )
-  }
+    return (
+      <Email
+        key={`email-${"1"}`}
+        index={1}
+        name={"Email personnel"}
+        email={"legallbapt@eisti.eu"}
+        onPressEmail={this.onPressEmail}
+      />
+    );
+  };
 
   render() {
     return (
@@ -195,18 +280,205 @@ class Contact extends Component {
         <View style={styles.container}>
           <Card containerStyle={styles.cardContainer}>
             {this.renderHeader()}
-						<View style={{marginTop: 50}}>
-            {this.renderTel()}
-            {Separator()}
-            {this.renderEmail()}
-						{Separator()}
-					</View>
-
+            <View style={{ marginTop: 50 }}>
+              {this.renderTel()}
+              {Separator()}
+              {this.renderEmail()}
+              {Separator()}
+            </View>
           </Card>
+          <View style={{ marginTop: 15 }}>
+            <Carousel
+              layout={"stack"}
+              layoutCardOffset={`18`}
+              ref={(ref) => (this.carousel = ref)}
+              data={this.state.remplacantAnnonce}
+              sliderWidth={SLIDER_WIDTH}
+              itemWidth={ITEM_WIDTH}
+              renderItem={this._renderItem.bind(this)}
+              onSnapToItem={(index) => this.setState({ activeIndex: index })}
+            />
+          </View>
+          {this.renderModal()}
         </View>
       </ScrollView>
-    )
+    );
   }
 }
 
-export default Contact
+const moduleState = (state) => ({
+  medcabs: state.medcabs.spots,
+  filters: state.medcabs.filters,
+  mylocation: state.medcabs.mylocation,
+  utilisateur: state.medcabs.user,
+});
+
+const moduleActions = {
+  setRemplacantAnnonce,
+};
+
+export default connect(moduleState, moduleActions)(Profil);
+
+const styles = StyleSheet.create({
+  cardContainer: {
+    backgroundColor: "#FFF",
+    borderWidth: 0,
+    flex: 1,
+    margin: 0,
+    padding: 0,
+  },
+  itemContainer: {
+    width: ITEM_WIDTH,
+    height: ITEM_HEIGHT,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#465881",
+    borderWidth: 2,
+  },
+  text: {
+    color: "#fff",
+    fontSize: 15,
+  },
+  modalTextSpace: {
+    marginTop: 3,
+    marginBottom: 3,
+  },
+  container: {
+    flex: 1,
+  },
+  emailContainer: {
+    backgroundColor: "#FFF",
+    flex: 1,
+    paddingTop: 30,
+  },
+  bouton: {
+    marginTop: 10,
+    backgroundColor: "#4F7942",
+  },
+  avatarAnnonce: {
+    width: 35,
+    height: 35,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: "white",
+    marginBottom: 10,
+    alignSelf: "center",
+    marginTop: 1,
+  },
+  headerBackgroundImage: {
+    paddingBottom: 20,
+    paddingTop: 35,
+  },
+  headerContainer2: {
+    top: 0,
+    height: height * 0.1,
+    width: width,
+  },
+  header2: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    height: height * 0.15,
+    paddingHorizontal: 14,
+  },
+  headerImage2: {
+    top: 0,
+    height: height * 0.25,
+    width: width,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerColumn: {
+    backgroundColor: "transparent",
+    ...Platform.select({
+      ios: {
+        alignItems: "center",
+        elevation: 1,
+        marginTop: -1,
+      },
+      android: {
+        alignItems: "center",
+      },
+    }),
+  },
+  placeIcon: {
+    color: "white",
+    fontSize: 26,
+  },
+  scroll: {
+    backgroundColor: "#FFF",
+  },
+  telContainer: {
+    backgroundColor: "#FFF",
+    flex: 1,
+    paddingTop: 30,
+  },
+  userAddressRow: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  userCityRow: {
+    backgroundColor: "transparent",
+  },
+  userCityText: {
+    color: "#A5A5A5",
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  userImage: {
+    borderColor: mainColor,
+    borderRadius: 85,
+    borderWidth: 3,
+    height: 170,
+    marginBottom: 15,
+    width: 170,
+  },
+  userNameText: {
+    color: "#FFF",
+    fontSize: 22,
+    fontWeight: "bold",
+    paddingBottom: 8,
+    textAlign: "center",
+  },
+  modalImage: {
+    width: width,
+    height: width * 0.5,
+  },
+  modalBorder: {
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 20,
+    marginRight: 20,
+    borderBottomColor: "#6d95da",
+    borderBottomWidth: 2,
+  },
+  modalTitle: {
+    marginTop: 5,
+    marginBottom: 5,
+    fontSize: 20,
+    fontWeight: "bold",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalDescription: {
+    marginTop: 5,
+    marginBottom: 5,
+    fontSize: 16,
+    alignItems: "center",
+    fontStyle: "italic",
+  },
+  modalText: {
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 10,
+    fontSize: 14,
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  modalTextSpace: {
+    marginTop: 3,
+    marginBottom: 3,
+  },
+});
