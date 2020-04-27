@@ -35,8 +35,6 @@ class Formulaire extends React.Component {
       );
       const etablissement = await etablissementFetch.json();
       this.props.setEtablissement(etablissement.etablissement);
-      console.log("SALUT JE SUIS UN Etablissement");
-      console.log(etablissement.etablissement);
     } catch (err) {
       console.log("Erreur avec le fetch ---->  ", err);
     }
@@ -81,11 +79,13 @@ class Formulaire extends React.Component {
     console.log(utilisateur);
     return (
       <View style={styles.header}>
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity onPress={() => this.props.navigation.navigate('HomePage')}>
-            <Ionicons name="md-arrow-back" size={24} />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.location}>
+        <TouchableOpacity
+          onPress={() => { this.props.navigation.navigate('HomePage'); }}
+        >
+          <Ionicons color="white" name="md-arrow-back" size={24} />
+        </TouchableOpacity>
+      </View>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.title}>Ajout d'une annonce</Text>
         </View>
@@ -163,7 +163,7 @@ class Formulaire extends React.Component {
       <View style={{flexDirection:'row', justifyContent:'center'}}>
       <TouchableOpacity
       style={{
-          backgroundColor:'blue', borderRadius:10,
+          backgroundColor:'#003f5c', borderRadius:10,
           flex:1, width:100, height:50, margin:20,
           flexDirection:'row', justifyContent:'center',
           alignItems:'center'
@@ -248,6 +248,14 @@ const styles = StyleSheet.create({
   activeText: {
     color: '#FFF'
   },
+  location: {
+		height: 40,
+		width: 40,
+		borderRadius: 50,
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "#465881",
+	},
   first: {
     borderTopLeftRadius: 13,
     borderBottomLeftRadius: 13,

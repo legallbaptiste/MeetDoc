@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, Alert, Button, ScrollView, Dimensions,View, ActivityIndicator,StyleSheet, TextInput } from 'react-native';
+import { Text, Alert, Button, ScrollView, Dimensions,View, ActivityIndicator,StyleSheet, Platform, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import devConst from "../constants/devConst";
 import { setUser,setEtablissement } from "../reducers/reducer";
@@ -7,6 +7,10 @@ import AwesomeAlert from 'react-native-awesome-alerts';
 import CustomButton from '../components/CustomButton'
 import {CheckBox} from "native-base";
 import Select2 from "react-native-select-two";
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import * as DocumentPicker from 'expo-document-picker';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -17,6 +21,8 @@ class Inscription extends React.Component {
   };
 
   state = {
+    image: null,
+    document: null,
     ActivityIndicator_Loading: false,
     nom:"",
     prenom:"",
@@ -36,6 +42,104 @@ class Inscription extends React.Component {
     showAlert: false,
     data:[],
   };
+
+
+  handleUploadPhoto = () => {
+    const createFormData = (photo, body) => {
+    const data = new FormData();
+
+      data.append("photo", {
+        name: "Photo1",
+        type: "image",
+        uri:
+          Platform.OS === "android" ? photo : photo.replace("file://", "")
+      });
+
+      Object.keys(body).forEach(key => {
+        data.append(key, body[key]);
+      });
+
+      return data;
+    };
+    console.log("FETCH BODY");
+      console.log(createFormData(this.state.image, { userId: "123" }));
+      fetch("http://172.20.10.7:3000/upload/image", {
+        method: "POST",
+        body: createFormData(this.state.image, { userId: "123" })
+      })
+        .then(response => response.json())
+        .then(response => {
+          console.log("upload succes", response);
+          this.setState({cartePro: response.chemin})
+          alert("Upload success!");
+        })
+        .catch(error => {
+          console.log("upload error", error);
+          alert("Upload failed!");
+        });
+    };
+
+
+    handleUploadDocument = () => {
+      const createFormDataDocument = (doc, body) => {
+        const data = new FormData();
+
+        data.append("file", {
+          name: "Document1",
+          type: "file",
+          uri:
+            Platform.os === "android" ? doc : doc.replace("file://", "")
+        });
+
+        Object.keys(body).forEach(key => {
+          data.append(key, body[key]);
+        });
+
+        return data;
+      }
+          fetch("http://172.20.10.7:3000/upload/document", {
+            method: "POST",
+            body: createFormDataDocument(this.state.document, { userId: "123" })
+          })
+            .then(response => response.json())
+            .then(response => {
+              console.log("upload succes", response);
+              this.setState({cv: response.chemin})
+              alert("Upload success!");
+            })
+            .catch(error => {
+              console.log("upload error", error);
+              alert("Upload failed!");
+            });
+      };
+
+    getPermissionAsync = async () => {
+      if (Constants.platform.ios) {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    };
+
+    _pickImage = async () => {
+      try {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+        if (!result.cancelled) {
+          this.setState({ image: result.uri });
+          this.handleUploadPhoto();
+        }
+
+        console.log(result);
+      } catch (E) {
+        console.log(E);
+      }
+    };
 
 
   go = () => {
@@ -87,7 +191,7 @@ inscription(){
         email : this.state.username,
         motDePasse : this.state.password,
         numTel : this.state.numTel,
-        cartePro : "lienVersCartePro"
+        cartePro : this.state.cartePro
       },
       adresse : {
         voie: this.state.voie,
@@ -133,7 +237,7 @@ inscription(){
         email : this.state.username,
         motDePasse : this.state.password,
         numTel : this.state.numTel,
-        cartePro : "lienVersCartePro"
+        cartePro : this.state.cartePro
       },
       adresse : {
         voie: this.state.voie,
@@ -245,14 +349,7 @@ inscription(){
           />
         </View>
         <View style={styles.inputView}>
-          <TextInput
-            value={this.state.cartePro}
-            onChangeText={(cartePro) => this.setState({ cartePro })}
-            label='Carte pro'
-            placeholder="Carte du médecin"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
+          <Button title="Insérer votre carte de médecin" onPress={this._pickImage} />
         </View>
         <View style={styles.separatorContainer} animation={'zoomIn'} delay={700} duration={400}>
           <View style={styles.separatorLine} />
@@ -348,14 +445,10 @@ inscription(){
         </View>
         { (this.state.selectedStatus) ?
           (<View style={styles.inputView}>
-            <TextInput
-              value={this.state.cv}
-              onChangeText={(cv) => this.setState({ cv })}
-              label='CV'
-              placeholder="CV"
-              placeholderTextColor="#003f5c"
-              style={styles.inputText}
-            />
+            <Button
+                title="Selectionner votre CV"
+                onPress={this._pickDocument}
+              />
           </View>) : (
             <View style={styles.inputView}>
             <Select2

@@ -1,232 +1,212 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
+import { Card, Icon } from 'react-native-elements'
 import {
-	ScrollView,
-	StyleSheet,
-	Linking,
-	Image,
-	Button,
-	Alert,
-	Text,
-	TouchableOpacity,
-	View,
-	Dimensions,
-	SafeAreaView,
-	Switch,
-	TextInput
-} from "react-native";
-import { connect } from "react-redux";
-import {
-	Ionicons,
-	MaterialIcons,
-	Foundation,
-	FontAwesome
-} from "@expo/vector-icons";
-import axios from "axios";
-import { setProfil } from "../reducers/reducer";
+  Image,
+  ImageBackground,
+  Linking,
+  ListView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
+import PropTypes from 'prop-types'
 
-import devConst from "../constants/devConst";
+import mainColor from '../constants/constant'
 
-const { width, height } = Dimensions.get("screen");
-
-class Profil extends Component {
-	static navigationOptions = {
-		header: null
-	};
-
-
-
-	renderHeader() {
-		return (
-			<View style={styles.header}>
-				<View style={{ flex: 1 }}>
-					<TouchableOpacity
-						onPress={() => this.props.navigation.navigate("HomePage")}
-					>
-						<Ionicons name="md-arrow-back" size={24} />
-					</TouchableOpacity>
-				</View>
-				<View style={{ flex: 1, alignItems: "center" }}>
-					<Text style={styles.title}>Profil</Text>
-				</View>
-			</View>
-		);
-	}
-
-	render() {
-		const {utilisateur} = this.props;
-		console.log(utilisateur);
-		return (
-			<SafeAreaView style={styles.container}>
-				{this.renderHeader()}
-				<View style={styles.header2}></View>
-				<Image
-					style={styles.avatar}
-					source={{ uri: "https://bootdey.com/img/Content/avatar/avatar7.png" }}
-				/>
-
-				<View style={styles.body}>
-					<View style={styles.bodyContent}>
-						<Text style={styles.name}>{utilisateur.nom} {utilisateur.Prenom}</Text>
-						<Text style={styles.info}>Type : Remplacant</Text>
-						<Text style={styles.info}>Ville : {utilisateur.ville}</Text>
-						<Text style={styles.info}>Spécialité : Chirugien dentaire</Text>
-						<Text style={styles.description}>{utilisateur.description}</Text>
-					</View>
-					<View style={styles.Contact}>
-						<Text style={styles.contact}> Contacts </Text>
-						<Text style={styles.telephone}>Téléphone : {utilisateur.numTel}</Text>
-						<Text style={styles.mail}>Email : {utilisateur.email}</Text>
-					</View>
-					<View style={styles.Annonces}>
-						<Text style={styles.titre}> Mes annonces </Text>
-					</View>
-					<View style={styles.Contacter}>
-
-					</View>
-				</View>
-			</SafeAreaView>
-		);
-	}
-}
-
-const moduleState = (state) => ({
-	utilisateur: state.medcabs.user,
-});
-
-const moduleActions = {
-};
-
-export default connect(moduleState, moduleActions)(Profil);
+import Email from '../components/Email'
+import Separator from '../components/Separator'
+import Tel from '../components/Tel'
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1
-	},
-	header2: {
-		backgroundColor: "#3C824C",
-		//  height:200,
-		flex: 1
-	},
-	avatar: {
-		width: 130,
-		height: 130,
-		borderRadius: 63,
-		borderWidth: 4,
-		borderColor: "white",
-		marginBottom: 10,
-		alignSelf: "center",
-		position: "absolute",
-		marginTop: 130
-	},
-	body: {
-		flex: 3
-	},
-	bodyContent: {
-		flex: 4,
-		alignItems: "center",
-		padding: 30
-	},
-	name: {
-		fontSize: 22,
-		fontWeight: "600",
-		marginTop: 49,
-		flex: 1
-	},
-	info: {
-		fontSize: 16,
-		color: "#122e61",
-		flex: 1
-	},
-	header: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		height: height * 0.05,
-		width: width,
-		paddingHorizontal: 14
-	},
-	description: {
-		fontSize: 16,
-		color: "#696969",
-		textAlign: "center",
-		flex: 2
-	},
-
-	Contact: {
-		flex: 1,
-		alignItems: "center"
-	},
-	contact: {
-		fontSize: 22,
-		color: "#4287F5",
-		fontWeight: "600"
-	},
-	telephone: {},
-	mail: {},
-
-	title: {
-		fontSize: 18,
-		marginVertical: 14
-	},
-	Annonces: {
-		flex: 5
-	},
-	titre: {
-		fontSize: 20,
-		color: "#4287F5",
-		padding: 30
-	},
-
-	Contacter: {
-		flex: 1
-	},
-	bouton: {}
-});
-
-const THEME: ThemeType = {
-  monthTitleTextStyle: {
-    color: '#6d95da',
-    fontWeight: '300',
-    fontSize: 16,
+  cardContainer: {
+    backgroundColor: '#FFF',
+    borderWidth: 0,
+    flex: 1,
+    margin: 0,
+    padding: 0,
   },
-  emptyMonthContainerStyle: {},
-  emptyMonthTextStyle: {
-    fontWeight: '200',
+  container: {
+    flex: 1,
   },
-  weekColumnsContainerStyle: {},
-  weekColumnStyle: {
-    paddingVertical: 10,
+  emailContainer: {
+    backgroundColor: '#FFF',
+    flex: 1,
+    paddingTop: 30,
   },
-  weekColumnTextStyle: {
-    color: '#b6c1cd',
-    fontSize: 13,
+  headerBackgroundImage: {
+    paddingBottom: 20,
+    paddingTop: 35,
   },
-  nonTouchableDayContainerStyle: {
-    backgroundColor: "rgb(24, 74, 111)",
+  headerContainer: {},
+  headerColumn: {
+    backgroundColor: 'transparent',
+    ...Platform.select({
+      ios: {
+        alignItems: 'center',
+        elevation: 1,
+        marginTop: -1,
+      },
+      android: {
+        alignItems: 'center',
+      },
+    }),
   },
-  nonTouchableDayTextStyle: {
-    color:"white",
-
-  },
-  startDateContainerStyle: {},
-  endDateContainerStyle: {},
-  dayContainerStyle: {},
-  dayTextStyle: {
-    color: '#2d4150',
-    fontWeight: '200',
-    fontSize: 15,
-  },
-  dayOutOfRangeContainerStyle: {},
-  dayOutOfRangeTextStyle: {},
-  todayContainerStyle: {},
-  todayTextStyle: {
-    color: '#6d95da',
-  },
-  activeDayContainerStyle: {
-    backgroundColor: '#6d95da',
-  },
-  activeDayTextStyle: {
+  placeIcon: {
     color: 'white',
+    fontSize: 26,
   },
-  nonTouchableLastMonthDayTextStyle: {},
-};
+  scroll: {
+    backgroundColor: '#FFF',
+  },
+  telContainer: {
+    backgroundColor: '#FFF',
+    flex: 1,
+    paddingTop: 30,
+  },
+  userAddressRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  userCityRow: {
+    backgroundColor: 'transparent',
+  },
+  userCityText: {
+    color: '#A5A5A5',
+    fontSize: 15,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  userImage: {
+    borderColor: mainColor,
+    borderRadius: 85,
+    borderWidth: 3,
+    height: 170,
+    marginBottom: 15,
+    width: 170,
+  },
+  userNameText: {
+    color: '#FFF',
+    fontSize: 22,
+    fontWeight: 'bold',
+    paddingBottom: 8,
+    textAlign: 'center',
+  },
+})
+
+class Contact extends Component {
+	static navigationOptions = {
+		header: null,
+	};
+
+  state = {
+
+  }
+
+  onPressPlace = () => {
+    console.log('place')
+  }
+
+  onPressTel = number => {
+    Linking.openURL(`tel://${number}`).catch(err => console.log('Error:', err))
+  }
+
+  onPressSms = () => {
+    console.log('sms')
+  }
+
+  onPressEmail = email => {
+    Linking.openURL(`mailto://${email}?subject=subject&body=body`).catch(err =>
+      console.log('Error:', err)
+    )
+  }
+
+  renderHeader = () => {
+
+
+    return (
+      <View style={styles.headerContainer}>
+        <ImageBackground
+          style={styles.headerBackgroundImage}
+          blurRadius={10}
+          source={{
+            uri: "https://orig00.deviantart.net/dcd7/f/2014/027/2/0/mountain_background_by_pukahuna-d73zlo5.png",
+          }}
+        >
+          <View style={styles.headerColumn}>
+            <Image
+              style={styles.userImage}
+              source={{
+                uri: "https://scontent.fcdg2-1.fna.fbcdn.net/v/t1.0-9/206299_140273562710584_2239187_n.jpg?_nc_cat=111&_nc_sid=cdbe9c&_nc_oc=AQkOH2ujJiCQh0t81p9NI2RUVwwjaVQZ-Xn4JWp6TikQYD_JH9RjOF9gxwdqiwAthgU&_nc_ht=scontent.fcdg2-1.fna&oh=bb7d750cd61a3fa58a785f3be9ddc149&oe=5EC9A6D5",
+              }}
+            />
+            <Text style={styles.userNameText}>Nom</Text>
+            <View style={styles.userAddressRow}>
+              <View>
+                <Icon
+                  name="place"
+                  underlayColor="transparent"
+                  iconStyle={styles.placeIcon}
+                  onPress={this.onPressPlace}
+                />
+              </View>
+              <View style={styles.userCityRow}>
+                <Text style={styles.userCityText}>
+                  Ville, Pays
+                </Text>
+              </View>
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
+    )
+  }
+
+  renderTel = () => {
+
+        return (
+          <Tel
+            key={`tel-${"1"}`}
+            index={1}
+            name={"Mobile"}
+            number={"0629977341"}
+            onPressSms={this.onPressSms}
+            onPressTel={this.onPressTel}
+          />
+        )
+  }
+
+  renderEmail = () => {
+        return (
+          <Email
+            key={`email-${"1"}`}
+            index={1}
+            name={"Email personnel"}
+            email={"legallbapt@eisti.eu"}
+            onPressEmail={this.onPressEmail}
+          />
+        )
+  }
+
+  render() {
+    return (
+      <ScrollView style={styles.scroll}>
+        <View style={styles.container}>
+          <Card containerStyle={styles.cardContainer}>
+            {this.renderHeader()}
+						<View style={{marginTop: 50}}>
+            {this.renderTel()}
+            {Separator()}
+            {this.renderEmail()}
+						{Separator()}
+					</View>
+
+          </Card>
+        </View>
+      </ScrollView>
+    )
+  }
+}
+
+export default Contact
