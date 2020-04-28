@@ -6,6 +6,8 @@ const router = express.Router();
 
 const mysql = require("mysql");
 
+const multer = require("multer");
+
 const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
@@ -13,6 +15,8 @@ const connection = mysql.createPool({
 	database: "projetGI2Dev",
 });
 
+const upload = multer({ dest: "images" });
+const uploadDocument = multer({ dest: "document" });
 
 //Permet de gerer l'inscription
 router.post("/", jsonParser, function (req, res) {
@@ -150,7 +154,6 @@ router.get("/info/:email", (req, res) => {
 
 		var sqlRemplacant =
 			"SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro,descriptionLibre,cv,specialite FROM Adresse a, Remplacant rem, User u WHERE u.idAdresse = a.id AND rem.id = u.id AND ?";
-		//SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro,descriptionLibre,cv,specialite FROM Adresse a, Remplacant rem, User u WHERE u.idAdresse = a.id AND rem.id = u.id AND email = "remplacant@eisti.eu"
 
 		connection.query(sqlRemplacant, { email: email }, (err, result) => {
 			if (err) throw err;

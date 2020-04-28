@@ -29,7 +29,12 @@ import {
   SimpleLineIcons,
 } from "@expo/vector-icons";
 
-import { setLocation, setFilters, setMedCabs } from "../reducers/reducer";
+import {
+  setLocation,
+  setRemplacantAnnonce,
+  setFilters,
+  setMedCabs,
+} from "../reducers/reducer";
 
 // Import dev
 import devConst from "../constants/devConst";
@@ -61,6 +66,19 @@ class HomePage extends React.Component {
       );
       const annonce = await annonceFetch.json();
       this.props.setMedCabs(annonce);
+    } catch (err) {
+      console.log("Erreur avec le fetch ---->  ", err);
+    }
+    const { utilisateur } = this.props;
+    try {
+      const remplacantAnnonceFetch = await fetch(
+        "http://" +
+          devConst.ip +
+          ":3000/annonce/getRemplacantAnnonce/" +
+          utilisateur.id
+      );
+      const remplacantAnnonce = await remplacantAnnonceFetch.json();
+      this.props.setRemplacantAnnonce(remplacantAnnonce.user);
     } catch (err) {
       console.log("Erreur avec le fetch ---->  ", err);
     }
@@ -228,8 +246,6 @@ class HomePage extends React.Component {
 
     const mapSpots = medcabs;
     return mapSpots.map((medcab) => {
-      console.log("TOTOTOTOTOTOTO");
-      console.log(medcab);
       return (
         <View key={`medcab-${medcab.id}`} style={styles.medcab}>
           <ImageBackground
@@ -436,6 +452,7 @@ const moduleActions = {
   setLocation,
   setMedCabs,
   setFilters,
+  setRemplacantAnnonce,
 };
 
 export default connect(moduleState, moduleActions)(HomePage);

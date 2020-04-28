@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import { Text, Alert, Button, ScrollView, Dimensions,View, ActivityIndicator,StyleSheet, Platform, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import devConst from "../constants/devConst";
-import { setUser,setEtablissement } from "../reducers/reducer";
-import AwesomeAlert from 'react-native-awesome-alerts';
-import CustomButton from '../components/CustomButton'
-import {CheckBox} from "native-base";
+import { setUser, setEtablissement } from "../reducers/reducer";
+import AwesomeAlert from "react-native-awesome-alerts";
+import CustomButton from "../components/CustomButton";
+import { CheckBox } from "native-base";
 import Select2 from "react-native-select-two";
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import * as DocumentPicker from 'expo-document-picker';
 
-const { width, height } = Dimensions.get('screen');
+const { width, height } = Dimensions.get("screen");
 
 class Inscription extends React.Component {
 
@@ -517,100 +517,103 @@ inscription(){
 }
 
 const styles = StyleSheet.create({
-  container: {
-  backgroundColor: '#003f5c',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flex: 1,
-  },
-  containerSelect: {
-        width: '100%', minHeight: 45, borderRadius: 2, paddingHorizontal: 16,
-        flexDirection: 'row', alignItems: 'center', borderWidth: 1,
-        borderColor: '#cacaca', paddingVertical: 4
-  },
-  logo:{
-    marginTop: "9%",
-    fontWeight:"bold",
-    fontSize:50,
-    color:"#fb5b5a",
-    marginBottom:40
-  },
-  inputView:{
-    width:"80%",
-    backgroundColor:"#fff",
-    borderRadius:25,
-    height:50,
-    marginBottom:20,
-    justifyContent:"center",
-    padding:20
-  },
-  inputText:{
-    height:50,
-    color:"#465881"
-  },
+	container: {
+		backgroundColor: "#003f5c",
+		alignItems: "center",
+		justifyContent: "center",
+		flex: 1,
+	},
+	containerSelect: {
+		width: "100%",
+		minHeight: 45,
+		borderRadius: 2,
+		paddingHorizontal: 16,
+		flexDirection: "row",
+		alignItems: "center",
+		borderWidth: 1,
+		borderColor: "#cacaca",
+		paddingVertical: 4,
+	},
+	logo: {
+		marginTop: "9%",
+		fontWeight: "bold",
+		fontSize: 50,
+		color: "#fb5b5a",
+		marginBottom: 40,
+	},
+	inputView: {
+		width: "80%",
+		backgroundColor: "#fff",
+		borderRadius: 25,
+		height: 50,
+		marginBottom: 20,
+		justifyContent: "center",
+		padding: 20,
+	},
+	inputText: {
+		height: 50,
+		color: "#465881",
+	},
 
-    ActivityIndicatorStyle:{
-
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-      alignItems: 'center',
-      justifyContent: 'center'
-
-  },
-  forgot:{
-    color:"white",
-    fontSize:11
-  },
-  loginText:{
-    color:"white"
-  },
-  signInButton: {
-    marginHorizontal: width * 0.1,
-    backgroundColor: '#1976D2'
-  },
-  signInButtonText: {
-    color: 'white'
-  },
-  separatorContainer: {
-    marginHorizontal: width * 0.1,
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginVertical: 20
-  },
-  separatorLine: {
-    flex: 1,
-    borderWidth: StyleSheet.hairlineWidth,
-    height: StyleSheet.hairlineWidth,
-    borderColor: '#9B9FA4'
-  },
-  separatorOr: {
-    color: '#9B9FA4',
-    marginHorizontal: 8
-  },
-  item:{
-   width:"80%",
-   backgroundColor:"#fff",
-   borderRadius:20,
-   padding:10,
-   marginBottom:10,
-   flexDirection:"row",
- },
- checkBoxTxt:{
-   marginLeft:20
- },
+	ActivityIndicatorStyle: {
+		position: "absolute",
+		left: 0,
+		right: 0,
+		top: 0,
+		bottom: 0,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	forgot: {
+		color: "white",
+		fontSize: 11,
+	},
+	loginText: {
+		color: "white",
+	},
+	signInButton: {
+		marginHorizontal: width * 0.1,
+		backgroundColor: "#1976D2",
+	},
+	signInButtonText: {
+		color: "white",
+	},
+	separatorContainer: {
+		marginHorizontal: width * 0.1,
+		alignItems: "center",
+		flexDirection: "row",
+		marginVertical: 20,
+	},
+	separatorLine: {
+		flex: 1,
+		borderWidth: StyleSheet.hairlineWidth,
+		height: StyleSheet.hairlineWidth,
+		borderColor: "#9B9FA4",
+	},
+	separatorOr: {
+		color: "#9B9FA4",
+		marginHorizontal: 8,
+	},
+	item: {
+		width: "80%",
+		backgroundColor: "#fff",
+		borderRadius: 20,
+		padding: 10,
+		marginBottom: 10,
+		flexDirection: "row",
+	},
+	checkBoxTxt: {
+		marginLeft: 20,
+	},
 });
 const moduleState = (state) => ({
 	utilisateur: state.medcabs.user,
-  etablissement: state.medcabs.etablissement,
+	etablissement: state.medcabs.etablissement,
 });
 
 const moduleActions = {
 	setUser,
-  setEtablissement,
+	setEtablissement,
 };
-
 
 export default connect(moduleState, moduleActions)(Inscription);

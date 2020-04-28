@@ -14,6 +14,7 @@ import {
   Dimensions,
   TouchableOpacity,
   View,
+  WebView,
 } from "react-native";
 import { Button } from "react-native-elements";
 
@@ -48,34 +49,19 @@ class Profil extends React.Component {
   state = {
     modalVisible: false,
     activeIndex: 0,
-    selectedData: [],
-    remplacantAnnonce: [],
+    dataProfil: [],
   };
 
-  async componentDidMount() {
-    const { utilisateur } = this.props;
-    try {
-      const remplacantAnnonceFetch = await fetch(
-        "http://" +
-          devConst.ip +
-          ":3000/Annonce/getRemplacantAnnonce/" +
-          utilisateur.id
-      );
-      const remplacantAnnonce = await remplacantAnnonceFetch.json();
-      this.props.setRemplacantAnnonce(remplacantAnnonce);
-    } catch (err) {
-      console.log("Erreur avec le fetch ---->  ", err);
-    }
-  }
   _renderItem({ item, index }) {
+    console.log(item);
     return (
       <View style={styles.itemContainer}>
         <Image style={styles.avatarAnnonce} source={{ uri: item.image }} />
         <Text style={{ fontSize: 18, color: "white", marginTop: 5 }}>
-          {item.title}
+          {item.nom} {item.prenom}
         </Text>
         <Text style={{ fontSize: 13, color: "white", marginTop: 5 }}>
-          {item.text}
+          {item.ville}
         </Text>
         <Button
           buttonStyle={styles.bouton}
@@ -91,7 +77,7 @@ class Profil extends React.Component {
   }
 
   _selectedItem = (data) => {
-    this.setState({ selectedData: data });
+    this.setState({ dataProfil: data });
     this.setModalVisible(true);
   };
   onPressPlace = () => {
@@ -114,7 +100,18 @@ class Profil extends React.Component {
     ).catch((err) => console.log("Error:", err));
   };
 
+  onPressCV = () => {
+    console.log("toto");
+    <WebView
+      bounces={false}
+      scrollEnabled={false}
+      source={{ uri: "http://www.africau.edu/images/default/sample.pdf" }}
+    />;
+  };
   renderHeader = () => {
+    const { utilisateur } = this.props;
+    console.log("USER");
+    console.log(utilisateur);
     return (
       <View style={styles.headerContainer}>
         <ImageBackground
@@ -133,7 +130,9 @@ class Profil extends React.Component {
                   "https://scontent.fcdg2-1.fna.fbcdn.net/v/t1.0-9/206299_140273562710584_2239187_n.jpg?_nc_cat=111&_nc_sid=cdbe9c&_nc_oc=AQkOH2ujJiCQh0t81p9NI2RUVwwjaVQZ-Xn4JWp6TikQYD_JH9RjOF9gxwdqiwAthgU&_nc_ht=scontent.fcdg2-1.fna&oh=bb7d750cd61a3fa58a785f3be9ddc149&oe=5EC9A6D5",
               }}
             />
-            <Text style={styles.userNameText}>Nom</Text>
+            <Text style={styles.userNameText}>
+              {utilisateur.nom} {utilisateur.prenom}
+            </Text>
             <View style={styles.userAddressRow}>
               <View>
                 <Icon
@@ -144,7 +143,9 @@ class Profil extends React.Component {
                 />
               </View>
               <View style={styles.userCityRow}>
-                <Text style={styles.userCityText}>Ville, Pays</Text>
+                <Text style={styles.userCityText}>
+                  {utilisateur.ville}, {utilisateur.codePostale}
+                </Text>
               </View>
             </View>
           </View>
@@ -152,9 +153,43 @@ class Profil extends React.Component {
       </View>
     );
   };
+
+  ajoutReservation() {
+    // const { utilisateur } = this.props;
+    // const data = this.state.dataProfil;
+    // console.log(utilisateur);
+    // bodyAnnonce = {
+    //   idAnnonce: data.id.toString(),
+    //   idUser: utilisateur.id.toString(),
+    // };
+    // console.log(bodyAnnonce);
+    // fetch("http://" + devConst.ip + ":3000/Annonce/postuler/", {
+    //   method: "POST",
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(bodyAnnonce),
+    // })
+    //   .then((response) => response.text())
+    //   .then((responseJsonFromServer) => {
+    //     console.log(responseJsonFromServer);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
+    // console.log("Ajout reservation OK");
+    // this.props.navigation.navigate("HomePage");
+  }
+
   renderModal() {
     const { utilisateur } = this.props;
-    const data = this.state.selectedData;
+    const PdfReader = ({ url: uri }) => (
+      <WebView style={{ flex: 1 }} source={{ uri }} />
+    );
+    const data = this.state.dataProfil;
+    console.log("UN PROFIL");
+    console.log(data);
     return (
       <Modal
         animationType="slide"
@@ -176,13 +211,13 @@ class Profil extends React.Component {
                         this.setModalVisible(!this.state.modalVisible);
                       }}
                     >
-                      <Ionicons color="black" name="md-arrow-back" size={24} />
+                      <Ionicons color="white" name="md-arrow-back" size={24} />
                     </TouchableOpacity>
                   </View>
                 </View>
               </View>
 
-              {utilisateur.type === "remplacant" ? (
+              {utilisateur.type === "recruteur" ? (
                 <View style={styles.settings}>
                   <Button
                     onPress={this.ajoutReservation.bind(this)}
@@ -192,7 +227,7 @@ class Profil extends React.Component {
                       size: 25,
                       color: "white",
                     }}
-                    title="Demander une reservation"
+                    title="Accepter le profil"
                   />
                 </View>
               ) : (
@@ -210,37 +245,31 @@ class Profil extends React.Component {
           </View>
           <View style={styles.modalBorder}></View>
           <View style={styles.modalTitle}>
-            <Text style={styles.modalTitle}>{data.titre}</Text>
-            <Text style={styles.modalDescription}>{data.description}</Text>
+            <Text style={styles.modalTitle}>
+              {data.nom} {data.prenom}
+            </Text>
+            <Text style={styles.modalDescription}>{data.specialite}</Text>
           </View>
           <View style={styles.modalText}>
             <View style={styles.modalText}>
-              <Text style={styles.modalTextSpace}>
-                Ouverture : lundi au vendredi
-              </Text>
+              <Text style={styles.modalTextSpace}>Ville : {data.ville}</Text>
             </View>
             <View style={styles.modalText}>
               <Text style={styles.modalTextSpace}>
-                Horraire : 8h-12h30 et 13h30-20h
+                Numéro de téléphone : {data.numTel}
               </Text>
             </View>
 
             <View style={styles.modalText}>
-              <Text style={styles.modalTextSpace}>
-                Qualifications requises : 3 ans d'expérience minimum
-              </Text>
+              <Text style={styles.modalTextSpace}>Email : {data.email}</Text>
             </View>
 
             <View style={styles.modalText}>
-              <Text style={styles.modalTextSpace}>
-                Déplacement domicile : Non
-              </Text>
-            </View>
-
-            <View style={styles.modalText}>
-              <Text style={styles.modalTextSpace}>
-                Description de l'annonceur : Dr Maboul
-              </Text>
+              <Button
+                buttonStyle={styles.bouton2}
+                title="Voir le CV"
+                onPress={this.onPressCV}
+              />
             </View>
           </View>
           <View style={styles.modalBorder}></View>
@@ -250,12 +279,13 @@ class Profil extends React.Component {
   }
 
   renderTel = () => {
+    const { utilisateur } = this.props;
     return (
       <Tel
         key={`tel-${"1"}`}
-        index={1}
+        index={"1"}
         name={"Mobile"}
-        number={"0629977341"}
+        number={utilisateur.numTel}
         onPressSms={this.onPressSms}
         onPressTel={this.onPressTel}
       />
@@ -263,18 +293,22 @@ class Profil extends React.Component {
   };
 
   renderEmail = () => {
+    const { utilisateur } = this.props;
     return (
       <Email
         key={`email-${"1"}`}
-        index={1}
+        index={"1"}
         name={"Email personnel"}
-        email={"legallbapt@eisti.eu"}
+        email={utilisateur.email}
         onPressEmail={this.onPressEmail}
       />
     );
   };
 
   render() {
+    const { remplacantAnnonce } = this.props;
+    console.log("REMPLACANT ANNONCE");
+    console.log(remplacantAnnonce);
     return (
       <ScrollView style={styles.scroll}>
         <View style={styles.container}>
@@ -287,17 +321,21 @@ class Profil extends React.Component {
               {Separator()}
             </View>
           </Card>
-          <View style={{ marginTop: 15 }}>
-            <Carousel
-              layout={"stack"}
-              layoutCardOffset={`18`}
-              ref={(ref) => (this.carousel = ref)}
-              data={this.state.remplacantAnnonce}
-              sliderWidth={SLIDER_WIDTH}
-              itemWidth={ITEM_WIDTH}
-              renderItem={this._renderItem.bind(this)}
-              onSnapToItem={(index) => this.setState({ activeIndex: index })}
-            />
+          <View style={styles.container}>
+            <View></View>
+
+            <View style={{ marginTop: 15 }}>
+              <Carousel
+                layout={"stack"}
+                layoutCardOffset={18}
+                ref={(ref) => (this.carousel = ref)}
+                data={remplacantAnnonce}
+                sliderWidth={SLIDER_WIDTH}
+                itemWidth={ITEM_WIDTH}
+                renderItem={this._renderItem.bind(this)}
+                onSnapToItem={(index) => this.setState({ activeIndex: index })}
+              />
+            </View>
           </View>
           {this.renderModal()}
         </View>
@@ -311,11 +349,10 @@ const moduleState = (state) => ({
   filters: state.medcabs.filters,
   mylocation: state.medcabs.mylocation,
   utilisateur: state.medcabs.user,
+  remplacantAnnonce: state.medcabs.remplacantAnnonce,
 });
 
-const moduleActions = {
-  setRemplacantAnnonce,
-};
+const moduleActions = {};
 
 export default connect(moduleState, moduleActions)(Profil);
 
@@ -354,6 +391,10 @@ const styles = StyleSheet.create({
   bouton: {
     marginTop: 10,
     backgroundColor: "#4F7942",
+  },
+  bouton2: {
+    marginTop: 10,
+    backgroundColor: "#465881",
   },
   avatarAnnonce: {
     width: 35,
@@ -420,6 +461,14 @@ const styles = StyleSheet.create({
   },
   userCityRow: {
     backgroundColor: "transparent",
+  },
+  location: {
+    height: 40,
+    width: 40,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#465881",
   },
   userCityText: {
     color: "#A5A5A5",

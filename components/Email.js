@@ -1,19 +1,19 @@
-import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Icon } from 'react-native-elements'
-import PropTypes from 'prop-types'
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Icon } from "react-native-elements";
+import PropTypes from "prop-types";
 
-import mainColor from '../constants/constant'
+import mainColor from "../constants/constant";
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "flex-start",
     marginBottom: 25,
   },
   emailColumn: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "flex-start",
     marginBottom: 5,
   },
   emailIcon: {
@@ -21,27 +21,27 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   emailNameColumn: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "flex-start",
   },
   emailNameText: {
-    color: 'gray',
+    color: "gray",
     fontSize: 14,
-    fontWeight: '200',
+    fontWeight: "200",
   },
   emailRow: {
     flex: 8,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
   },
   emailText: {
     fontSize: 16,
   },
   iconRow: {
     flex: 2,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
-})
+});
 
 const Email = ({ containerStyle, onPressEmail, name, email, index }) => (
   <TouchableOpacity onPress={() => onPressEmail(email)}>
@@ -68,7 +68,7 @@ const Email = ({ containerStyle, onPressEmail, name, email, index }) => (
       </View>
     </View>
   </TouchableOpacity>
-)
+);
 
 Email.propTypes = {
   containerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
@@ -76,11 +76,11 @@ Email.propTypes = {
   index: PropTypes.string.isRequired,
   name: PropTypes.string,
   onPressEmail: PropTypes.func.isRequired,
-}
+};
 
 Email.defaultProps = {
   containerStyle: {},
   name: null,
-}
+};
 
-export default Email
+export default Email;
