@@ -52,8 +52,24 @@ class Profil extends React.Component {
     dataProfil: [],
   };
 
+
+  async componentDidMount() {
+    const { utilisateur } = this.props;
+    try {
+      const annonceUserFetch = await fetch(
+        "http://" +
+          devConst.ip +
+          ":3000/annonce/getRemplacantAnnonce/" +
+          utilisateur.id
+      );
+      const annonceUser = await annonceUserFetch.json();
+      this.props.setAnnonceUtilisateur(annonceUser);
+    } catch (err) {
+      console.log("Erreur avec le fetch ---->  ", err);
+    }
+  }
+
   _renderItem({ item, index }) {
-    console.log(item);
     return (
       <View style={styles.itemContainer}>
         <Image style={styles.avatarAnnonce} source={{ uri: item.image }} />
@@ -304,7 +320,61 @@ class Profil extends React.Component {
       />
     );
   };
+renderAnnonce() {
+  return(
+    <View style={styles.medcab}>
+      <ImageBackground
+        style={styles.medcabImage}
+        imageStyle={styles.medcabImage}
+        source={{ ""}}
+      />
 
+      <View style={styles.medcabDetails}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+            toto
+          </Text>
+          <Text style={{ fontSize: 12, color: "#A5A5A5", paddingTop: 5 }}>
+            {medcab.description}
+          </Text>
+        </View>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={styles.medcabInfo}>
+            <FontAwesome name="star" color="#3C824C" size={12} />
+            <Text style={{ marginLeft: 4, color: "#3C824C" }}>
+              {medcab.typeOffre}
+            </Text>
+          </View>
+          <View style={styles.medcabInfo}>
+            <FontAwesome name="location-arrow" color="#4287F5" size={12} />
+            <Text style={{ marginLeft: 4, color: "#4287F5" }}>
+              {medcab.codePostale}, {medcab.ville}
+            </Text>
+          </View>
+        </View>
+      </View>
+      <View style={{ flex: 0.2, justifyContent: "center" }}>
+        <TouchableOpacity
+          onPress={() => {
+            this._selectedItem(medcab);
+          }}
+        >
+          <SimpleLineIcons
+            name="options-vertical"
+            color="#A5A5A5"
+            size={24}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
   render() {
     const { remplacantAnnonce } = this.props;
     console.log("REMPLACANT ANNONCE");
@@ -319,11 +389,13 @@ class Profil extends React.Component {
               {Separator()}
               {this.renderEmail()}
               {Separator()}
+              <View>
+              <Text>
+              Mon annoce :  {this.renderModal2()}
+              </Text></View>
             </View>
           </Card>
           <View style={styles.container}>
-            <View></View>
-
             <View style={{ marginTop: 15 }}>
               <Carousel
                 layout={"stack"}
