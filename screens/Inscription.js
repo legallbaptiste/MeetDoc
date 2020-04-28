@@ -33,7 +33,7 @@ class Inscription extends React.Component {
 	state = {
 		image: null,
 		document: null,
-		ActivityIndicator_Loading: false,
+		// ActivityIndicator_Loading: false,
 		nom: "",
 		prenom: "",
 		username: "",
@@ -48,11 +48,11 @@ class Inscription extends React.Component {
 		specialite: "",
 		description: "",
 		cv: "",
-		selectedStatus: false,
 		showAlert: false,
 		data: [],
 		typeProfil: "",
 		titleChoixProfil: "Choix du profil",
+		titleChoixEtablissement: "Choisir votre établissement",
 	};
 
 	handleUploadPhoto = () => {
@@ -71,21 +71,18 @@ class Inscription extends React.Component {
 
 			return data;
 		};
-		console.log("FETCH BODY");
 		console.log(createFormData(this.state.image, { userId: "123" }));
-		fetch("http://172.20.10.7:3000/upload/image", {
+		fetch("http://" + devConst.ip + ":3000/upload/image", {
 			method: "POST",
 			body: createFormData(this.state.image, { userId: "123" }),
 		})
 			.then((response) => response.json())
 			.then((response) => {
-				console.log("upload succes", response);
-				this.setState({ cartePro: response.chemin });
-				alert("Upload success!");
+				this.setState({ cartePro: response.file.filename });
+				return response;
 			})
 			.catch((error) => {
 				console.log("upload error", error);
-				alert("Upload failed!");
 			});
 	};
 
@@ -105,15 +102,14 @@ class Inscription extends React.Component {
 
 			return data;
 		};
-		fetch("http://172.20.10.7:3000/upload/document", {
+		fetch("http://" + devConst.ip + ":3000/upload/document", {
 			method: "POST",
 			body: createFormDataDocument(this.state.document, { userId: "123" }),
 		})
 			.then((response) => response.json())
 			.then((response) => {
 				console.log("upload succes", response);
-				this.setState({ cv: response.chemin });
-				alert("Upload success!");
+				this.setState({ cv: response.file.filename });
 			})
 			.catch((error) => {
 				console.log("upload error", error);
@@ -140,12 +136,19 @@ class Inscription extends React.Component {
 			});
 			if (!result.cancelled) {
 				this.setState({ image: result.uri });
-				this.handleUploadPhoto();
+				await this.handleUploadPhoto();
 			}
-
-			console.log(result);
 		} catch (E) {
 			console.log(E);
+		}
+	};
+
+	_pickDocument = async () => {
+		let result = await DocumentPicker.getDocumentAsync({});
+		console.log(result);
+		if (!result.cancelled) {
+			this.setState({ document: result.uri });
+			await this.handleUploadDocument();
 		}
 	};
 
@@ -185,98 +188,98 @@ class Inscription extends React.Component {
 		this.setState({ selectedItems });
 	};
 
-	inscription() {
-		this.setState({ ActivityIndicator_Loading: true }, () => {
-			if (!this.state.selectedStatus) {
-				const bodyRecruteur = {
-					user: {
-						nom: this.state.nom,
-						prenom: this.state.prenom,
-						email: this.state.username,
-						motDePasse: this.state.password,
-						numTel: this.state.numTel,
-						cartePro: this.state.cartePro,
-					},
-					adresse: {
-						voie: this.state.voie,
-						numVoie: this.state.numVoie,
-						ville: this.state.ville,
-						codePostale: this.state.codePostale,
-						pays: this.state.pays,
-					},
-					recruteur: {
-						specialite: this.state.specialite,
-						descriptionLibre: this.state.description,
-						idEtablissement: this.state.data[0].toString(),
-					},
-				};
-				fetch("http://" + devConst.ip + ":3000/user/", {
-					method: "POST",
-					headers: {
-						Accept: "application/json",
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(bodyRecruteur),
+	async inscription() {
+		// this.setState({ ActivityIndicator_Loading: true }, async () => {
+		if (this.state.typeProfil === "recruteur") {
+			const bodyRecruteur = {
+				user: {
+					nom: this.state.nom,
+					prenom: this.state.prenom,
+					email: this.state.username,
+					motDePasse: this.state.password,
+					numTel: this.state.numTel,
+					cartePro: this.state.cartePro,
+				},
+				adresse: {
+					voie: this.state.voie,
+					numVoie: this.state.numVoie,
+					ville: this.state.ville,
+					codePostale: this.state.codePostale,
+					pays: this.state.pays,
+				},
+				recruteur: {
+					specialite: this.state.specialite,
+					descriptionLibre: this.state.description,
+					idEtablissement: this.state.data[0].toString(),
+				},
+			};
+			fetch("http://" + devConst.ip + ":3000/user/", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(bodyRecruteur),
+			})
+				.then((response) => response.text())
+				.then((responseJsonFromServer) => {
+					alert(responseJsonFromServer);
+
+					// this.setState({ ActivityIndicator_Loading: false });
 				})
-					.then((response) => response.text())
-					.then((responseJsonFromServer) => {
-						alert(responseJsonFromServer);
+				.catch((error) => {
+					console.error(error);
 
-						this.setState({ ActivityIndicator_Loading: false });
-					})
-					.catch((error) => {
-						console.error(error);
-
-						this.setState({ ActivityIndicator_Loading: false });
-					});
-				console.log("Inscription Recruteur OK");
-				this.showAlert();
-				this.props.navigation.navigate("SignInScreen");
-			} else {
-				const bodyRemplacant = {
-					user: {
-						nom: this.state.nom,
-						prenom: this.state.prenom,
-						email: this.state.username,
-						motDePasse: this.state.password,
-						numTel: this.state.numTel,
-						cartePro: this.state.cartePro,
-					},
-					adresse: {
-						voie: this.state.voie,
-						numVoie: this.state.numVoie,
-						ville: this.state.ville,
-						codePostale: this.state.codePostale,
-						pays: this.state.pays,
-					},
-					remplacant: {
-						specialite: this.state.specialite,
-						descriptionLibre: this.state.description,
-						cv: this.state.cv,
-					},
-				};
-				fetch("http://" + devConst.ip + ":3000/user/", {
-					method: "POST",
-					headers: {
-						Accept: "application/json",
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(bodyRemplacant),
+					// this.setState({ ActivityIndicator_Loading: false });
+				});
+			console.log("Inscription Recruteur OK");
+			this.showAlert();
+			this.props.navigation.navigate("SignInScreen");
+		} else {
+			const bodyRemplacant = {
+				user: {
+					nom: this.state.nom,
+					prenom: this.state.prenom,
+					email: this.state.username,
+					motDePasse: this.state.password,
+					numTel: this.state.numTel,
+					cartePro: this.state.cartePro,
+				},
+				adresse: {
+					voie: this.state.voie,
+					numVoie: this.state.numVoie,
+					ville: this.state.ville,
+					codePostale: this.state.codePostale,
+					pays: this.state.pays,
+				},
+				remplacant: {
+					specialite: this.state.specialite,
+					descriptionLibre: this.state.description,
+					cv: this.state.cv,
+				},
+			};
+			fetch("http://" + devConst.ip + ":3000/user/", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(bodyRemplacant),
+			})
+				.then((response) => response.text())
+				.then((responseJsonFromServer) => {
+					//this.setState({ ActivityIndicator_Loading: false });
+					console.log("responseJsonFromServer", responseJsonFromServer);
 				})
-					.then((response) => response.text())
-					.then((responseJsonFromServer) => {
-						this.setState({ ActivityIndicator_Loading: false });
-					})
-					.catch((error) => {
-						console.error(error);
+				.catch((error) => {
+					console.error(error);
 
-						this.setState({ ActivityIndicator_Loading: false });
-					});
-				console.log("Inscription Remplacant OK");
-				this.showAlert();
-				this.props.navigation.navigate("SignInScreen");
-			}
-		});
+					// this.setState({ ActivityIndicator_Loading: false });
+				});
+			console.log("Inscription Remplacant OK");
+			this.showAlert();
+			this.props.navigation.navigate("SignInScreen");
+		}
 	}
 
 	render() {
@@ -448,16 +451,16 @@ class Inscription extends React.Component {
 							]}
 							onSelect={(typeProfil) => {
 								switch (typeProfil[0]) {
-									case "1":
+									case 1:
 										var titleChoixProfil = "Médecins remplaçants";
 										break;
-									case "2":
+									case 2:
 										var titleChoixProfil = "Médecins installées";
 										break;
-									case "3":
+									case 3:
 										var titleChoixProfil = "Etablisseents de santé";
 										break;
-									case "4":
+									case 4:
 										var titleChoixProfil = "Collectivités territoriales";
 										break;
 								}
@@ -508,14 +511,19 @@ class Inscription extends React.Component {
 							<Select2
 								isSelectSingle
 								colorTheme="#003f5c"
-								popupTitle="Choisir votre établissement"
+								popupTitle={this.state.titleChoixEtablissement}
 								listEmptyTitle="Il n'y a pas d'établissement"
-								title="Choisir votre établissement"
+								title={this.state.titleChoixEtablissement}
 								selectButtonText="Valider"
 								cancelButtonText="Annuler"
 								searchPlaceHolderText="Rechercher.."
 								data={listEtablissement}
 								onSelect={(data) => {
+									this.setState({
+										titleChoixEtablissement:
+											listEtablissement[data[0] - 1].name,
+									});
+									console.log(data);
 									this.setState({ data });
 								}}
 								onRemoveItem={(data) => {
@@ -560,13 +568,13 @@ class Inscription extends React.Component {
 							textStyle={styles.signInButtonText}
 						/>
 					</View>
-					{this.state.ActivityIndicator_Loading ? (
+					{/* {this.state.ActivityIndicator_Loading ? (
 						<ActivityIndicator
 							color="#009688"
 							size="large"
 							style={styles.ActivityIndicatorStyle}
 						/>
-					) : null}
+					) : null} */}
 				</View>
 			</ScrollView>
 		);

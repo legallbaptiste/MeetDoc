@@ -255,7 +255,7 @@ router.get("/getAnnonceRecruteur/:idRecruteur", function (req, res) {
 	connection.getConnection(function (err, connection) {
 		// Executing the MySQL query (select all data from the 'users' table).
 		var sql =
-			" SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,a.actived,e.nomEtablissement,e.secretariatBool,e.typePatientele,e.specialite,e.visiteDomicile,e.activite,e.descriptionLibre,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM Annonce a,Adresse adr, Etablissement e  WHERE e.idAdresse = adr.id AND a.idEtablissement = e.id AND a.idRecruteur = " +
+			"SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,a.actived,e.nomEtablissement,e.secretariatBool,e.typePatientele,e.specialite,e.visiteDomicile,e.activite,e.descriptionLibre,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM Annonce a,Adresse adr, Etablissement e  WHERE e.idAdresse = adr.id AND a.idEtablissement = e.id AND a.idRecruteur = " +
 			idRecruteur;
 		connection.query(sql, function (error, results, fields) {
 			// If some error occurs, we throw an error.
@@ -264,7 +264,7 @@ router.get("/getAnnonceRecruteur/:idRecruteur", function (req, res) {
 			// Getting the 'response' from the database and sending it to our route. This is were the data is.
 			res.status(200).json({
 				message: "Annonce get OK",
-				user: results,
+				annonce: results,
 			});
 		});
 	});
