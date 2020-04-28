@@ -33,13 +33,15 @@ const INITIAL_STATE = {
 
 // Reducer
 export default function reducer(state = INITIAL_STATE, action = {}) {
-  console.log("ACTION ID");
-  console.log(action);
+  console.log("ACTION PAYLOAD");
+  console.log(action.payload);
+  console.log("STATE");
+  console.log(state);
   switch (action.type) {
     case UPDATE_ANNONCE:
+      state.annonceUser.actived = action.payload;
       return {
         ...state,
-        annonceUser: 1,
       };
     case SET_PROFIL:
       return {

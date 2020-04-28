@@ -25,6 +25,7 @@ import { connect } from "react-redux";
 import {
   setRemplacantAnnonce,
   setAnnonceUtilisateur,
+  updateAnnonce,
 } from "../reducers/reducer";
 
 import {
@@ -120,8 +121,7 @@ class Profil extends React.Component {
 
   renderHeader = () => {
     const { utilisateur } = this.props;
-    console.log("USER");
-    console.log(utilisateur);
+
     return (
       <View style={styles.headerContainer}>
         <ImageBackground
@@ -156,13 +156,13 @@ class Profil extends React.Component {
       </View>
     );
   };
+
   desactiverAnnonce() {
     const { annonceUser } = this.props;
     const bodyAnnonce = {
       idAnnonce: annonceUser[0].id.toString(),
       etat: "0",
     };
-    console.log(bodyAnnonce);
     fetch("http://" + devConst.ip + ":3000/Annonce/changeEtat", {
       method: "POST",
       headers: {
@@ -178,7 +178,7 @@ class Profil extends React.Component {
       .catch((error) => {
         console.error(error);
       });
-
+    this.props.updateAnnonce({ actived: 0 });
     console.log("Changement Etat 0 OK");
     this.props.navigation.navigate("HomePage");
   }
@@ -189,7 +189,6 @@ class Profil extends React.Component {
       idAnnonce: annonceUser[0].id.toString(),
       etat: "1",
     };
-    console.log(bodyAnnonce);
     fetch("http://" + devConst.ip + ":3000/Annonce/changeEtat", {
       method: "POST",
       headers: {
@@ -205,6 +204,7 @@ class Profil extends React.Component {
       .catch((error) => {
         console.error(error);
       });
+    this.props.updateAnnonce({ actived: 1 });
     console.log("Changement etat 1 OK");
     this.props.navigation.navigate("HomePage");
   }
@@ -240,8 +240,6 @@ class Profil extends React.Component {
     const { utilisateur } = this.props;
 
     const data = this.state.dataProfil;
-    console.log("UN PROFIL");
-    console.log(data);
     return (
       <Modal
         animationType="slide"
@@ -468,9 +466,7 @@ class Profil extends React.Component {
 
   renderAnnonce() {
     const { annonceUser } = this.props;
-    console.log("ANNONCEUSER");
-    console.log(annonceUser);
-    console.log(annonceUser[0]);
+
     return (
       <View style={styles.medcab}>
         <View style={styles.medcabDetails}>
@@ -523,8 +519,7 @@ class Profil extends React.Component {
 
   render() {
     const { remplacantAnnonce } = this.props;
-    console.log("REMPLACANT ANNONCE");
-    console.log(remplacantAnnonce);
+
     return (
       <ScrollView style={styles.scroll}>
         <View style={styles.headerContainer2}>
@@ -597,6 +592,7 @@ const moduleState = (state) => ({
 
 const moduleActions = {
   setAnnonceUtilisateur,
+  updateAnnonce,
 };
 
 export default connect(moduleState, moduleActions)(Profil);

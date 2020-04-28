@@ -91,9 +91,8 @@ class HomePage extends React.Component {
           utilisateur.id
       );
       const annonceUser = await annonceUserFetch.json();
-      console.log("ANNONCEUSER");
-      console.log(annonceUser.user);
-      this.props.setAnnonceUtilisateur(annonceUser.user);
+
+      this.props.setAnnonceUtilisateur(annonceUser.annonce);
     } catch (err) {
       console.log("Erreur avec le fetch ---->  ", err);
     }

@@ -6,8 +6,6 @@ const router = express.Router();
 
 const mysql = require("mysql");
 
-const multer = require("multer");
-
 const connection = mysql.createPool({
 	host: "localhost",
 	user: "root",
@@ -15,12 +13,10 @@ const connection = mysql.createPool({
 	database: "projetGI2Dev",
 });
 
-const upload = multer({ dest: "images" });
-const uploadDocument = multer({ dest: "document" });
-
 //Permet de gerer l'inscription
 router.post("/", jsonParser, function (req, res) {
 	// Connecting to the database.
+	console.log("BODY USER");
 	console.log(req.body);
 	const erreurMessage = {
 		erreur: "200",
@@ -94,9 +90,9 @@ router.post("/", jsonParser, function (req, res) {
 								//Insertion d'un remplacant
 								const remplacant = {
 									id: idUser,
-									descriptionLibre: req.body.descriptionLibre,
-									cv: req.body.cv,
-									specialite: req.body.specialite,
+									descriptionLibre: req.body.remplacant.descriptionLibre,
+									cv: req.body.remplacant.cv,
+									specialite: req.body.remplacant.specialite,
 								};
 								var sqlRemplacant = "INSERT INTO Remplacant SET ?";
 								connection.query(sqlRemplacant, remplacant, (err, result) => {
