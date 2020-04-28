@@ -8,6 +8,7 @@ const SET_ETABLISSEMENT = "SET_ETABLISSEMENT";
 const SET_REMPLACANT_ANNONCE = "SET_REMPLACANT_ANNONCE";
 const SET_ANNONCE_UTILISATEUR = "SET_ANNONCE_UTILISATEUR";
 const UPDATE_ANNONCE = "UPDATE_ANNONCE";
+const SET_ANNONCE = "SET_ANNONCE";
 // Initial state
 const INITIAL_STATE = {
   annonceUser: [],
@@ -33,13 +34,13 @@ const INITIAL_STATE = {
 
 // Reducer
 export default function reducer(state = INITIAL_STATE, action = {}) {
-  console.log("ACTION PAYLOAD");
-  console.log(action.payload);
-  console.log("STATE");
-  console.log(state);
+  // console.log("ACTION PAYLOAD");
+  // console.log(action.payload);
+  // console.log("STATE");
+  // console.log(state);
   switch (action.type) {
     case UPDATE_ANNONCE:
-      state.annonceUser.actived = action.payload;
+      state.annonceUser[0].actived = action.payload.actived;
       return {
         ...state,
       };
@@ -67,6 +68,11 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
       return {
         ...state,
         spots: action.payload.annonce,
+      };
+    case SET_ANNONCE:
+      state.spots.push(action.payload);
+      return {
+        ...state,
       };
     case SET_LOCATION:
       return {
@@ -105,6 +111,16 @@ export function setAnnonceUtilisateur(payload) {
     });
   };
 }
+
+export function setAnnonce(payload) {
+  return (dispatch) => {
+    dispatch({
+      type: SET_ANNONCE,
+      payload,
+    });
+  };
+}
+
 export function updateAnnonce(payload) {
   return (dispatch) => {
     dispatch({

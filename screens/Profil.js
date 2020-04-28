@@ -180,7 +180,7 @@ class Profil extends React.Component {
       });
     this.props.updateAnnonce({ actived: 0 });
     console.log("Changement Etat 0 OK");
-    this.props.navigation.navigate("HomePage");
+    this.setModalVisible2(!this.state.modalVisible2);
   }
 
   activerAnnonce() {
@@ -206,7 +206,7 @@ class Profil extends React.Component {
       });
     this.props.updateAnnonce({ actived: 1 });
     console.log("Changement etat 1 OK");
-    this.props.navigation.navigate("HomePage");
+    this.setModalVisible2(!this.state.modalVisible2);
   }
   ajoutReservation() {
     // const { utilisateur } = this.props;

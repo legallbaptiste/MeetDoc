@@ -63,7 +63,7 @@ class HomePage extends React.Component {
   async componentDidMount() {
     try {
       const annonceFetch = await fetch(
-        "http://" + devConst.ip + ":3000/Annonce"
+        "http://" + devConst.ip + ":3000/annonce/actived/actived"
       );
       const annonce = await annonceFetch.json();
       this.props.setMedCabs(annonce);

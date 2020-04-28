@@ -156,7 +156,7 @@ router.post("/postuler", function (req, res) {
   });
 });
 
-router.get("/actived", function (req, res) {
+router.get("/actived/actived", function (req, res) {
   // Connecting to the database.
   connection.getConnection(function (err, connection) {
     // Executing the MySQL query (select all data from the 'users' table).
