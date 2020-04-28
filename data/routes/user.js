@@ -177,4 +177,33 @@ router.get("/info/:email", (req, res) => {
 	});
 });
 
+router.post("/verifier", (req, res) => {
+	var data = {
+		idUser: req.body.idUser,
+		etat: req.body.etat,
+	};
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"UPDATE User SET verifier = " + data.etat + " WHERE id = " + data.idUser;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Modification etat vérifier d'un user POST OK",
+				data: results,
+				error: erreur,
+			});
+		});
+	});
+});
+
 module.exports = router;
