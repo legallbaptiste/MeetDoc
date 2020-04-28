@@ -33,6 +33,7 @@ import {
   setLocation,
   setRemplacantAnnonce,
   setFilters,
+  setAnnonceUtilisateur,
   setMedCabs,
 } from "../reducers/reducer";
 
@@ -79,6 +80,20 @@ class HomePage extends React.Component {
       );
       const remplacantAnnonce = await remplacantAnnonceFetch.json();
       this.props.setRemplacantAnnonce(remplacantAnnonce.user);
+    } catch (err) {
+      console.log("Erreur avec le fetch ---->  ", err);
+    }
+    try {
+      const annonceUserFetch = await fetch(
+        "http://" +
+          devConst.ip +
+          ":3000/annonce/getAnnonceRecruteur/" +
+          utilisateur.id
+      );
+      const annonceUser = await annonceUserFetch.json();
+      console.log("ANNONCEUSER");
+      console.log(annonceUser.user);
+      this.props.setAnnonceUtilisateur(annonceUser.user);
     } catch (err) {
       console.log("Erreur avec le fetch ---->  ", err);
     }
@@ -305,12 +320,10 @@ class HomePage extends React.Component {
   ajoutReservation() {
     const { utilisateur } = this.props;
     const data = this.state.selectedData;
-    console.log(utilisateur);
     bodyAnnonce = {
       idAnnonce: data.id.toString(),
       idUser: utilisateur.id.toString(),
     };
-    console.log(bodyAnnonce);
     fetch("http://" + devConst.ip + ":3000/Annonce/postuler/", {
       method: "POST",
       headers: {
@@ -446,6 +459,7 @@ const moduleState = (state) => ({
   filters: state.medcabs.filters,
   mylocation: state.medcabs.mylocation,
   utilisateur: state.medcabs.user,
+  annonceUser: state.medcabs.annonceUser,
 });
 
 const moduleActions = {
@@ -453,6 +467,7 @@ const moduleActions = {
   setMedCabs,
   setFilters,
   setRemplacantAnnonce,
+  setAnnonceUtilisateur,
 };
 
 export default connect(moduleState, moduleActions)(HomePage);

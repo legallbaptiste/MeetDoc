@@ -22,7 +22,10 @@ import PropTypes from "prop-types";
 import Carousel from "react-native-snap-carousel";
 import mainColor from "../constants/constant";
 import { connect } from "react-redux";
-import { setRemplacantAnnonce } from "../reducers/reducer";
+import {
+  setRemplacantAnnonce,
+  setAnnonceUtilisateur,
+} from "../reducers/reducer";
 
 import {
   Ionicons,
@@ -48,26 +51,10 @@ class Profil extends React.Component {
 
   state = {
     modalVisible: false,
+    modalVisible2: false,
     activeIndex: 0,
     dataProfil: [],
   };
-
-
-  async componentDidMount() {
-    const { utilisateur } = this.props;
-    try {
-      const annonceUserFetch = await fetch(
-        "http://" +
-          devConst.ip +
-          ":3000/annonce/getRemplacantAnnonce/" +
-          utilisateur.id
-      );
-      const annonceUser = await annonceUserFetch.json();
-      this.props.setAnnonceUtilisateur(annonceUser);
-    } catch (err) {
-      console.log("Erreur avec le fetch ---->  ", err);
-    }
-  }
 
   _renderItem({ item, index }) {
     return (
@@ -91,10 +78,16 @@ class Profil extends React.Component {
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
-
+  setModalVisible2(visible) {
+    this.setState({ modalVisible2: visible });
+  }
   _selectedItem = (data) => {
     this.setState({ dataProfil: data });
     this.setModalVisible(true);
+  };
+  _selectedItem2 = (data) => {
+    console.log("TOTO");
+    this.setModalVisible2(true);
   };
   onPressPlace = () => {
     console.log("place");
@@ -124,6 +117,7 @@ class Profil extends React.Component {
       source={{ uri: "http://www.africau.edu/images/default/sample.pdf" }}
     />;
   };
+
   renderHeader = () => {
     const { utilisateur } = this.props;
     console.log("USER");
@@ -139,13 +133,6 @@ class Profil extends React.Component {
           }}
         >
           <View style={styles.headerColumn}>
-            <Image
-              style={styles.userImage}
-              source={{
-                uri:
-                  "https://scontent.fcdg2-1.fna.fbcdn.net/v/t1.0-9/206299_140273562710584_2239187_n.jpg?_nc_cat=111&_nc_sid=cdbe9c&_nc_oc=AQkOH2ujJiCQh0t81p9NI2RUVwwjaVQZ-Xn4JWp6TikQYD_JH9RjOF9gxwdqiwAthgU&_nc_ht=scontent.fcdg2-1.fna&oh=bb7d750cd61a3fa58a785f3be9ddc149&oe=5EC9A6D5",
-              }}
-            />
             <Text style={styles.userNameText}>
               {utilisateur.nom} {utilisateur.prenom}
             </Text>
@@ -169,7 +156,58 @@ class Profil extends React.Component {
       </View>
     );
   };
+  desactiverAnnonce() {
+    const { annonceUser } = this.props;
+    const bodyAnnonce = {
+      idAnnonce: annonceUser[0].id.toString(),
+      etat: "0",
+    };
+    console.log(bodyAnnonce);
+    fetch("http://" + devConst.ip + ":3000/Annonce/changeEtat", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyAnnonce),
+    })
+      .then((response) => response.text())
+      .then((responseJsonFromServer) => {
+        console.log(responseJsonFromServer);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
+    console.log("Changement Etat 0 OK");
+    this.props.navigation.navigate("HomePage");
+  }
+
+  activerAnnonce() {
+    const { annonceUser } = this.props;
+    const bodyAnnonce = {
+      idAnnonce: annonceUser[0].id.toString(),
+      etat: "1",
+    };
+    console.log(bodyAnnonce);
+    fetch("http://" + devConst.ip + ":3000/Annonce/changeEtat", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyAnnonce),
+    })
+      .then((response) => response.text())
+      .then((responseJsonFromServer) => {
+        console.log(responseJsonFromServer);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    console.log("Changement etat 1 OK");
+    this.props.navigation.navigate("HomePage");
+  }
   ajoutReservation() {
     // const { utilisateur } = this.props;
     // const data = this.state.dataProfil;
@@ -200,9 +238,7 @@ class Profil extends React.Component {
 
   renderModal() {
     const { utilisateur } = this.props;
-    const PdfReader = ({ url: uri }) => (
-      <WebView style={{ flex: 1 }} source={{ uri }} />
-    );
+
     const data = this.state.dataProfil;
     console.log("UN PROFIL");
     console.log(data);
@@ -320,67 +356,194 @@ class Profil extends React.Component {
       />
     );
   };
-renderAnnonce() {
-  return(
-    <View style={styles.medcab}>
-      <ImageBackground
-        style={styles.medcabImage}
-        imageStyle={styles.medcabImage}
-        source={{ ""}}
-      />
 
-      <View style={styles.medcabDetails}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-            toto
-          </Text>
-          <Text style={{ fontSize: 12, color: "#A5A5A5", paddingTop: 5 }}>
-            {medcab.description}
-          </Text>
-        </View>
-        <View style={{ flex: 1, flexDirection: "row" }}>
-          <View style={styles.medcabInfo}>
-            <FontAwesome name="star" color="#3C824C" size={12} />
-            <Text style={{ marginLeft: 4, color: "#3C824C" }}>
-              {medcab.typeOffre}
+  renderModal2() {
+    const { annonceUser } = this.props;
+    const { utilisateur } = this.props;
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={this.state.modalVisible2}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+        }}
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.headerContainer2}>
+            <View style={styles.header2}>
+              <View style={{ flex: 2, flexDirection: "row" }}>
+                <View style={styles.settings}>
+                  <View style={styles.location}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setModalVisible2(!this.state.modalVisible2);
+                      }}
+                    >
+                      <Ionicons color="white" name="md-arrow-back" size={24} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+              {annonceUser[0].actived === 1 ? (
+                <View style={styles.settings}>
+                  <Button
+                    onPress={this.desactiverAnnonce.bind(this)}
+                    buttonStyle={{ backgroundColor: "#BF0A30" }}
+                    icon={{
+                      name: "close",
+                      size: 25,
+                      color: "white",
+                    }}
+                    title="Désactiver l'annonce"
+                  />
+                </View>
+              ) : (
+                <View style={styles.settings}>
+                  <Button
+                    onPress={this.activerAnnonce.bind(this)}
+                    buttonStyle={{ backgroundColor: "#4F7942" }}
+                    icon={{
+                      name: "check",
+                      size: 25,
+                      color: "white",
+                    }}
+                    title="Activer l'annonce"
+                  />
+                </View>
+              )}
+            </View>
+          </View>
+
+          <View style={styles.headerImage}>
+            <ImageBackground
+              style={styles.modalImage}
+              imageStyle={styles.modalImage}
+              source={{ uri: annonceUser[0].image }}
+            />
+          </View>
+          <View style={styles.modalBorder}></View>
+          <View style={styles.modalTitle}>
+            <Text style={styles.modalTitle}>{annonceUser[0].titre}</Text>
+            <Text style={styles.modalDescription}>
+              {annonceUser[0].description}
             </Text>
           </View>
-          <View style={styles.medcabInfo}>
-            <FontAwesome name="location-arrow" color="#4287F5" size={12} />
-            <Text style={{ marginLeft: 4, color: "#4287F5" }}>
-              {medcab.codePostale}, {medcab.ville}
+          <View style={styles.modalText}>
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Ouverture : lundi au vendredi
+              </Text>
+            </View>
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Horraire : 8h-12h30 et 13h30-20h
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Qualifications requises : 3 ans d'expérience minimum
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Déplacement domicile : Non
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Description de l'annonceur : Dr Maboul
+              </Text>
+            </View>
+          </View>
+          <View style={styles.modalBorder}></View>
+        </SafeAreaView>
+      </Modal>
+    );
+  }
+
+  renderAnnonce() {
+    const { annonceUser } = this.props;
+    console.log("ANNONCEUSER");
+    console.log(annonceUser);
+    console.log(annonceUser[0]);
+    return (
+      <View style={styles.medcab}>
+        <View style={styles.medcabDetails}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+              {annonceUser[0].titre}
+            </Text>
+            <Text style={{ fontSize: 12, color: "#A5A5A5", paddingTop: 5 }}>
+              {annonceUser[0].description}
             </Text>
           </View>
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <View style={styles.medcabInfo}>
+              <FontAwesome name="star" color="#3C824C" size={12} />
+              <Text style={{ marginLeft: 4, color: "#3C824C" }}>
+                {annonceUser[0].typeOffre}
+              </Text>
+            </View>
+            <View style={styles.medcabInfo}>
+              <FontAwesome name="location-arrow" color="#4287F5" size={12} />
+              <Text style={{ marginLeft: 4, color: "#4287F5" }}>
+                {annonceUser[0].codePostale}, {annonceUser[0].ville}
+              </Text>
+            </View>
+          </View>
         </View>
+        <View style={{ flex: 0.2, justifyContent: "center" }}>
+          <TouchableOpacity
+            onPress={() => {
+              this._selectedItem2(annonceUser[0]);
+            }}
+          >
+            <SimpleLineIcons
+              name="options-vertical"
+              color="#A5A5A5"
+              size={24}
+            />
+          </TouchableOpacity>
+        </View>
+        {this.renderModal2()}
       </View>
-      <View style={{ flex: 0.2, justifyContent: "center" }}>
-        <TouchableOpacity
-          onPress={() => {
-            this._selectedItem(medcab);
-          }}
-        >
-          <SimpleLineIcons
-            name="options-vertical"
-            color="#A5A5A5"
-            size={24}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
-}
+    );
+  }
+
   render() {
     const { remplacantAnnonce } = this.props;
     console.log("REMPLACANT ANNONCE");
     console.log(remplacantAnnonce);
     return (
       <ScrollView style={styles.scroll}>
+        <View style={styles.headerContainer2}>
+          <View style={styles.header2}>
+            <View style={{ flex: 2, flexDirection: "row" }}>
+              <View style={styles.settings}>
+                <View style={styles.location}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.props.navigation.navigate("HomePage");
+                    }}
+                  >
+                    <Ionicons color="white" name="md-arrow-back" size={24} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
         <View style={styles.container}>
           <Card containerStyle={styles.cardContainer}>
             {this.renderHeader()}
@@ -390,12 +553,19 @@ renderAnnonce() {
               {this.renderEmail()}
               {Separator()}
               <View>
-              <Text>
-              Mon annoce :  {this.renderModal2()}
-              </Text></View>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                  Votre annonce :
+                </Text>
+                {this.renderAnnonce()}
+              </View>
             </View>
           </Card>
           <View style={styles.container}>
+            <View style={{ marginTop: 15 }}>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                Personne ayant postulé à votre annonce :
+              </Text>
+            </View>
             <View style={{ marginTop: 15 }}>
               <Carousel
                 layout={"stack"}
@@ -422,9 +592,12 @@ const moduleState = (state) => ({
   mylocation: state.medcabs.mylocation,
   utilisateur: state.medcabs.user,
   remplacantAnnonce: state.medcabs.remplacantAnnonce,
+  annonceUser: state.medcabs.annonceUser,
 });
 
-const moduleActions = {};
+const moduleActions = {
+  setAnnonceUtilisateur,
+};
 
 export default connect(moduleState, moduleActions)(Profil);
 
@@ -562,6 +735,29 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingBottom: 8,
     textAlign: "center",
+  },
+  medcab: {
+    flex: 1,
+    flexDirection: "row",
+    borderBottomColor: "#A5A5A5",
+    borderBottomWidth: 0.5,
+    padding: 20,
+  },
+  medcabDetails: {
+    flex: 2,
+    paddingLeft: 20,
+    flexDirection: "column",
+    justifyContent: "space-around",
+  },
+  medcabInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 14,
+  },
+  medcabImage: {
+    width: width * 0.3,
+    height: width * 0.25,
+    borderRadius: 6,
   },
   modalImage: {
     width: width,

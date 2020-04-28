@@ -6,8 +6,11 @@ const SET_PROFIL = "SET_PROFIL";
 const SET_USER = "SET_USER";
 const SET_ETABLISSEMENT = "SET_ETABLISSEMENT";
 const SET_REMPLACANT_ANNONCE = "SET_REMPLACANT_ANNONCE";
+const SET_ANNONCE_UTILISATEUR = "SET_ANNONCE_UTILISATEUR";
+const UPDATE_ANNONCE = "UPDATE_ANNONCE";
 // Initial state
 const INITIAL_STATE = {
+  annonceUser: [],
   remplacantAnnonce: [],
   etablissement: [],
   spots: [],
@@ -30,11 +33,23 @@ const INITIAL_STATE = {
 
 // Reducer
 export default function reducer(state = INITIAL_STATE, action = {}) {
+  console.log("ACTION ID");
+  console.log(action);
   switch (action.type) {
+    case UPDATE_ANNONCE:
+      return {
+        ...state,
+        annonceUser: 1,
+      };
     case SET_PROFIL:
       return {
         ...state,
         profils: action.payload,
+      };
+    case SET_ANNONCE_UTILISATEUR:
+      return {
+        ...state,
+        annonceUser: action.payload,
       };
     case SET_REMPLACANT_ANNONCE:
       return {
@@ -80,6 +95,23 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
 }
 
 // Actions
+export function setAnnonceUtilisateur(payload) {
+  return (dispatch) => {
+    dispatch({
+      type: SET_ANNONCE_UTILISATEUR,
+      payload,
+    });
+  };
+}
+export function updateAnnonce(payload) {
+  return (dispatch) => {
+    dispatch({
+      type: UPDATE_ANNONCE,
+      payload,
+    });
+  };
+}
+
 export function setMedCabs(payload) {
   return (dispatch) => {
     dispatch({

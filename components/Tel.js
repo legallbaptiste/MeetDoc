@@ -1,44 +1,44 @@
-import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Icon } from 'react-native-elements'
-import PropTypes from 'prop-types'
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Icon } from "react-native-elements";
+import PropTypes from "prop-types";
 
-import mainColor from '../constants/constant'
+import mainColor from "../constants/constant";
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "flex-start",
     marginBottom: 25,
   },
   iconRow: {
     flex: 2,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   smsIcon: {
-    color: 'gray',
+    color: "gray",
     fontSize: 30,
   },
   smsRow: {
     flex: 2,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   telIcon: {
     color: mainColor,
     fontSize: 30,
   },
   telNameColumn: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "flex-start",
   },
   telNameText: {
-    color: 'gray',
+    color: "gray",
     fontSize: 14,
-    fontWeight: '200',
+    fontWeight: "200",
   },
   telNumberColumn: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "flex-start",
     marginBottom: 5,
   },
   telNumberText: {
@@ -46,10 +46,10 @@ const styles = StyleSheet.create({
   },
   telRow: {
     flex: 6,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
   },
-})
+});
 
 const Tel = ({
   containerStyle,
@@ -92,8 +92,8 @@ const Tel = ({
         </View>
       </View>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 Tel.propTypes = {
   containerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
@@ -102,11 +102,11 @@ Tel.propTypes = {
   number: PropTypes.string.isRequired,
   onPressSms: PropTypes.func.isRequired,
   onPressTel: PropTypes.func.isRequired,
-}
+};
 
 Tel.defaultProps = {
   containerStyle: {},
   name: null,
-}
+};
 
-export default Tel
+export default Tel;
