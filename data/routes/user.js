@@ -206,4 +206,40 @@ router.post("/verifier", (req, res) => {
 	});
 });
 
+router.post("/accepterAnnonceRemplacant", (req, res) => {
+	var data = {
+		idUser: req.body.idUser,
+		idAnnonce: req.body.idAnnonce,
+		accepter: req.body.accepter,
+	};
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"UPDATE AnnonceRemplacant SET accepter = " +
+			data.accepter +
+			" WHERE idAnnonce = " +
+			data.idAnnonce +
+			" AND idRemplacant = " +
+			data.idUser;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message:
+					"Modification etat accepter d'un remplacant pour une annonce POST OK",
+				data: results,
+				error: erreur,
+			});
+		});
+	});
+});
+
 module.exports = router;
