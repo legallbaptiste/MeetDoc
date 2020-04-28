@@ -1,13 +1,16 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
+	ImageBackground,
 	ScrollView,
 	StyleSheet,
 	Linking,
 	Image,
 	Button,
 	Alert,
+	Modal,
 	Text,
 	TouchableOpacity,
+	TouchableHighlight,
 	View,
 	Dimensions,
 	SafeAreaView,
@@ -15,7 +18,6 @@ import {
 	TextInput
 } from "react-native";
 import Carousel from 'react-native-snap-carousel';
-import AwesomeAlert from 'react-native-awesome-alerts';
 
 import { connect } from "react-redux";
 import {
@@ -38,127 +40,230 @@ class Profil extends Component {
 
 
 
-	renderHeader() {
-		return (
-			<View style={styles.header}>
-				<View style={{ flex: 1 }}>
-					<TouchableOpacity
-						onPress={() => this.props.navigation.navigate("HomePage")}
-					>
-						<Ionicons name="md-arrow-back" size={24} />
-					</TouchableOpacity>
-				</View>
-				<View style={{ flex: 1, alignItems: "center" }}>
-					<Text style={styles.title}>Profil</Text>
-				</View>
-			</View>
-		);
-	}
-
 	constructor(props){
         super(props);
 
         this.state = {
-					showAlert : false,
+					modalVisible: false,
           activeIndex:0,
+					selectedData:[],
           carouselItems: [
-          {
-              title:"Item 1",
-              text: "Text 1",
-							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-          },
-          {
-              title:"Item 2",
-              text: "Text 2",
-							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-					},
-          {
-              title:"Item 3",
-              text: "Text 3",
-							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-          },
-          {
-              title:"Item 4",
-              text: "Text 4",
-							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-          },
-          {
-              title:"Item 5",
-              text: "Text 5",
-							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-          },
+						{
+	    Retrocession: 75.5,
+	    codePostale: 64000,
+	    cv: null,
+	    description: "Cabinet du docteur Raoul, spécialisé dans la médecine générale",
+	    descriptionLibre: null,
+	    email: "remplacant2@eisti.eu",
+	    id: 4,
+	    image: "https://www.burofacil.fr/public/img/big/bureaux-equipes5aa156dd5c66c.jpg",
+	    nom: "LeGall",
+	    numTel: "0669696969",
+	    numVoie: 13,
+	    pays: "France",
+	    prenom: "Baptisite",
+	    specialite: null,
+	    titre: "Cabinet du Dr Raoul",
+	    typeOffre: "Plein Temps",
+	    ville: "Pau",
+	    voie: "Avenue Pierre masse",
+	  },
+	   {
+	    Retrocession: 80.5,
+	    codePostale: 64000,
+	    cv: null,
+	    description: "Cabinet du docteur Maboul, spécialisé en chirugie dentaire",
+	    descriptionLibre: null,
+	    email: "remplacant@eisti.eu",
+	    id: 2,
+	    image: "https://be-mydesk.com/img/cms/Articles%20de%20blog/amenagement-cabinet-medical.jpg",
+	    nom: "Disdier",
+	    numTel: "0645681890",
+	    numVoie: 13,
+	    pays: "France",
+	    prenom: "Yéyé",
+	    specialite: null,
+	    titre: "Cabinet du Dr Maboul",
+	    typeOffre: "Plein Temps",
+	    ville: "Pau",
+	    voie: "Avenue Pierre masse",
+	  },
+	  {
+	    Retrocession: 80.5,
+	    codePostale: 64000,
+	    cv: null,
+	    description: "Cabinet du docteur Maboul, spécialisé en chirugie dentaire",
+	    descriptionLibre: null,
+	    email: "remplacant@eisti.eu",
+	    id: 2,
+	    image: "https://be-mydesk.com/img/cms/Articles%20de%20blog/amenagement-cabinet-medical.jpg",
+	    nom: "Disdier",
+	    numTel: "0645681890",
+	    numVoie: 13,
+	    pays: "France",
+	    prenom: "Yéyé",
+	    specialite: null,
+	    titre: "Cabinet du Dr Maboul",
+	    typeOffre: "Plein Temps",
+	    ville: "Pau",
+	    voie: "Avenue Pierre masse",
+	  },
         ]
       }
     }
 
-		showAlert = () => {
-		    this.setState({
-		      showAlert: true
-		    });
-		  };
+		setModalVisible(visible) {
+			this.setState({ modalVisible: visible });
+		}
 
-		  hideAlert = () => {
-		    this.setState({
-		      showAlert: false
-		    });
-		  };
+		_selectedItem = (data) => {
+			this.setState({ selectedData: data });
+			this.setModalVisible(true);
+		};
+
+
+				renderHeader() {
+					return (
+						<View style={styles.header}>
+							<View style={{ flex: 1 }}>
+								<TouchableOpacity
+									onPress={() => this.props.navigation.navigate("HomePage")}
+								>
+									<Ionicons name="md-arrow-back" size={24} />
+								</TouchableOpacity>
+							</View>
+							<View style={{ flex: 1, alignItems: "center" }}>
+								<Text style={styles.title}>Profil</Text>
+							</View>
+						</View>
+					);
+				}
+
 
     _renderItem({item,index}){
-			console.log("caca");
-			console.log(this.state);
-			const {showAlert} = this.state;
-
 
         return (
           <View style={{
               backgroundColor:'floralwhite',
               borderRadius: 5,
-              height: 90,
+              height: 250,
               padding: 5,
               marginLeft: 5,
-              marginRight: 5, }}>
+              marginRight: 5,
+						}}>
 							<Image
 								style={styles.avatarAnnonce}
 								source={ {uri: item.image} }
 							/>
-            <Text style={{fontSize: 10}}>{item.title}</Text>
-            <Text>{item.text}</Text>
-	<View style={styles.Contacter}>
-						<Text>I'm AwesomeAlert</Text>
-        			<TouchableOpacity onPress={() => {
-          			this.showAlert();
-        				}}>
-          		<View style={styles.button}>
-            	<Text style={styles.text}>Try me!</Text>
-          		</View>
-        		</TouchableOpacity>
-						<AwesomeAlert
-          show={showAlert}
-          showProgress={false}
-          title="AwesomeAlert"
-          message="I have a message for you!"
-          closeOnTouchOutside={true}
-          closeOnHardwareBackPress={false}
-          showCancelButton={true}
-          showConfirmButton={true}
-          cancelText="No, cancel"
-          confirmText="Yes, delete it"
-          confirmButtonColor="#DD6B55"
-          onCancelPressed={() => {
-            this.hideAlert();
-          }}
-          onConfirmPressed={() => {
-            this.hideAlert();
-          }}
-        />
-				</View>
+            <Text style={{fontSize: 13}}>{item.nom}</Text>
+            <Text style={{fontSize: 10}}>{item.ville}</Text>
+						<Button
+							style={styles.bouton}
+							title="Profil"
+							onPress={() => this._selectedItem(item)}
+						/>
           </View>
 
         )
     }
 
+		renderModal(){
+			const data = this.state.selectedData;
+			return(
+			<View style={styles.centeredView}>
+			<Modal
+				animationType="slide"
+				transparent={false}
+				visible={this.state.modalVisible}
+				onRequestClose={() => {
+					this.setModalVisible(!this.state.modalVisible);
+				}}
+			>
+
+				<SafeAreaView style={styles.container}>
+					<View style={styles.headerContainer}>
+						<View style={styles.header}>
+							<View style={{ flex: 2, flexDirection: "row" }}>
+								<View style={styles.settings}>
+									<View style={styles.location}>
+										<TouchableOpacity
+											onPress={() => {
+												this.setModalVisible(!this.state.modalVisible);
+											}}
+										>
+											<Ionicons color="white" name="md-arrow-back" size={24} />
+										</TouchableOpacity>
+									</View>
+								</View>
+							</View>
+
+
+						</View>
+					</View>
+
+					<View style={styles.headerImage}>
+						<ImageBackground
+							style={styles.modalImage}
+							imageStyle={styles.modalImage}
+							source={{ uri: data.image }}
+						/>
+					</View>
+					<View style={styles.modalBorder}></View>
+					<View style={styles.modalTitle}>
+						<Text style={styles.modalText}>{data.nom}</Text>
+						<Text style={styles.modalTitle}>{data.ville}</Text>
+					</View>
+					<View style={styles.modalText}>
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Disponibilités : lundi au vendredi
+							</Text>
+						</View>
+
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Qualifications : 3 ans d'expériences
+							</Text>
+						</View>
+
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Déplacement domicile : Non
+							</Text>
+						</View>
+
+						<View style={styles.modalText}>
+							<Text style={styles.modalTextSpace}>
+								Description du postulant : Faut pas respirer la compote, ca fait tousser.
+							</Text>
+						</View>
+					</View>
+					<View style={styles.modalBorder}></View>
+					<View style={styles.settings}>
+						<Button
+							buttonStyle={{ backgroundColor: "#4F7942", color: "white" }}
+							icon={{
+								name: "check",
+								size: 25,
+								color: "white",
+							}}
+							title="Voir le Profil"
+							onPress={() => {
+								Alert.alert("Affichage page profil complete.");
+			        }}
+						/>
+					</View>
+				</SafeAreaView>
+			</Modal>
+			</View>
+			);
+		}
+
+
+
 	render() {
 		const {utilisateur} = this.props;
+		console.log(this.state.carouselItems);
 		return (
 			<SafeAreaView style={styles.container}>
 				{this.renderHeader()}
@@ -188,18 +293,17 @@ class Profil extends Component {
 						  ref={ref => this.carousel = ref}
 						  data={this.state.carouselItems}
 						  sliderWidth={300}
-						  itemWidth={100}
-						  renderItem={this._renderItem}
+						  itemWidth={120}
+						  renderItem={this._renderItem.bind(this)}
 						  onSnapToItem = { index => this.setState({activeIndex:index}) } />
 					</View>
-					<View style={styles.Contacter}>
-						<Button
-							style={styles.bouton}
-							title="Contacter"
-							onPress={() => Alert.alert(profils.nom)}
-						/>
 
-					</View>
+
+
+						{this.renderModal()}
+
+
+
 				</View>
 			</SafeAreaView>
 		);
@@ -236,12 +340,13 @@ const styles = StyleSheet.create({
 		marginTop: 130
 	},
 	avatarAnnonce: {
-		width: 10,
-		height: 10,
+		width: 35,
+		height: 35,
+		borderRadius: 17,
+		borderWidth: 1,
 		borderColor: "white",
 		marginBottom: 1,
 		alignSelf: "center",
-		position: "absolute",
 		marginTop: 1
 	},
 	body: {
@@ -296,12 +401,14 @@ const styles = StyleSheet.create({
 	},
 	Annonces: {
 		justifyContent : 'center',
-		flex: 5
+		flex: 6
+
 	},
 	titre: {
 		fontSize: 20,
 		color: "#4287F5",
-		padding: 30
+		paddingTop: 30,
+		paddingBottom: 20
 	},
 
 	Contacter: {
@@ -311,7 +418,46 @@ const styles = StyleSheet.create({
 	text: {
     color: '#fff',
     fontSize: 15
-  }
+  },
+	modalImage: {
+		width: width,
+		height: width * 0.5,
+	},
+	modalBorder: {
+		marginTop: 5,
+		marginBottom: 5,
+		marginLeft: 20,
+		marginRight: 20,
+		borderBottomColor: "#6d95da",
+		borderBottomWidth: 2,
+	},
+	modalTitle: {
+		marginTop: 5,
+		marginBottom: 5,
+		fontSize: 20,
+		fontWeight: "bold",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	modalDescription: {
+		marginTop: 5,
+		marginBottom: 5,
+		fontSize: 16,
+		alignItems: "center",
+		fontStyle: "italic",
+	},
+	modalText: {
+		marginTop: 5,
+		marginBottom: 5,
+		marginLeft: 10,
+		fontSize: 14,
+		alignItems: "flex-start",
+		justifyContent: "center",
+	},
+	modalTextSpace: {
+		marginTop: 3,
+		marginBottom: 3,
+	}
 });
 
 
@@ -361,4 +507,5 @@ const THEME: ThemeType = {
     color: 'white',
   },
   nonTouchableLastMonthDayTextStyle: {},
+
 };

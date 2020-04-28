@@ -4,6 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import HomePage from '../screens/HomePage';
 import Settings from '../screens/Settings';
+import Admin from '../screens/Admin';
 import Formulaire from '../screens/Formulaire';
 import Profil from '../screens/Profil';
 import Opening from '../screens/Opening';
@@ -20,6 +21,7 @@ export default createStackNavigator(
     Opening : Opening,
     Connexion: Connexion,
     HomePage: HomePage,
+    Admin: Admin,
     Inscription: Inscription,
     Settings: Settings,
     Formulaire: Formulaire,

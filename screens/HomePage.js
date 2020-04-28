@@ -356,7 +356,7 @@ class HomePage extends React.Component {
 						</View>
 						<View style={styles.modalText}>
 							<Text style={styles.modalTextSpace}>
-								Horraire : 8h-12h30 et 13h30-20h
+								Horaire : 8h-12h30 et 13h30-20h
 							</Text>
 						</View>
 
@@ -384,6 +384,34 @@ class HomePage extends React.Component {
 		);
 	}
 
+	ajoutReservation() {
+    const { utilisateur } = this.props;
+    const data = this.state.selectedData;
+    bodyAnnonce = {
+      idAnnonce: data.id.toString(),
+      idUser: utilisateur.id.toString(),
+    };
+    fetch("http://" + devConst.ip + ":3000/Annonce/postuler/", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyAnnonce),
+    })
+      .then((response) => response.text())
+      .then((responseJsonFromServer) => {
+        console.log(responseJsonFromServer);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    console.log("Ajout reservation OK");
+    // this.props.navigation.navigate("HomePage");
+  }
+
+
+
 	render() {
 		return (
 			<SafeAreaView style={styles.container}>
@@ -394,6 +422,17 @@ class HomePage extends React.Component {
 					{this.renderMap()}
 					{this.renderList()}
 					{this.renderModal()}
+
+					<Button
+            	onPress={this.ajoutReservation.bind(this)}
+              buttonStyle={{ backgroundColor: "#4F7942" }}
+            	icon={{
+                name: "check",
+                size: 25,
+                color: "white",
+              }}
+              title="Demander une reservation"
+              />
 				</ScrollView>
 			</SafeAreaView>
 		);

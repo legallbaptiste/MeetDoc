@@ -69,7 +69,11 @@ class Connexion extends React.Component {
 				const userInfo = userInfo1.user;
 				console.log(userInfo);
 				this.props.setUser(userInfo);
-				this.props.navigation.navigate("HomePage");
+				if (this.state.username == "admin"){
+					this.props.navigation.navigate("Admin");
+				} else {
+					this.props.navigation.navigate("HomePage");
+				}
 			} else {
 				console.log("Pas le bon mdp ou mail");
 				this.showAlert();
