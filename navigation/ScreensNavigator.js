@@ -17,6 +17,7 @@ import Register from "../screens/Register";
 import ImagePickerExample from "../screens/ImagePickerExample";
 
 export default createStackNavigator({
+<<<<<<< HEAD
   // Register : Register,
   // ImagePickerExample: ImagePickerExample,
   SignInScreen: SignInScreen,
@@ -27,4 +28,16 @@ export default createStackNavigator({
   Settings: Settings,
   Formulaire: Formulaire,
   Profil: Profil,
+=======
+	// ImagePickerExample: ImagePickerExample,
+	//Register: Register,
+	SignInScreen: SignInScreen,
+	Opening: Opening,
+	Connexion: Connexion,
+	HomePage: HomePage,
+	Inscription: Inscription,
+	Settings: Settings,
+	Formulaire: Formulaire,
+	Profil: Profil,
+>>>>>>> yy
 });
