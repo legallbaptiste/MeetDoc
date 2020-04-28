@@ -17,6 +17,7 @@ import {
   WebView,
 } from "react-native";
 import { Button } from "react-native-elements";
+import PDFReader from "rn-pdf-reader-js";
 
 import PropTypes from "prop-types";
 import Carousel from "react-native-snap-carousel";
@@ -53,8 +54,10 @@ class Profil extends React.Component {
   state = {
     modalVisible: false,
     modalVisible2: false,
+    modalVisible3: false,
     activeIndex: 0,
     dataProfil: [],
+    dataAnnonce: [],
   };
 
   _renderItem({ item, index }) {
@@ -82,6 +85,11 @@ class Profil extends React.Component {
   setModalVisible2(visible) {
     this.setState({ modalVisible2: visible });
   }
+
+  setModalVisible3(visible) {
+    this.setState({ modalVisible3: visible });
+  }
+
   _selectedItem = (data) => {
     this.setState({ dataProfil: data });
     this.setModalVisible(true);
@@ -90,6 +98,7 @@ class Profil extends React.Component {
     console.log("TOTO");
     this.setModalVisible2(true);
   };
+
   onPressPlace = () => {
     console.log("place");
   };
@@ -112,11 +121,6 @@ class Profil extends React.Component {
 
   onPressCV = () => {
     console.log("toto");
-    <WebView
-      bounces={false}
-      scrollEnabled={false}
-      source={{ uri: "http://www.africau.edu/images/default/sample.pdf" }}
-    />;
   };
 
   renderHeader = () => {
@@ -207,33 +211,6 @@ class Profil extends React.Component {
     this.props.updateAnnonce({ actived: 1 });
     console.log("Changement etat 1 OK");
     this.setModalVisible2(!this.state.modalVisible2);
-  }
-  ajoutReservation() {
-    // const { utilisateur } = this.props;
-    // const data = this.state.dataProfil;
-    // console.log(utilisateur);
-    // bodyAnnonce = {
-    //   idAnnonce: data.id.toString(),
-    //   idUser: utilisateur.id.toString(),
-    // };
-    // console.log(bodyAnnonce);
-    // fetch("http://" + devConst.ip + ":3000/Annonce/postuler/", {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(bodyAnnonce),
-    // })
-    //   .then((response) => response.text())
-    //   .then((responseJsonFromServer) => {
-    //     console.log(responseJsonFromServer);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-    // console.log("Ajout reservation OK");
-    // this.props.navigation.navigate("HomePage");
   }
 
   renderModal() {
@@ -354,7 +331,85 @@ class Profil extends React.Component {
       />
     );
   };
+  renderModal3() {
+    const { utilisateur } = this.props;
+    const data = this.state.dataAnnonce;
+    return (
+      <Modal
+        animationType="slide"
+        key={data.id}
+        transparent={false}
+        visible={this.state.modalVisible3}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+        }}
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+              <View style={{ flex: 2, flexDirection: "row" }}>
+                <View style={styles.settings}>
+                  <View style={styles.location}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setModalVisible3(!this.state.modalVisible3);
+                      }}
+                    >
+                      <Ionicons color="white" name="md-arrow-back" size={24} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
 
+          <View style={styles.headerImage}>
+            <ImageBackground
+              style={styles.modalImage}
+              imageStyle={styles.modalImage}
+              source={{ uri: data.image }}
+            />
+          </View>
+          <View style={styles.modalBorder}></View>
+          <View style={styles.modalTitle}>
+            <Text style={styles.modalTitle}>{data.titre}</Text>
+            <Text style={styles.modalDescription}>{data.description}</Text>
+          </View>
+          <View style={styles.modalText}>
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Ouverture : lundi au vendredi
+              </Text>
+            </View>
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Horraire : 8h-12h30 et 13h30-20h
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Qualifications requises : 3 ans d'expérience minimum
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Déplacement domicile : Non
+              </Text>
+            </View>
+
+            <View style={styles.modalText}>
+              <Text style={styles.modalTextSpace}>
+                Description de l'annonceur : Dr Maboul
+              </Text>
+            </View>
+          </View>
+          <View style={styles.modalBorder}></View>
+        </SafeAreaView>
+      </Modal>
+    );
+  }
   renderModal2() {
     const { annonceUser } = this.props;
     const { utilisateur } = this.props;
@@ -513,13 +568,67 @@ class Profil extends React.Component {
           </TouchableOpacity>
         </View>
         {this.renderModal2()}
+        {this.renderModal3()}
       </View>
     );
   }
+  renderList() {
+    const { remplacantPostule } = this.props;
+    return remplacantPostule.map((annonce) => {
+      console.log("ANNONCE");
+      console.log(annonce);
+      return (
+        <View key={`medcab-${annonce.id}`} style={styles.medcab}>
+          <ImageBackground
+            style={styles.medcabImage}
+            imageStyle={styles.medcabImage}
+            source={{ uri: annonce.image }}
+          />
 
+          <View style={styles.medcabDetails}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                {annonce.titre}
+              </Text>
+              <Text style={{ fontSize: 12, color: "#A5A5A5", paddingTop: 5 }}>
+                {annonce.description}
+              </Text>
+            </View>
+            <View style={{ flex: 1, flexDirection: "col" }}>
+              <View style={styles.medcabInfo}>
+                <FontAwesome name="star" color="#3C824C" size={12} />
+                <Text style={{ marginLeft: 4, color: "#3C824C" }}>
+                  {annonce.typeOffre}
+                </Text>
+              </View>
+              <View style={styles.medcabInfo}>
+                <FontAwesome name="location-arrow" color="#4287F5" size={12} />
+                <Text style={{ marginLeft: 4, color: "#4287F5" }}>
+                  {annonce.numVoie} {annonce.voie}
+                </Text>
+              </View>
+              <View style={styles.medcabInfo}>
+                <FontAwesome name="location-arrow" color="#4287F5" size={12} />
+                <Text style={{ marginLeft: 4, color: "#4287F5" }}>
+                  {annonce.codePostale}, {annonce.ville}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      );
+    });
+  }
   render() {
     const { remplacantAnnonce } = this.props;
-
+    const { utilisateur } = this.props;
+    const { remplacantPostule } = this.props;
     return (
       <ScrollView style={styles.scroll}>
         <View style={styles.headerContainer2}>
@@ -547,33 +656,48 @@ class Profil extends React.Component {
               {Separator()}
               {this.renderEmail()}
               {Separator()}
-              <View>
-                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                  Votre annonce :
-                </Text>
-                {this.renderAnnonce()}
-              </View>
+              {utilisateur.type === "recruteur" ? (
+                <View>
+                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                    Votre annonce :
+                  </Text>
+                  {this.renderAnnonce()}
+                </View>
+              ) : (
+                <View>
+                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                    Les annonces où vous avez postulé :
+                  </Text>
+                  {this.renderList()}
+                </View>
+              )}
             </View>
           </Card>
-          <View style={styles.container}>
-            <View style={{ marginTop: 15 }}>
-              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                Personne ayant postulé à votre annonce :
-              </Text>
+          {utilisateur.type === "recruteur" ? (
+            <View style={styles.container}>
+              <View style={{ marginTop: 15 }}>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                  Personne ayant postulé à votre annonce :
+                </Text>
+              </View>
+              <View style={{ marginTop: 15 }}>
+                <Carousel
+                  layout={"stack"}
+                  layoutCardOffset={18}
+                  ref={(ref) => (this.carousel = ref)}
+                  data={remplacantAnnonce}
+                  sliderWidth={SLIDER_WIDTH}
+                  itemWidth={ITEM_WIDTH}
+                  renderItem={this._renderItem.bind(this)}
+                  onSnapToItem={(index) =>
+                    this.setState({ activeIndex: index })
+                  }
+                />
+              </View>
             </View>
-            <View style={{ marginTop: 15 }}>
-              <Carousel
-                layout={"stack"}
-                layoutCardOffset={18}
-                ref={(ref) => (this.carousel = ref)}
-                data={remplacantAnnonce}
-                sliderWidth={SLIDER_WIDTH}
-                itemWidth={ITEM_WIDTH}
-                renderItem={this._renderItem.bind(this)}
-                onSnapToItem={(index) => this.setState({ activeIndex: index })}
-              />
-            </View>
-          </View>
+          ) : (
+            <View></View>
+          )}
           {this.renderModal()}
         </View>
       </ScrollView>
@@ -588,6 +712,7 @@ const moduleState = (state) => ({
   utilisateur: state.medcabs.user,
   remplacantAnnonce: state.medcabs.remplacantAnnonce,
   annonceUser: state.medcabs.annonceUser,
+  remplacantPostule: state.medcabs.remplacantPostule,
 });
 
 const moduleActions = {

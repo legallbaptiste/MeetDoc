@@ -9,10 +9,12 @@ const SET_REMPLACANT_ANNONCE = "SET_REMPLACANT_ANNONCE";
 const SET_ANNONCE_UTILISATEUR = "SET_ANNONCE_UTILISATEUR";
 const UPDATE_ANNONCE = "UPDATE_ANNONCE";
 const SET_ANNONCE = "SET_ANNONCE";
+const SET_REMPLACANT_POSTULE = "SET_REMPLACANT_POSTULE";
 // Initial state
 const INITIAL_STATE = {
   annonceUser: [],
   remplacantAnnonce: [],
+  remplacantPostule: [],
   etablissement: [],
   spots: [],
   user: [],
@@ -48,6 +50,11 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
       return {
         ...state,
         profils: action.payload,
+      };
+    case SET_REMPLACANT_POSTULE:
+      return {
+        ...state,
+        remplacantPostule: action.payload,
       };
     case SET_ANNONCE_UTILISATEUR:
       return {
@@ -107,6 +114,14 @@ export function setAnnonceUtilisateur(payload) {
   return (dispatch) => {
     dispatch({
       type: SET_ANNONCE_UTILISATEUR,
+      payload,
+    });
+  };
+}
+export function setRemplacantPostule(payload) {
+  return (dispatch) => {
+    dispatch({
+      type: SET_REMPLACANT_POSTULE,
       payload,
     });
   };

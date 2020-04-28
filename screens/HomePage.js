@@ -35,6 +35,7 @@ import {
   setFilters,
   setAnnonceUtilisateur,
   setMedCabs,
+  setRemplacantPostule,
 } from "../reducers/reducer";
 
 // Import dev
@@ -71,17 +72,33 @@ class HomePage extends React.Component {
       console.log("Erreur avec le fetch ---->  ", err);
     }
     const { utilisateur } = this.props;
-    try {
-      const remplacantAnnonceFetch = await fetch(
-        "http://" +
-          devConst.ip +
-          ":3000/annonce/getRemplacantAnnonce/" +
-          utilisateur.id
-      );
-      const remplacantAnnonce = await remplacantAnnonceFetch.json();
-      this.props.setRemplacantAnnonce(remplacantAnnonce.user);
-    } catch (err) {
-      console.log("Erreur avec le fetch ---->  ", err);
+
+    if (utilisateur.type === "recruteur") {
+      try {
+        const remplacantAnnonceFetch = await fetch(
+          "http://" +
+            devConst.ip +
+            ":3000/annonce/getRemplacantAnnonce/" +
+            utilisateur.id
+        );
+        const remplacantAnnonce = await remplacantAnnonceFetch.json();
+        this.props.setRemplacantAnnonce(remplacantAnnonce.user);
+      } catch (err) {
+        console.log("Erreur avec le fetch ---->  ", err);
+      }
+    } else {
+      try {
+        const remplacantPostuleFetch = await fetch(
+          "http://" +
+            devConst.ip +
+            ":3000/annonce/getByRemplacant/" +
+            utilisateur.id
+        );
+        const remplacantPostule = await remplacantPostuleFetch.json();
+        this.props.setRemplacantPostule(remplacantPostule.annonce);
+      } catch (err) {
+        console.log("Erreur avec le fetch ---->  ", err);
+      }
     }
     try {
       const annonceUserFetch = await fetch(
@@ -467,6 +484,7 @@ const moduleActions = {
   setFilters,
   setRemplacantAnnonce,
   setAnnonceUtilisateur,
+  setRemplacantPostule,
 };
 
 export default connect(moduleState, moduleActions)(HomePage);
