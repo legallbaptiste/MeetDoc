@@ -13,10 +13,10 @@ const connection = mysql.createPool({
 	database: "projetGI2Dev",
 });
 
-
 //Permet de gerer l'inscription
 router.post("/", jsonParser, function (req, res) {
 	// Connecting to the database.
+	console.log("BODY USER");
 	console.log(req.body);
 	const erreurMessage = {
 		erreur: "200",
@@ -90,9 +90,9 @@ router.post("/", jsonParser, function (req, res) {
 								//Insertion d'un remplacant
 								const remplacant = {
 									id: idUser,
-									descriptionLibre: req.body.descriptionLibre,
-									cv: req.body.cv,
-									specialite: req.body.specialite,
+									descriptionLibre: req.body.remplacant.descriptionLibre,
+									cv: req.body.remplacant.cv,
+									specialite: req.body.remplacant.specialite,
 								};
 								var sqlRemplacant = "INSERT INTO Remplacant SET ?";
 								connection.query(sqlRemplacant, remplacant, (err, result) => {
@@ -135,7 +135,7 @@ router.get("/:email", function (req, res) {
 			if (err) throw err;
 			connection.release();
 			res.status(200).json({
-				message: "Get user work !",
+				message: "Get user connection work !",
 				user: user,
 			});
 		});
@@ -150,7 +150,6 @@ router.get("/info/:email", (req, res) => {
 
 		var sqlRemplacant =
 			"SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro,descriptionLibre,cv,specialite FROM Adresse a, Remplacant rem, User u WHERE u.idAdresse = a.id AND rem.id = u.id AND ?";
-		//SELECT u.id,nom,prenom,email,numTel,cartePro,voie,numVoie,ville,codePostale,cartePro,descriptionLibre,cv,specialite FROM Adresse a, Remplacant rem, User u WHERE u.idAdresse = a.id AND rem.id = u.id AND email = "remplacant@eisti.eu"
 
 		connection.query(sqlRemplacant, { email: email }, (err, result) => {
 			if (err) throw err;
@@ -170,9 +169,101 @@ router.get("/info/:email", (req, res) => {
 				}
 
 				res.status(200).json({
-					message: "Get user work !",
+					message: "Get user info work !",
 					user: user,
 				});
+			});
+		});
+	});
+});
+
+router.post("/verifier", (req, res) => {
+	var data = {
+		idUser: req.body.idUser,
+		etat: req.body.etat,
+	};
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"UPDATE User SET verifier = " + data.etat + " WHERE id = " + data.idUser;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Modification etat vérifier d'un user POST OK",
+				data: results,
+				error: erreur,
+			});
+		});
+	});
+});
+
+router.post("/accepterAnnonceRemplacant", (req, res) => {
+	var data = {
+		idUser: req.body.idUser,
+		idAnnonce: req.body.idAnnonce,
+		accepter: req.body.accepter,
+	};
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"UPDATE AnnonceRemplacant SET accepter = " +
+			data.accepter +
+			" WHERE idAnnonce = " +
+			data.idAnnonce +
+			" AND idRemplacant = " +
+			data.idUser;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message:
+					"Modification etat accepter d'un remplacant pour une annonce POST OK",
+				data: results,
+				error: erreur,
+			});
+		});
+	});
+});
+
+router.get("/all/all", (req, res) => {
+	var user = {};
+
+	var sqlVerifier = "SELECT * FROM User WHERE verifier = 1";
+
+	connection.query(sqlVerifier, (err, result) => {
+		if (err) throw err;
+		delete result.motDePasse;
+		user.verifier = result;
+
+		var sqlNonVerifier = "SELECT * FROM User WHERE verifier = 0";
+
+		connection.query(sqlNonVerifier, (err, result) => {
+			if (err) throw err;
+			delete result.motDePasse;
+			user.nonVerifier = result;
+
+			console.log(user);
+
+			res.status(200).json({
+				message: "Get all user accepter work !",
+				user: user,
 			});
 		});
 	});

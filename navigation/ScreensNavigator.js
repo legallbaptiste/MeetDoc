@@ -1,5 +1,9 @@
-import React from 'react';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import React from "react";
+import {
+  createStackNavigator,
+  createBottomTabNavigator,
+} from "react-navigation";
+
 
 
 import HomePage from '../screens/HomePage';

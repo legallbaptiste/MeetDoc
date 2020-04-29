@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, YellowBox, StyleSheet, View } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import {Asset} from 'expo-asset';
 import AppNavigator from './navigation/AppNavigator';
 
 import store from './reducers';
+console.disableYellowBox = true;
 
 export default class App extends React.Component {
   state = {

@@ -1,18 +1,30 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 
-import { StyleSheet, Dimensions } from 'react-native'
+import { StyleSheet, Dimensions, Image } from 'react-native'
 import { Text, View } from 'react-native-animatable'
 
 import CustomButton from '../components/CustomButton'
 const { width, height } = Dimensions.get('screen');
+import imgLogo from '../assets/images/logo.png';
+
+const IMAGE_WIDTH = width * 0.8
+
 
 export default class Opening extends Component {
-
 
   render () {
     return (
       <View style={styles.container}>
+      <Image
+          animation={'bounceIn'}
+          duration={1200}
+          delay={200}
+          ref={(ref) => this.logoImgRef = ref}
+          style={styles.logoImg}
+          source={imgLogo}
+        />
+
         <View animation={'zoomIn'} delay={600} duration={400}>
           <CustomButton
             text={'S\'inscrire'}
@@ -61,6 +73,14 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     height: StyleSheet.hairlineWidth,
     borderColor: '#9B9FA4'
+  },
+  logoImg: {
+    flex: 1,
+    height: null,
+    width: IMAGE_WIDTH,
+    alignSelf: 'center',
+    resizeMode: 'contain',
+    marginVertical: 30
   },
   separatorOr: {
     color: '#9B9FA4',

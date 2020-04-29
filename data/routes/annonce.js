@@ -96,7 +96,7 @@ router.get("/:idAnnonce", function (req, res) {
 
 			// Getting the 'response' from the database and sending it to our route. This is were the data is.
 			res.status(200).json({
-				message: "Annonce get OK",
+				message: "Annonce get by id OK",
 				annonce: results,
 			});
 		});
@@ -118,7 +118,7 @@ router.get("/getByRemplacant/:idRemplacant", function (req, res) {
 
 			// Getting the 'response' from the database and sending it to our route. This is were the data is.
 			res.status(200).json({
-				message: "Annonce get OK",
+				message: "Annonce getByRemplacant OK",
 				annonce: results,
 			});
 		});
@@ -151,6 +151,120 @@ router.post("/postuler", function (req, res) {
 				message: "Ajout AnnonceRemplacant POST OK",
 				data: data,
 				error: erreur,
+			});
+		});
+	});
+});
+
+router.get("/actived/actived", function (req, res) {
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var annonceSql =
+			"SELECT * FROM Etablissement e, Adresse ad, Annonce a WHERE a.idEtablissement = e.id AND e.idAdresse = ad.id AND a.actived = 1";
+		connection.query(annonceSql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) throw error;
+
+			// Mets l'addresse au format voulu pour l'API de openstreetmap
+			Promise.all(
+				results.map((elem) => {
+					var ad = elem.numVoie + "+" + elem.voie + "+" + elem.ville;
+
+					// Recupere les coordonnée pour afficher sur la map
+					return fetch(
+						"https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+							ad
+					)
+						.then((response) => response.json())
+						.then((json) => {
+							elem.latlng = {
+								lat: json[0].lat,
+								lng: json[0].lon,
+							};
+						});
+				})
+			).then(() => {
+				res.status(200).json({
+					message: "Annonce get actived OK",
+					annonce: results,
+				});
+			});
+		});
+	});
+});
+
+router.post("/changeEtat", function (req, res) {
+	var data = {
+		idAnnonce: req.body.idAnnonce,
+		etat: req.body.etat,
+	};
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"UPDATE Annonce SET actived = " +
+			data.etat +
+			" WHERE id = " +
+			data.idAnnonce;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Modification etat annonce POST OK",
+				data: results,
+				error: erreur,
+			});
+		});
+	});
+});
+
+router.get("/getRemplacantAnnonce/:idRecruteur", function (req, res) {
+	const idRecruteur = req.params.idRecruteur;
+
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,a.actived,u.nom,u.prenom,u.email,u.numTel,rem.descriptionLibre,rem.cv,rem.specialite,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM AnnonceRemplacant ar, Annonce a,Adresse adr, User u, Remplacant rem  WHERE ar.idRemplacant = rem.id AND ar.idRemplacant = u.id AND u.idAdresse = adr.id AND a.id=ar.idAnnonce AND a.idRecruteur = " +
+			idRecruteur;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) throw error;
+
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Annonce getRemplacantAnnonce OK",
+				user: results,
+			});
+		});
+	});
+});
+
+router.get("/getAnnonceRecruteur/:idRecruteur", function (req, res) {
+	const idRecruteur = req.params.idRecruteur;
+
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,a.actived,e.nomEtablissement,e.secretariatBool,e.typePatientele,e.specialite,e.visiteDomicile,e.activite,e.descriptionLibre,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM Annonce a,Adresse adr, Etablissement e  WHERE e.idAdresse = adr.id AND a.idEtablissement = e.id AND a.idRecruteur = " +
+			idRecruteur;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) throw error;
+
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Annonce getAnnonceRecruteur OK",
+				annonce: results,
 			});
 		});
 	});

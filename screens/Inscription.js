@@ -1,388 +1,539 @@
-import React, { Component } from 'react';
-import { Text, Alert, Button, ScrollView, Dimensions,View, ActivityIndicator,StyleSheet, TextInput } from 'react-native';
-import { connect } from 'react-redux';
+import React, { Component } from "react";
+import {
+  Text,
+  Alert,
+  Button,
+  ScrollView,
+  Dimensions,
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Platform,
+  TextInput,
+} from "react-native";
+import { connect } from "react-redux";
 import devConst from "../constants/devConst";
-import { setUser,setEtablissement } from "../reducers/reducer";
-import AwesomeAlert from 'react-native-awesome-alerts';
-import CustomButton from '../components/CustomButton'
-import {CheckBox} from "native-base";
+import { setUser, setEtablissement } from "../reducers/reducer";
+import AwesomeAlert from "react-native-awesome-alerts";
+import CustomButton from "../components/CustomButton";
+import { CheckBox } from "native-base";
 import Select2 from "react-native-select-two";
+import * as ImagePicker from "expo-image-picker";
+import Constants from "expo-constants";
+import * as Permissions from "expo-permissions";
+import * as DocumentPicker from "expo-document-picker";
 
-const { width, height } = Dimensions.get('screen');
+const { width, height } = Dimensions.get("screen");
 
 class Inscription extends React.Component {
-
   static navigationOptions = {
     header: null,
   };
 
   state = {
-    ActivityIndicator_Loading: false,
-    nom:"",
-    prenom:"",
+    image: null,
+    document: null,
+    // ActivityIndicator_Loading: false,
+    nom: "",
+    prenom: "",
     username: "",
     password: "",
-    numTel:"",
+    numTel: "",
     cartePro: "",
-    voie:"",
-    numVoie:"",
-    ville:"",
-    codePostale:"",
-    pays:"",
-    specialite:"",
-    description:"",
-    cv:"",
-    selectedStatus: false,
+    voie: "",
+    numVoie: "",
+    ville: "",
+    codePostale: "",
+    pays: "",
+    specialite: "",
+    description: "",
+    cv: "",
     showAlert: false,
-    data:[],
+    data: [],
+    typeProfil: "",
+    titleChoixProfil: "Choix du profil",
+    titleChoixEtablissement: "Choisir votre établissement",
   };
 
+  handleUploadPhoto = () => {
+    const createFormData = (photo, body) => {
+      const data = new FormData();
+
+      data.append("photo", {
+        name: "Photo1",
+        type: "image",
+        uri: Platform.OS === "android" ? photo : photo.replace("file://", ""),
+      });
+
+      Object.keys(body).forEach((key) => {
+        data.append(key, body[key]);
+      });
+
+      return data;
+    };
+    console.log(createFormData(this.state.image, { userId: "123" }));
+    fetch("http://" + devConst.ip + ":3000/upload/image", {
+      method: "POST",
+      body: createFormData(this.state.image, { userId: "123" }),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        this.setState({ cartePro: response.file.filename });
+        return response;
+      })
+      .catch((error) => {
+        console.log("upload error", error);
+      });
+  };
+
+  handleUploadDocument = () => {
+    const createFormDataDocument = (doc, body) => {
+      const data = new FormData();
+
+      data.append("file", {
+        name: "Document1",
+        type: "file",
+        uri: Platform.os === "android" ? doc : doc.replace("file://", ""),
+      });
+
+      Object.keys(body).forEach((key) => {
+        data.append(key, body[key]);
+      });
+
+      return data;
+    };
+    fetch("http://" + devConst.ip + ":3000/upload/document", {
+      method: "POST",
+      body: createFormDataDocument(this.state.document, { userId: "123" }),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        console.log("upload succes", response);
+        this.setState({ cv: response.file.filename });
+      })
+      .catch((error) => {
+        console.log("upload error", error);
+        alert("Upload failed!");
+      });
+  };
+
+  getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+      }
+    }
+  };
+
+  _pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!result.cancelled) {
+        this.setState({ image: result.uri });
+        await this.handleUploadPhoto();
+      }
+    } catch (E) {
+      console.log(E);
+    }
+  };
+
+  _pickDocument = async () => {
+    let result = await DocumentPicker.getDocumentAsync({});
+    console.log(result);
+    if (!result.cancelled) {
+      this.setState({ document: result.uri });
+      await this.handleUploadDocument();
+    }
+  };
 
   go = () => {
-           const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-            if (reg.test(this.state.email) === true){
-               alert('valid');
-           }
-           else{
-               alert();
-           }
-  }
+    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(this.state.email) === true) {
+      alert("valid");
+    } else {
+      alert();
+    }
+  };
   showAlert = () => {
-     this.setState({
-       showAlert: true
-     });
-   };
+    this.setState({
+      showAlert: true,
+    });
+  };
 
-   hideAlert = () => {
-     this.setState({
-    showAlert: false
-  });
-};
+  hideAlert = () => {
+    this.setState({
+      showAlert: false,
+    });
+  };
 
-async componentDidMount() {
-  try {
-    const etablissementFetch = await fetch(
-      "http://" + devConst.ip + ":3000/Etablissement/all"
-    );
-    const etablissement = await etablissementFetch.json();
-    this.props.setEtablissement(etablissement.etablissement);
-    console.log("SALUT JE SUIS UN Etablissement");
-    console.log(etablissement.etablissement);
-  } catch (err) {
-    console.log("Erreur avec le fetch ---->  ", err);
+  async componentDidMount() {
+    try {
+      const etablissementFetch = await fetch(
+        "http://" + devConst.ip + ":3000/Etablissement/all"
+      );
+      const etablissement = await etablissementFetch.json();
+      this.props.setEtablissement(etablissement.etablissement);
+    } catch (err) {
+      console.log("Erreur avec le fetch ---->  ", err);
+    }
   }
-}
 
-onSelectedItemsChange = selectedItems => {
+  onSelectedItemsChange = (selectedItems) => {
     this.setState({ selectedItems });
   };
 
-
-inscription(){
-  this.setState({ ActivityIndicator_Loading : true }, () =>
-  {
-    if(!this.state.selectedStatus){
+  async inscription() {
+    // this.setState({ ActivityIndicator_Loading: true }, async () => {
+    if (this.state.typeProfil === "recruteur") {
       const bodyRecruteur = {
-      user : {
-        nom : this.state.nom,
-        prenom : this.state.prenom,
-        email : this.state.username,
-        motDePasse : this.state.password,
-        numTel : this.state.numTel,
-        cartePro : "lienVersCartePro"
-      },
-      adresse : {
-        voie: this.state.voie,
-        numVoie: this.state.numVoie,
-        ville: this.state.ville,
-        codePostale: this.state.codePostale,
-        pays: this.state.pays
-      },
-      recruteur : {
-        specialite : this.state.specialite,
-        descriptionLibre : this.state.description,
-        idEtablissement : this.state.data[0].toString()
-      }
-    };
-    console.log(bodyRecruteur);
-      fetch("http://"+devConst.ip+":3000/user/", {
-        method: 'POST',
+        user: {
+          nom: this.state.nom,
+          prenom: this.state.prenom,
+          email: this.state.username,
+          motDePasse: this.state.password,
+          numTel: this.state.numTel,
+          cartePro: this.state.cartePro,
+        },
+        adresse: {
+          voie: this.state.voie,
+          numVoie: this.state.numVoie,
+          ville: this.state.ville,
+          codePostale: this.state.codePostale,
+          pays: this.state.pays,
+        },
+        recruteur: {
+          specialite: this.state.specialite,
+          descriptionLibre: this.state.description,
+          idEtablissement: this.state.data[0].toString(),
+        },
+      };
+      fetch("http://" + devConst.ip + ":3000/user/", {
+        method: "POST",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(bodyRecruteur),
-      }).then((response) => response.text())
-        .then((responseJsonFromServer) =>
-            {
-                alert(responseJsonFromServer);
+      })
+        .then((response) => response.text())
+        .then((responseJsonFromServer) => {
+          alert(responseJsonFromServer);
 
-                this.setState({ ActivityIndicator_Loading : false });
+          // this.setState({ ActivityIndicator_Loading: false });
+        })
+        .catch((error) => {
+          console.error(error);
 
-            }).catch((error) =>
-            {
-                console.error(error);
-
-                this.setState({ ActivityIndicator_Loading : false});
-            });
+          // this.setState({ ActivityIndicator_Loading: false });
+        });
       console.log("Inscription Recruteur OK");
       this.showAlert();
-      this.props.navigation.navigate('SignInScreen');
-    }else {
+      this.props.navigation.navigate("SignInScreen");
+    } else {
       const bodyRemplacant = {
-      user : {
-        nom : this.state.nom,
-        prenom : this.state.prenom,
-        email : this.state.username,
-        motDePasse : this.state.password,
-        numTel : this.state.numTel,
-        cartePro : "lienVersCartePro"
-      },
-      adresse : {
-        voie: this.state.voie,
-        numVoie: this.state.numVoie,
-        ville: this.state.ville,
-        codePostale: this.state.codePostale,
-        pays: this.state.pays
-      },
-      remplacant : {
-        specialite : this.state.specialite,
-        descriptionLibre : this.state.description,
-        cv : this.state.cv
-      }
-    };
-    console.log(bodyRemplacant);
-      fetch("http://"+devConst.ip+":3000/user/", {
-        method: 'POST',
+        user: {
+          nom: this.state.nom,
+          prenom: this.state.prenom,
+          email: this.state.username,
+          motDePasse: this.state.password,
+          numTel: this.state.numTel,
+          cartePro: this.state.cartePro,
+        },
+        adresse: {
+          voie: this.state.voie,
+          numVoie: this.state.numVoie,
+          ville: this.state.ville,
+          codePostale: this.state.codePostale,
+          pays: this.state.pays,
+        },
+        remplacant: {
+          specialite: this.state.specialite,
+          descriptionLibre: this.state.description,
+          cv: this.state.cv,
+        },
+      };
+      fetch("http://" + devConst.ip + ":3000/user/", {
+        method: "POST",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(bodyRemplacant),
-      }).then((response) => response.text()).then((responseJsonFromServer) =>
-            {
+      })
+        .then((response) => response.text())
+        .then((responseJsonFromServer) => {
+          //this.setState({ ActivityIndicator_Loading: false });
+          console.log("responseJsonFromServer", responseJsonFromServer);
+        })
+        .catch((error) => {
+          console.error(error);
 
-                this.setState({ ActivityIndicator_Loading : false });
-
-            }).catch((error) =>
-            {
-                console.error(error);
-
-                this.setState({ ActivityIndicator_Loading : false});
-            });
+          // this.setState({ ActivityIndicator_Loading: false });
+        });
       console.log("Inscription Remplacant OK");
       this.showAlert();
-      this.props.navigation.navigate('SignInScreen');
+      this.props.navigation.navigate("SignInScreen");
     }
-  });
-}
+  }
 
   render() {
-    const listEtablissement=[];
+    const listEtablissement = [];
 
-    const {showAlert} = this.state;
-    const {etablissement} = this.props;
+    const { showAlert } = this.state;
+    const { etablissement } = this.props;
     const { selectedItems } = this.state;
-    const {data} = this.state;
+    const { data } = this.state;
     etablissement.forEach((item, i) => {
-      listEtablissement.push({id: item.id , name: item.nomEtablissement})
+      listEtablissement.push({ id: item.id, name: item.nomEtablissement });
     });
     return (
       <ScrollView>
-
-      <View style={styles.container}>
-        <Text style={styles.logo}>Adopte ton doc'</Text>
-        <View style={styles.separatorContainer} animation={'zoomIn'} delay={700} duration={400}>
-          <View style={styles.separatorLine} />
-          <Text style={styles.separatorOr}>{' Informations '}</Text>
-          <View style={styles.separatorLine} />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.nom}
-            onChangeText={(nom) => this.setState({ nom })}
-            label='Nom'
-            placeholder="Nom"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.prenom}
-            onChangeText={(prenom) => this.setState({ prenom })}
-            label='Prenom'
-            placeholder="Prenom"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
+        <View style={styles.container}>
+          <Text style={styles.logo}>Adopte ton doc'</Text>
+          <View
+            style={styles.separatorContainer}
+            animation={"zoomIn"}
+            delay={700}
+            duration={400}
+          >
+            <View style={styles.separatorLine} />
+            <Text style={styles.separatorOr}>{" Informations "}</Text>
+            <View style={styles.separatorLine} />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.nom}
+              onChangeText={(nom) => this.setState({ nom })}
+              label="Nom"
+              placeholder="Nom"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.prenom}
+              onChangeText={(prenom) => this.setState({ prenom })}
+              label="Prenom"
+              placeholder="Prenom"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
           <View style={styles.inputView}>
             <TextInput
               value={this.state.username}
               onChangeText={(username) => this.setState({ username })}
-              label='Email'
+              label="Email"
               placeholder="Email"
               placeholderTextColor="#003f5c"
               style={styles.inputText}
             />
           </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.password}
-            onChangeText={(password) => this.setState({ password })}
-            label='Mot de passe'
-            placeholder="Mot de passe"
-            placeholderTextColor="#003f5c"
-            secureTextEntry={true}
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.numTel}
-            onChangeText={(numTel) => this.setState({ numTel })}
-            label='Numéro de téléphone'
-            placeholder="Numéro de téléphone"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.cartePro}
-            onChangeText={(cartePro) => this.setState({ cartePro })}
-            label='Carte pro'
-            placeholder="Carte du médecin"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.separatorContainer} animation={'zoomIn'} delay={700} duration={400}>
-          <View style={styles.separatorLine} />
-          <Text style={styles.separatorOr}>{' Adresse '}</Text>
-          <View style={styles.separatorLine} />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.numVoie}
-            onChangeText={(numVoie) => this.setState({ numVoie })}
-            label='Numéro de voie'
-            placeholder="Numéro de voie"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.voie}
-            onChangeText={(voie) => this.setState({ voie })}
-            label='Voie'
-            placeholder="Voie"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.ville}
-            onChangeText={(ville) => this.setState({ ville })}
-            label='Ville'
-            placeholder="Ville"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.codePostale}
-            onChangeText={(codePostale) => this.setState({ codePostale })}
-            label='Code postal'
-            placeholder="Code postal"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.pays}
-            onChangeText={(pays) => this.setState({ pays })}
-            label='Pays'
-            placeholder="Pays"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.separatorContainer} animation={'zoomIn'} delay={700} duration={400}>
-          <View style={styles.separatorLine} />
-          <Text style={styles.separatorOr}>{' Status '}</Text>
-          <View style={styles.separatorLine} />
-        </View>
-        <View style={styles.item} >
-          <CheckBox
-            checked={this.state.selectedStatus}
-            color="#fb5b5a"
-            onPress={() => this.setState({selectedStatus: !this.state.selectedStatus})}
-          />
-            <Text style={
-                {...styles.checkBoxTxt,
-                color:this.state.selectedStatus===true?"#fb5b5a":"grey",
-                fontWeight:this.state.selectedStatus===true? "bold" :"normal"
-              }}>{this.state.selectedStatus === true ? "Vous êtes remplaçant" : "Vous êtes un recruteur"}</Text>
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.specialite}
-            onChangeText={(specialite) => this.setState({ specialite })}
-            label='Specialite'
-            placeholder="Sprecialite"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            value={this.state.descriptionLibre}
-            onChangeText={(descriptionLibre) => this.setState({ descriptionLibre })}
-            label='Description'
-            placeholder="Description"
-            placeholderTextColor="#003f5c"
-            style={styles.inputText}
-          />
-        </View>
-        { (this.state.selectedStatus) ?
-          (<View style={styles.inputView}>
+          <View style={styles.inputView}>
             <TextInput
-              value={this.state.cv}
-              onChangeText={(cv) => this.setState({ cv })}
-              label='CV'
-              placeholder="CV"
+              value={this.state.password}
+              onChangeText={(password) => this.setState({ password })}
+              label="Mot de passe"
+              placeholder="Mot de passe"
+              placeholderTextColor="#003f5c"
+              secureTextEntry={true}
+              style={styles.inputText}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.numTel}
+              onChangeText={(numTel) => this.setState({ numTel })}
+              label="Numéro de téléphone"
+              placeholder="Numéro de téléphone"
               placeholderTextColor="#003f5c"
               style={styles.inputText}
             />
-          </View>) : (
-            <View style={styles.inputView}>
+          </View>
+          <View style={styles.inputView}>
+            <Button
+              title="Insérer votre carte de médecin"
+              onPress={this._pickImage}
+            />
+          </View>
+          <View
+            style={styles.separatorContainer}
+            animation={"zoomIn"}
+            delay={700}
+            duration={400}
+          >
+            <View style={styles.separatorLine} />
+            <Text style={styles.separatorOr}>{" Adresse "}</Text>
+            <View style={styles.separatorLine} />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.numVoie}
+              onChangeText={(numVoie) => this.setState({ numVoie })}
+              label="Numéro de voie"
+              placeholder="Numéro de voie"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.voie}
+              onChangeText={(voie) => this.setState({ voie })}
+              label="Voie"
+              placeholder="Voie"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.ville}
+              onChangeText={(ville) => this.setState({ ville })}
+              label="Ville"
+              placeholder="Ville"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.codePostale}
+              onChangeText={(codePostale) => this.setState({ codePostale })}
+              label="Code postal"
+              placeholder="Code postal"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.pays}
+              onChangeText={(pays) => this.setState({ pays })}
+              label="Pays"
+              placeholder="Pays"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
+          <View
+            style={styles.separatorContainer}
+            animation={"zoomIn"}
+            delay={700}
+            duration={400}
+          >
+            <View style={styles.separatorLine} />
+            <Text style={styles.separatorOr}>{" Status "}</Text>
+            <View style={styles.separatorLine} />
+          </View>
+          <View style={styles.item}>
             <Select2
-             isSelectSingle
-             colorTheme="#003f5c"
-             popupTitle="Choisir votre établissement"
-             listEmptyTitle="Il n'y a pas d'établissement"
-             title="Choisir votre établissement"
-             selectButtonText="Valider"
-             cancelButtonText="Annuler"
-             data={listEtablissement}
-             onSelect={data => {
-               this.setState({ data })
-             }}
-             onRemoveItem={data => {
-               this.setState({ data })
-             }}
-           />
-          </View>)
+              isSelectSingle
+              colorTheme="#003f5c"
+              popupTitle={this.state.titleChoixProfil}
+              listEmptyTitle="Il n'y a pas de profil possible"
+              title={this.state.titleChoixProfil}
+              selectButtonText="Valider"
+              cancelButtonText="Annuler"
+              searchPlaceHolderText="Rechercher.."
+              data={[
+                { id: 1, name: "Médecins remplaçants" },
+                { id: 2, name: "Médecins installées" },
+                { id: 3, name: "Etablisseents de santé" },
+                { id: 4, name: "Collectivités territoriales" },
+              ]}
+              onSelect={(typeProfil) => {
+                switch (typeProfil[0]) {
+                  case 1:
+                    var titleChoixProfil = "Médecins remplaçants";
+                    break;
+                  case 2:
+                    var titleChoixProfil = "Médecins installées";
+                    break;
+                  case 3:
+                    var titleChoixProfil = "Etablisseents de santé";
+                    break;
+                  case 4:
+                    var titleChoixProfil = "Collectivités territoriales";
+                    break;
+                }
+                this.setState({ titleChoixProfil: titleChoixProfil });
+                console.log("title ", this.state.titleChoixProfil);
+                if (typeProfil[0] == 1) {
+                  this.setState({ typeProfil: "remplacant" });
+                } else {
+                  this.setState({ typeProfil: "recruteur" });
+                }
+              }}
+              onRemoveItem={(typeProfil) => {
+                this.setState({ typeProfil });
+              }}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.specialite}
+              onChangeText={(specialite) => this.setState({ specialite })}
+              label="Specialite"
+              placeholder="Specialité"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              value={this.state.descriptionLibre}
+              onChangeText={(descriptionLibre) =>
+                this.setState({ descriptionLibre })
+              }
+              label="Description"
+              placeholder="Description"
+              placeholderTextColor="#003f5c"
+              style={styles.inputText}
+            />
+          </View>
+          {this.state.typeProfil === "remplacant" ? (
+            <View style={styles.inputView}>
+              <Button
+                title="Selectionner votre CV"
+                onPress={this._pickDocument}
+              />
+            </View>
+          ) : (
+            <View style={styles.inputView}>
+              <Select2
+                isSelectSingle
+                colorTheme="#003f5c"
+                popupTitle={this.state.titleChoixEtablissement}
+                listEmptyTitle="Il n'y a pas d'établissement"
+                title={this.state.titleChoixEtablissement}
+                selectButtonText="Valider"
+                cancelButtonText="Annuler"
+                searchPlaceHolderText="Rechercher.."
+                data={listEtablissement}
+                onSelect={(data) => {
+                  this.setState({
+                    titleChoixEtablissement:
+                      listEtablissement[data[0] - 1].name,
+                  });
+                  console.log(data);
+                  this.setState({ data });
+                }}
+                onRemoveItem={(data) => {
+                  this.setState({ data });
+                }}
+              />
+            </View>
+          )}
 
-        }
-
-        <AwesomeAlert
+          <AwesomeAlert
             show={showAlert}
             showProgress={false}
             title="Bravo vous êtes inscris !"
@@ -393,135 +544,141 @@ inscription(){
             cancelText="Ok"
             confirmButtonColor="#DD6B55"
             onCancelPressed={() => {
-                this.hideAlert();
+              this.hideAlert();
             }}
             onConfirmPressed={() => {
-                this.hideAlert();
+              this.hideAlert();
             }}
-        />
-
-
-        <View style={styles.separatorContainer} animation={'zoomIn'} delay={700} duration={400}>
-          <View style={styles.separatorLine} />
-          <View style={styles.separatorLine} />
-        </View>
-        <View animation={'zoomIn'} delay={800} duration={400}>
-          <CustomButton
-            text={"S'inscrire"}
-            onPress={this.inscription.bind(this)}
-            buttonStyle={styles.signInButton}
-            textStyle={styles.signInButtonText}
           />
 
+          <View
+            style={styles.separatorContainer}
+            animation={"zoomIn"}
+            delay={700}
+            duration={400}
+          >
+            <View style={styles.separatorLine} />
+            <View style={styles.separatorLine} />
+          </View>
+          <View animation={"zoomIn"} delay={800} duration={400}>
+            <CustomButton
+              text={"S'inscrire"}
+              onPress={this.inscription.bind(this)}
+              buttonStyle={styles.signInButton}
+              textStyle={styles.signInButtonText}
+            />
+          </View>
+          {/* {this.state.ActivityIndicator_Loading ? (
+						<ActivityIndicator
+							color="#009688"
+							size="large"
+							style={styles.ActivityIndicatorStyle}
+						/>
+					) : null} */}
         </View>
-        {
-          this.state.ActivityIndicator_Loading ?
-          <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> :
-          null
-          }
-
-      </View>
       </ScrollView>
-
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-  backgroundColor: '#003f5c',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flex: 1,
+    backgroundColor: "#003f5c",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
   },
   containerSelect: {
-        width: '100%', minHeight: 45, borderRadius: 2, paddingHorizontal: 16,
-        flexDirection: 'row', alignItems: 'center', borderWidth: 1,
-        borderColor: '#cacaca', paddingVertical: 4
+    width: "100%",
+    minHeight: 45,
+    borderRadius: 2,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#cacaca",
+    paddingVertical: 4,
   },
-  logo:{
+  logo: {
     marginTop: "9%",
-    fontWeight:"bold",
-    fontSize:50,
-    color:"#fb5b5a",
-    marginBottom:40
+    fontWeight: "bold",
+    fontSize: 50,
+    color: "#fb5b5a",
+    marginBottom: 40,
   },
-  inputView:{
-    width:"80%",
-    backgroundColor:"#fff",
-    borderRadius:25,
-    height:50,
-    marginBottom:20,
-    justifyContent:"center",
-    padding:20
+  inputView: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 25,
+    height: 50,
+    marginBottom: 20,
+    justifyContent: "center",
+    padding: 20,
   },
-  inputText:{
-    height:50,
-    color:"#465881"
+  inputText: {
+    height: 50,
+    color: "#465881",
   },
 
-    ActivityIndicatorStyle:{
-
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-      alignItems: 'center',
-      justifyContent: 'center'
-
+  ActivityIndicatorStyle: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  forgot:{
-    color:"white",
-    fontSize:11
+  forgot: {
+    color: "white",
+    fontSize: 11,
   },
-  loginText:{
-    color:"white"
+  loginText: {
+    color: "white",
   },
   signInButton: {
     marginHorizontal: width * 0.1,
-    backgroundColor: '#1976D2'
+    backgroundColor: "#1976D2",
   },
   signInButtonText: {
-    color: 'white'
+    color: "white",
   },
   separatorContainer: {
     marginHorizontal: width * 0.1,
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginVertical: 20
+    alignItems: "center",
+    flexDirection: "row",
+    marginVertical: 20,
   },
   separatorLine: {
     flex: 1,
     borderWidth: StyleSheet.hairlineWidth,
     height: StyleSheet.hairlineWidth,
-    borderColor: '#9B9FA4'
+    borderColor: "#9B9FA4",
   },
   separatorOr: {
-    color: '#9B9FA4',
-    marginHorizontal: 8
+    color: "#9B9FA4",
+    marginHorizontal: 8,
   },
-  item:{
-   width:"80%",
-   backgroundColor:"#fff",
-   borderRadius:20,
-   padding:10,
-   marginBottom:10,
-   flexDirection:"row",
- },
- checkBoxTxt:{
-   marginLeft:20
- },
+  item: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 10,
+    flexDirection: "row",
+  },
+  checkBoxTxt: {
+    marginLeft: 20,
+  },
 });
 const moduleState = (state) => ({
-	utilisateur: state.medcabs.user,
+  utilisateur: state.medcabs.user,
   etablissement: state.medcabs.etablissement,
 });
 
 const moduleActions = {
-	setUser,
+  setUser,
   setEtablissement,
 };
-
 
 export default connect(moduleState, moduleActions)(Inscription);
