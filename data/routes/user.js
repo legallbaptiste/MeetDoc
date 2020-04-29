@@ -135,7 +135,7 @@ router.get("/:email", function (req, res) {
 			if (err) throw err;
 			connection.release();
 			res.status(200).json({
-				message: "Get user work !",
+				message: "Get user connection work !",
 				user: user,
 			});
 		});
@@ -169,7 +169,7 @@ router.get("/info/:email", (req, res) => {
 				}
 
 				res.status(200).json({
-					message: "Get user work !",
+					message: "Get user info work !",
 					user: user,
 				});
 			});
@@ -237,6 +237,33 @@ router.post("/accepterAnnonceRemplacant", (req, res) => {
 					"Modification etat accepter d'un remplacant pour une annonce POST OK",
 				data: results,
 				error: erreur,
+			});
+		});
+	});
+});
+
+router.get("/all/all", (req, res) => {
+	var user = {};
+
+	var sqlVerifier = "SELECT * FROM User WHERE verifier = 1";
+
+	connection.query(sqlVerifier, (err, result) => {
+		if (err) throw err;
+		delete result.motDePasse;
+		user.verifier = result;
+
+		var sqlNonVerifier = "SELECT * FROM User WHERE verifier = 0";
+
+		connection.query(sqlNonVerifier, (err, result) => {
+			if (err) throw err;
+			delete result.motDePasse;
+			user.nonVerifier = result;
+
+			console.log(user);
+
+			res.status(200).json({
+				message: "Get all user accepter work !",
+				user: user,
 			});
 		});
 	});
