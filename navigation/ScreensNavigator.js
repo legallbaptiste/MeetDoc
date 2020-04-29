@@ -15,6 +15,7 @@ import SignInScreen from "../screens/SignInScreen";
 import AuthLoadingScreen from "../screens/AuthLoadingScreen";
 import Register from "../screens/Register";
 import ImagePickerExample from "../screens/ImagePickerExample";
+import Admin from "../screens/Admin.js";
 
 export default createStackNavigator({
   // ImagePickerExample: ImagePickerExample,
@@ -25,6 +26,7 @@ export default createStackNavigator({
   HomePage: HomePage,
   Inscription: Inscription,
   Settings: Settings,
+  Admin: Admin,
   Formulaire: Formulaire,
   Profil: Profil,
 });

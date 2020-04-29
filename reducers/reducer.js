@@ -10,8 +10,10 @@ const SET_ANNONCE_UTILISATEUR = "SET_ANNONCE_UTILISATEUR";
 const UPDATE_ANNONCE = "UPDATE_ANNONCE";
 const SET_ANNONCE = "SET_ANNONCE";
 const SET_REMPLACANT_POSTULE = "SET_REMPLACANT_POSTULE";
+const SET_RECUP_USER = "SET_RECUP_USER";
 // Initial state
 const INITIAL_STATE = {
+  allUser: [],
   annonceUser: [],
   remplacantAnnonce: [],
   remplacantPostule: [],
@@ -45,6 +47,11 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
       state.annonceUser[0].actived = action.payload.actived;
       return {
         ...state,
+      };
+    case SET_RECUP_USER:
+      return {
+        ...state,
+        allUser: action.payload,
       };
     case SET_PROFIL:
       return {
@@ -118,6 +125,16 @@ export function setAnnonceUtilisateur(payload) {
     });
   };
 }
+
+export function setRecupUser(payload) {
+  return (dispatch) => {
+    dispatch({
+      type: SET_RECUP_USER,
+      payload,
+    });
+  };
+}
+
 export function setRemplacantPostule(payload) {
   return (dispatch) => {
     dispatch({
