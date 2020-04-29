@@ -67,7 +67,7 @@ class HomePage extends React.Component {
         "http://" + devConst.ip + ":3000/annonce/actived/actived"
       );
       const annonce = await annonceFetch.json();
-      this.props.setRecupUser(annonce);
+      this.props.setMedCabs(annonce);
     } catch (err) {
       console.log("Erreur avec le fetch ---->  ", err);
     }

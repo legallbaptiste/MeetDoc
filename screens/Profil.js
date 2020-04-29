@@ -160,7 +160,35 @@ class Profil extends React.Component {
       </View>
     );
   };
-
+  accepterProfil() {
+    const data = this.state.dataProfil;
+    console.log("DATA");
+    console.log(data);
+    const { utilisateur } = this.props;
+    const bodyAnnonce = {
+      idUser: data.idRemplacant.toString(),
+      idAnnonce: data.id.toString(),
+      accepter: "1",
+    };
+    console.log(bodyAnnonce);
+    fetch("http://" + devConst.ip + ":3000/user/accepterAnnonceRemplacant", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyAnnonce),
+    })
+      .then((response) => response.text())
+      .then((responseJsonFromServer) => {
+        console.log(responseJsonFromServer);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    console.log("Profil accepter OK");
+    this.setModalVisible(!this.state.modalVisible);
+  }
   desactiverAnnonce() {
     const { annonceUser } = this.props;
     const bodyAnnonce = {
@@ -247,7 +275,7 @@ class Profil extends React.Component {
               {utilisateur.type === "recruteur" ? (
                 <View style={styles.settings}>
                   <Button
-                    onPress={this.ajoutReservation.bind(this)}
+                    onPress={this.accepterProfil.bind(this)}
                     buttonStyle={{ backgroundColor: "#4F7942" }}
                     icon={{
                       name: "check",
@@ -619,6 +647,22 @@ class Profil extends React.Component {
                   {annonce.codePostale}, {annonce.ville}
                 </Text>
               </View>
+              {console.log(annonce.accepter)}
+              {annonce.accepter === 1 ? (
+                <View style={styles.medcabInfo}>
+                  <FontAwesome name="check" color="green" size={12} />
+                  <Text style={{ marginLeft: 4, color: "green" }}>
+                    Vous avez été accepté
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.medcabInfo}>
+                  <FontAwesome name="close" color="red" size={12} />
+                  <Text style={{ marginLeft: 4, color: "red" }}>
+                    Vous n'avez pas été accepté
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </View>

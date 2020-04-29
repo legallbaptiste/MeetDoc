@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import devConst from "../constants/devConst";
-import { setUser } from "../reducers/reducer";
+import { setUser, setRecupUser } from "../reducers/reducer";
 import AwesomeAlert from "react-native-awesome-alerts";
 import CustomButton from "../components/CustomButton";
 const { width, height } = Dimensions.get("screen");
@@ -46,7 +46,17 @@ class Connexion extends React.Component {
       showAlert: false,
     });
   };
-
+  async componentDidMount() {
+    try {
+      const recupUserFetch = await fetch(
+        "http://" + devConst.ip + ":3000/user/all/all"
+      );
+      const recupUser = await recupUserFetch.json();
+      this.props.setRecupUser(recupUser.user.nonVerifier);
+    } catch (err) {
+      console.log("Erreur avec le fetch ---->  ", err);
+    }
+  }
   async onLogin() {
     try {
       const userFetch = await fetch(
@@ -210,6 +220,7 @@ const moduleState = (state) => ({
 
 const moduleActions = {
   setUser,
+  setRecupUser,
 };
 
 export default connect(moduleState, moduleActions)(Connexion);

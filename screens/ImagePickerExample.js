@@ -23,7 +23,7 @@ export default class ImagePickerExample extends React.Component {
           title="Pick an image from camera roll"
           onPress={this._pickImage}
         />
-
+        {console.log(image)}
         <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
       </View>
     );
@@ -32,7 +32,6 @@ export default class ImagePickerExample extends React.Component {
   _pickDocument = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
     alert(result.uri);
-    console.log(result);
     if (!result.cancelled) {
       this.setState({ document: result.uri });
       this.handleUploadDocument();
@@ -59,19 +58,15 @@ export default class ImagePickerExample extends React.Component {
 
       return data;
     };
-    console.log("FETCH BODY");
-    console.log(createFormData(this.state.image, { userId: "123" }));
     fetch("http://" + devConst.ip + ":3000/upload/image", {
       method: "POST",
       body: createFormData(this.state.image, { userId: "123" }),
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log("upload succes", response);
         alert("Upload success!");
       })
       .catch((error) => {
-        console.log("upload error", error);
         alert("Upload failed!");
       });
   };
@@ -98,11 +93,9 @@ export default class ImagePickerExample extends React.Component {
     })
       .then((response) => response.json())
       .then((response) => {
-        console.log("upload succes", response);
         alert("Upload success!");
       })
       .catch((error) => {
-        console.log("upload error", error);
         alert("Upload failed!");
       });
   };
@@ -115,7 +108,6 @@ export default class ImagePickerExample extends React.Component {
       }
     }
   };
-
   _pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -129,8 +121,6 @@ export default class ImagePickerExample extends React.Component {
         this.setState({ image: result.uri });
         this.handleUploadPhoto();
       }
-
-      console.log(result);
     } catch (E) {
       console.log(E);
     }

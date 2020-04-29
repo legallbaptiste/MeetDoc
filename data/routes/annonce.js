@@ -110,7 +110,7 @@ router.get("/getByRemplacant/:idRemplacant", function (req, res) {
   connection.getConnection(function (err, connection) {
     // Executing the MySQL query (select all data from the 'users' table).
     var sql =
-      "SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,u.nom,u.prenom,u.email,u.numTel,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM AnnonceRemplacant ar, Annonce a, Recruteur re, Etablissement e,Adresse adr, User u  WHERE a.id = ar.idAnnonce AND re.id = a.idRecruteur AND u.id = re.id AND e.id = a.idEtablissement AND adr.id = e.idAdresse AND ar.idRemplacant = " +
+      "SELECT ar.accepter, a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,u.nom,u.prenom,u.email,u.numTel,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM AnnonceRemplacant ar, Annonce a, Recruteur re, Etablissement e,Adresse adr, User u  WHERE a.id = ar.idAnnonce AND re.id = a.idRecruteur AND u.id = re.id AND e.id = a.idEtablissement AND adr.id = e.idAdresse AND ar.idRemplacant = " +
       idRemplacant;
     connection.query(sql, function (error, results, fields) {
       // If some error occurs, we throw an error.
@@ -233,7 +233,7 @@ router.get("/getRemplacantAnnonce/:idRecruteur", function (req, res) {
   connection.getConnection(function (err, connection) {
     // Executing the MySQL query (select all data from the 'users' table).
     var sql =
-      "SELECT a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,a.actived,u.nom,u.prenom,u.email,u.numTel,rem.descriptionLibre,rem.cv,rem.specialite,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM AnnonceRemplacant ar, Annonce a,Adresse adr, User u, Remplacant rem  WHERE ar.idRemplacant = rem.id AND ar.idRemplacant = u.id AND u.idAdresse = adr.id AND a.id=ar.idAnnonce AND a.idRecruteur = " +
+      "SELECT ar.idRemplacant, a.id,a.titre,a.typeOffre,a.Retrocession,a.description,a.image,a.actived,u.nom,u.prenom,u.email,u.numTel,rem.descriptionLibre,rem.cv,rem.specialite,adr.codePostale,adr.numVoie,adr.pays,adr.ville,adr.voie FROM AnnonceRemplacant ar, Annonce a,Adresse adr, User u, Remplacant rem  WHERE ar.idRemplacant = rem.id AND ar.idRemplacant = u.id AND u.idAdresse = adr.id AND a.id=ar.idAnnonce AND a.idRecruteur = " +
       idRecruteur;
     connection.query(sql, function (error, results, fields) {
       // If some error occurs, we throw an error.

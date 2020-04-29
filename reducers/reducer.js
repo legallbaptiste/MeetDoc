@@ -11,6 +11,7 @@ const UPDATE_ANNONCE = "UPDATE_ANNONCE";
 const SET_ANNONCE = "SET_ANNONCE";
 const SET_REMPLACANT_POSTULE = "SET_REMPLACANT_POSTULE";
 const SET_RECUP_USER = "SET_RECUP_USER";
+const UPDATE_RECUP_USER = "UPDATE_RECUP_USER";
 // Initial state
 const INITIAL_STATE = {
   allUser: [],
@@ -45,6 +46,16 @@ export default function reducer(state = INITIAL_STATE, action = {}) {
   switch (action.type) {
     case UPDATE_ANNONCE:
       state.annonceUser[0].actived = action.payload.actived;
+      return {
+        ...state,
+      };
+    case UPDATE_RECUP_USER:
+      console.log(state.allUser);
+      state.allUser.forEach((item, i) => {
+        if (item.id == action.payload.idUser) {
+          state.allUser[i].verifier = action.payload.actived;
+        }
+      });
       return {
         ...state,
       };
@@ -121,6 +132,15 @@ export function setAnnonceUtilisateur(payload) {
   return (dispatch) => {
     dispatch({
       type: SET_ANNONCE_UTILISATEUR,
+      payload,
+    });
+  };
+}
+
+export function updateRecupUser(payload) {
+  return (dispatch) => {
+    dispatch({
+      type: UPDATE_RECUP_USER,
       payload,
     });
   };

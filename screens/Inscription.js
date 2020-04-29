@@ -223,8 +223,6 @@ class Inscription extends React.Component {
       })
         .then((response) => response.text())
         .then((responseJsonFromServer) => {
-          alert(responseJsonFromServer);
-
           // this.setState({ ActivityIndicator_Loading: false });
         })
         .catch((error) => {
@@ -233,7 +231,6 @@ class Inscription extends React.Component {
           // this.setState({ ActivityIndicator_Loading: false });
         });
       console.log("Inscription Recruteur OK");
-      this.showAlert();
       this.props.navigation.navigate("SignInScreen");
     } else {
       const bodyRemplacant = {
@@ -277,7 +274,6 @@ class Inscription extends React.Component {
           // this.setState({ ActivityIndicator_Loading: false });
         });
       console.log("Inscription Remplacant OK");
-      this.showAlert();
       this.props.navigation.navigate("SignInScreen");
     }
   }
@@ -357,12 +353,10 @@ class Inscription extends React.Component {
               style={styles.inputText}
             />
           </View>
-          <View style={styles.inputView}>
-            <Button
-              title="Insérer votre carte de médecin"
-              onPress={this._pickImage}
-            />
-          </View>
+          <Button
+            title="Insérer votre carte de médecin"
+            onPress={this._pickImage}
+          />
           <View
             style={styles.separatorContainer}
             animation={"zoomIn"}
@@ -500,12 +494,10 @@ class Inscription extends React.Component {
             />
           </View>
           {this.state.typeProfil === "remplacant" ? (
-            <View style={styles.inputView}>
-              <Button
-                title="Selectionner votre CV"
-                onPress={this._pickDocument}
-              />
-            </View>
+            <Button
+              title="Selectionner votre CV"
+              onPress={this._pickDocument}
+            />
           ) : (
             <View style={styles.inputView}>
               <Select2

@@ -30,7 +30,7 @@ import {
   SimpleLineIcons,
 } from "@expo/vector-icons";
 
-import { setRecupUser } from "../reducers/reducer";
+import { setRecupUser, updateRecupUser } from "../reducers/reducer";
 
 // Import dev
 import devConst from "../constants/devConst";
@@ -44,49 +44,14 @@ class Admin extends React.Component {
 
   constructor(props) {
     super(props);
-    // const listUser = [
-    //   {
-    //     key: "Jean Michel",
-    //     text: "Medecin Generaliste",
-    //     image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-    //     type: "Remplacant",
-    //   },
-    //   {
-    //     key: "Baptiste Le Gall",
-    //     text: "Urologue",
-    //     image:
-    //       "https://scontent-cdt1-1.xx.fbcdn.net/v/t31.0-0/p640x640/1026108_695326990483774_1360926662_o.jpg?_nc_cat=105&_nc_sid=cdbe9c&_nc_ohc=_1ulQjDrKqIAX8gpMr_&_nc_ht=scontent-cdt1-1.xx&_nc_tp=6&oh=e19f0f093a464b8500231a4b7a1fa570&oe=5ECBD0B8",
-    //     type: "Remplacant",
-    //   },
-    //   {
-    //     key: "Yeye Disdier",
-    //     text: "Gerontologue",
-    //     image:
-    //       "https://scontent-cdg2-1.xx.fbcdn.net/v/t1.0-9/295485_255043561187484_790475_n.jpg?_nc_cat=110&_nc_sid=cdbe9c&_nc_ohc=sR4pZpeUEhkAX9yKuRh&_nc_ht=scontent-cdg2-1.xx&oh=af6be56859af9a0221de07fa565fd21f&oe=5ECC13BA",
-    //     type: "Remplacant",
-    //   },
-    //   {
-    //     key: "Maxime Kp",
-    //     text: "Mec Stylé",
-    //     image:
-    //       "https://scontent-cdg2-1.xx.fbcdn.net/v/t1.0-9/935581_624796954246618_1964892583_n.jpg?_nc_cat=111&_nc_sid=174925&_nc_ohc=0vsFzbor8zUAX-tdEJt&_nc_ht=scontent-cdg2-1.xx&oh=f359bbb5eacd84cb0a12f77d2330c6f6&oe=5ECDCEC2",
-    //     type: "Remplacant",
-    //   },
-    //   {
-    //     key: "Hugues Marti",
-    //     text: "Medecin de kp",
-    //     image:
-    //       "https://scontent-cdg2-1.xx.fbcdn.net/v/t1.0-9/17373_102574326440948_4374277_n.jpg?_nc_cat=100&_nc_sid=cdbe9c&_nc_ohc=dB-FGupn3E0AX_oVQp0&_nc_ht=scontent-cdg2-1.xx&oh=6d9ccfb130dca0ee6ca65b5abe6bc834&oe=5ECE6303",
-    //     type: "Remplacant",
-    //   },
-    // ];
+    const { allUser } = this.props;
     this.state = {
       modalVisible: false,
       activeIndex: 0,
       selectedData: [],
       search: "",
-      listItems: listUser,
-      searchListItems: listUser,
+      listItems: allUser,
+      searchListItems: allUser,
     };
   }
 
@@ -99,46 +64,37 @@ class Admin extends React.Component {
     this.setModalVisible(true);
   };
 
-  async componentDidMount() {
-    try {
-      const recupUserFetch = await fetch(
-        "http://" + devConst.ip + ":3000/user/all/all"
-      );
-      const recupUser = await recupUserFetch.json();
-      this.props.setRecupUser(recupUser);
-    } catch (err) {
-      console.log("Erreur avec le fetch ---->  ", err);
-    }
+  activerUser() {
+    console.log("TOTO");
+    const data = this.state.selectedData;
+    console.log(data);
+    const bodyAnnonce = {
+      idUser: data.id.toString(),
+      etat: "1",
+    };
+    fetch("http://" + devConst.ip + ":3000/user/verifier", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyAnnonce),
+    })
+      .then((response) => response.text())
+      .then((responseJsonFromServer) => {
+        console.log(responseJsonFromServer);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    this.props.updateRecupUser({ actived: 1, idUser: data.id });
+    console.log("Changement etat 1 OK");
+    this.setModalVisible(!this.state.modalVisible);
   }
-
-  // activerUser() {
-  //   const data = this.state.selectedData;
-  //   const bodyAnnonce = {
-  //     idAnnonce: annonceUser[0].id.toString(),
-  //     etat: "1",
-  //   };
-  //   fetch("http://" + devConst.ip + ":3000/Annonce/changeEtat", {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(bodyAnnonce),
-  //   })
-  //     .then((response) => response.text())
-  //     .then((responseJsonFromServer) => {
-  //       console.log(responseJsonFromServer);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  //   this.props.updateAnnonce({ actived: 1 });
-  //   console.log("Changement etat 1 OK");
-  //   this.setModalVisible2(!this.state.modalVisible2);
-  // }
 
   renderModal() {
     const data = this.state.selectedData;
+    console.log(data);
     return (
       <View style={styles.centeredView}>
         <Modal
@@ -182,52 +138,17 @@ class Admin extends React.Component {
               </View>
               <View style={styles.modalBorder}></View>
               <View style={styles.modalTitle}>
-                <Text style={styles.modalText}>{data.key}</Text>
+                <Text style={styles.modalText}>
+                  {data.nom} {data.prenom}
+                </Text>
                 <Text style={styles.modalTitle}>{data.text}</Text>
               </View>
 
-              <View style={styles.modalText}>
-                <View style={styles.modalText}>
-                  <Text style={styles.modalTextSpace}>
-                    Type de profil : {data.type}.
-                  </Text>
-                </View>
-                <View style={styles.modalText}>
-                  <Text style={styles.modalTextSpace}>
-                    Disponibilités : lundi au vendredi
-                  </Text>
-                </View>
-
-                <View style={styles.modalText}>
-                  <Text style={styles.modalTextSpace}>
-                    Qualifications : 3 ans d'expériences
-                  </Text>
-                </View>
-
-                <View style={styles.modalText}>
-                  <Text style={styles.modalTextSpace}>
-                    Déplacement domicile : Non
-                  </Text>
-                </View>
-
-                <View style={styles.modalText}>
-                  <Text style={styles.modalTextSpace}>
-                    Description du postulant : Faut pas respirer la compote, ca
-                    fait tousser.
-                  </Text>
-                </View>
-              </View>
               <View style={styles.settings}>
-                <Button
-                  buttonStyle={{
-                    backgroundColor: "#B3B6B7",
-                    width: 150,
-                    height: 50,
-                  }}
-                  title="Voir la carte pro."
-                  onPress={() => {
-                    Alert.alert("Carte pro.");
-                  }}
+                {console.log("data/images/" + data.cartePro + ".jpg")}
+                <Image
+                  source={require("/Users/legallbaptiste/Desktop/ReactNative/CampingSpot/data/images/carteMedecin.png")}
+                  style={{ width: 200, height: 200 }}
                 />
               </View>
               <View style={styles.modalBorder}></View>
@@ -239,9 +160,7 @@ class Admin extends React.Component {
                     height: 50,
                   }}
                   title="Valider le Profil"
-                  onPress={() => {
-                    Alert.alert("Le profil a été accepté.");
-                  }}
+                  onPress={this.activerUser.bind(this)}
                 />
                 <Button
                   buttonStyle={{
@@ -265,12 +184,6 @@ class Admin extends React.Component {
   _renderItem(item) {
     return (
       <View style={styles.medcab}>
-        <ImageBackground
-          style={styles.medcabImage}
-          imageStyle={styles.medcabImage}
-          source={{ uri: item.image }}
-        />
-
         <View style={styles.medcabDetails}>
           <View
             style={{
@@ -279,9 +192,14 @@ class Admin extends React.Component {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 14, fontWeight: "bold" }}>{item.key}</Text>
+            <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+              {item.nom} {item.prenom}
+            </Text>
             <Text style={{ fontSize: 12, color: "#A5A5A5", paddingTop: 5 }}>
-              {item.text}
+              {item.email}
+            </Text>
+            <Text style={{ fontSize: 12, color: "#A5A5A5", paddingTop: 5 }}>
+              {item.numTel}
             </Text>
           </View>
         </View>
@@ -304,11 +222,12 @@ class Admin extends React.Component {
 
   updateSearch = (search) => {
     listSearch = [];
+    const { allUser } = this.props;
     this.setState({ search: search });
-    this.setState({ searchListItems: this.state.listItems });
+    this.setState({ searchListItems: allUser });
 
-    for (let item of this.state.listItems) {
-      name = String(item.key).toLowerCase();
+    for (let item of allUser) {
+      name = (item.nom + " " + item.prenom).toLowerCase();
       if (name.includes(search)) {
         listSearch.push(item);
       }
@@ -328,18 +247,18 @@ class Admin extends React.Component {
   render() {
     const search = this.state.search;
     const { allUser } = this.props;
-    console.log("ALLUSER");
-    console.log(allUser);
     return (
-      <View style={styles.container}>
-        <SearchBar
-          placeholder="Type Here..."
-          value={search}
-          onChangeText={this.updateSearch}
-        />
-        {this.renderList()}
-        {this.renderModal()}
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View>
+          <SearchBar
+            placeholder="Type Here..."
+            value={search}
+            onChangeText={this.updateSearch}
+          />
+          {this.renderList()}
+          {this.renderModal()}
+        </View>
+      </SafeAreaView>
     );
   }
 }
@@ -351,6 +270,7 @@ const moduleState = (state) => ({
 
 const moduleActions = {
   setRecupUser,
+  updateRecupUser,
 };
 
 export default connect(moduleState, moduleActions)(Admin);
