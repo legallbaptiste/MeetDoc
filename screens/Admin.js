@@ -55,30 +55,36 @@ export default class Admin extends React.Component {
 							text: "Medecin Generaliste",
 							image: "https://bootdey.com/img/Content/avatar/avatar7.png",
 							type: "Remplacant",
+							id:21,
 					},
 					{
 							key:"Baptiste Le Gall",
 							text: "Urologue",
 							image: "https://scontent-cdt1-1.xx.fbcdn.net/v/t31.0-0/p640x640/1026108_695326990483774_1360926662_o.jpg?_nc_cat=105&_nc_sid=cdbe9c&_nc_ohc=_1ulQjDrKqIAX8gpMr_&_nc_ht=scontent-cdt1-1.xx&_nc_tp=6&oh=e19f0f093a464b8500231a4b7a1fa570&oe=5ECBD0B8",
 							type: "Remplacant",
+							email:"remplacant2@eisti.eu",
+							id:20,
 					},
 					{
 							key:"Yeye Disdier",
 							text: "Gerontologue",
 							image: "https://scontent-cdg2-1.xx.fbcdn.net/v/t1.0-9/295485_255043561187484_790475_n.jpg?_nc_cat=110&_nc_sid=cdbe9c&_nc_ohc=sR4pZpeUEhkAX9yKuRh&_nc_ht=scontent-cdg2-1.xx&oh=af6be56859af9a0221de07fa565fd21f&oe=5ECC13BA",
 							type: "Remplacant",
+							id:19,
 					},
 					{
 							key:"Maxime Kp",
 							text: "Mec Stylé",
 							image: "https://scontent-cdg2-1.xx.fbcdn.net/v/t1.0-9/935581_624796954246618_1964892583_n.jpg?_nc_cat=111&_nc_sid=174925&_nc_ohc=0vsFzbor8zUAX-tdEJt&_nc_ht=scontent-cdg2-1.xx&oh=f359bbb5eacd84cb0a12f77d2330c6f6&oe=5ECDCEC2",
 							type: "Remplacant",
+							id:22,
 					},
 					{
 							key:"Hugues Marti",
 							text: "Medecin de kp",
 							image: "https://scontent-cdg2-1.xx.fbcdn.net/v/t1.0-9/17373_102574326440948_4374277_n.jpg?_nc_cat=100&_nc_sid=cdbe9c&_nc_ohc=dB-FGupn3E0AX_oVQp0&_nc_ht=scontent-cdg2-1.xx&oh=6d9ccfb130dca0ee6ca65b5abe6bc834&oe=5ECE6303",
 							type: "Remplacant",
+							id:23,
 					},
 				];
         this.state = {
@@ -100,6 +106,32 @@ export default class Admin extends React.Component {
     this.setState({ selectedData: data });
     this.setModalVisible(true);
   };
+
+	verifierUser(item){
+		const bodyVerifProfil = {
+      idUser: item.id.toString(),
+      etat: "1",
+    };
+    fetch("http://" + devConst.ip + ":3000/user/verifier", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyVerifProfil),
+    })
+      .then((response) => response.text())
+      .then((responseJsonFromServer) => {
+				console.log("Hello Big World");
+        console.log("hihi"+responseJsonFromServer);
+      })
+      .catch((error) => {
+				console.log("erreur Route");
+        console.error(error);
+      });
+
+	}
+
 
   renderModal(){
     const data = this.state.selectedData;
@@ -197,7 +229,8 @@ export default class Admin extends React.Component {
 
             title="Valider le Profil"
             onPress={() => {
-              Alert.alert("Le profil a été accepté.");
+							Alert.alert(devConst.ip);
+              this.verifierUser(data);
             }}
           />
           <Button
