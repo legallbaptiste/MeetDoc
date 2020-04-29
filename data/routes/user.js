@@ -135,7 +135,7 @@ router.get("/:email", function (req, res) {
 			if (err) throw err;
 			connection.release();
 			res.status(200).json({
-				message: "Get user work !",
+				message: "Get user connection work !",
 				user: user,
 			});
 		});
@@ -169,9 +169,101 @@ router.get("/info/:email", (req, res) => {
 				}
 
 				res.status(200).json({
-					message: "Get user work !",
+					message: "Get user info work !",
 					user: user,
 				});
+			});
+		});
+	});
+});
+
+router.post("/verifier", (req, res) => {
+	var data = {
+		idUser: req.body.idUser,
+		etat: req.body.etat,
+	};
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"UPDATE User SET verifier = " + data.etat + " WHERE id = " + data.idUser;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message: "Modification etat vérifier d'un user POST OK",
+				data: results,
+				error: erreur,
+			});
+		});
+	});
+});
+
+router.post("/accepterAnnonceRemplacant", (req, res) => {
+	var data = {
+		idUser: req.body.idUser,
+		idAnnonce: req.body.idAnnonce,
+		accepter: req.body.accepter,
+	};
+	erreur = {
+		message: "Pas d'erreur",
+	};
+	// Connecting to the database.
+	connection.getConnection(function (err, connection) {
+		// Executing the MySQL query (select all data from the 'users' table).
+		var sql =
+			"UPDATE AnnonceRemplacant SET accepter = " +
+			data.accepter +
+			" WHERE idAnnonce = " +
+			data.idAnnonce +
+			" AND idRemplacant = " +
+			data.idUser;
+		connection.query(sql, function (error, results, fields) {
+			// If some error occurs, we throw an error.
+			if (error) {
+				erreur.message = "Erreur dans la requete";
+				erreur.code = error;
+			}
+			// Getting the 'response' from the database and sending it to our route. This is were the data is.
+			res.status(200).json({
+				message:
+					"Modification etat accepter d'un remplacant pour une annonce POST OK",
+				data: results,
+				error: erreur,
+			});
+		});
+	});
+});
+
+router.get("/all/all", (req, res) => {
+	var user = {};
+
+	var sqlVerifier = "SELECT * FROM User WHERE verifier = 1";
+
+	connection.query(sqlVerifier, (err, result) => {
+		if (err) throw err;
+		delete result.motDePasse;
+		user.verifier = result;
+
+		var sqlNonVerifier = "SELECT * FROM User WHERE verifier = 0";
+
+		connection.query(sqlNonVerifier, (err, result) => {
+			if (err) throw err;
+			delete result.motDePasse;
+			user.nonVerifier = result;
+
+			console.log(user);
+
+			res.status(200).json({
+				message: "Get all user accepter work !",
+				user: user,
 			});
 		});
 	});

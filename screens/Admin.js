@@ -44,8 +44,6 @@ class Admin extends React.Component {
 
   constructor(props) {
     super(props);
-    const { allUser } = this.props;
-    const listUser = allUser;
     // const listUser = [
     //   {
     //     key: "Jean Michel",
@@ -113,31 +111,31 @@ class Admin extends React.Component {
     }
   }
 
-  activerUser() {
-    const data = this.state.selectedData;
-    const bodyAnnonce = {
-      idAnnonce: annonceUser[0].id.toString(),
-      etat: "1",
-    };
-    fetch("http://" + devConst.ip + ":3000/Annonce/changeEtat", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bodyAnnonce),
-    })
-      .then((response) => response.text())
-      .then((responseJsonFromServer) => {
-        console.log(responseJsonFromServer);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    this.props.updateAnnonce({ actived: 1 });
-    console.log("Changement etat 1 OK");
-    this.setModalVisible2(!this.state.modalVisible2);
-  }
+  // activerUser() {
+  //   const data = this.state.selectedData;
+  //   const bodyAnnonce = {
+  //     idAnnonce: annonceUser[0].id.toString(),
+  //     etat: "1",
+  //   };
+  //   fetch("http://" + devConst.ip + ":3000/Annonce/changeEtat", {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(bodyAnnonce),
+  //   })
+  //     .then((response) => response.text())
+  //     .then((responseJsonFromServer) => {
+  //       console.log(responseJsonFromServer);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  //   this.props.updateAnnonce({ actived: 1 });
+  //   console.log("Changement etat 1 OK");
+  //   this.setModalVisible2(!this.state.modalVisible2);
+  // }
 
   renderModal() {
     const data = this.state.selectedData;
@@ -329,7 +327,9 @@ class Admin extends React.Component {
 
   render() {
     const search = this.state.search;
-
+    const { allUser } = this.props;
+    console.log("ALLUSER");
+    console.log(allUser);
     return (
       <View style={styles.container}>
         <SearchBar

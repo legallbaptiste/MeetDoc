@@ -96,7 +96,7 @@ router.get("/:idAnnonce", function (req, res) {
 
       // Getting the 'response' from the database and sending it to our route. This is were the data is.
       res.status(200).json({
-        message: "Annonce get OK",
+        message: "Annonce get by id OK",
         annonce: results,
       });
     });
@@ -118,7 +118,7 @@ router.get("/getByRemplacant/:idRemplacant", function (req, res) {
 
       // Getting the 'response' from the database and sending it to our route. This is were the data is.
       res.status(200).json({
-        message: "Annonce get OK",
+        message: "Annonce getByRemplacant OK",
         annonce: results,
       });
     });
@@ -186,7 +186,7 @@ router.get("/actived/actived", function (req, res) {
         })
       ).then(() => {
         res.status(200).json({
-          message: "Annonce get OK",
+          message: "Annonce get actived OK",
           annonce: results,
         });
       });
@@ -241,7 +241,7 @@ router.get("/getRemplacantAnnonce/:idRecruteur", function (req, res) {
 
       // Getting the 'response' from the database and sending it to our route. This is were the data is.
       res.status(200).json({
-        message: "Annonce get OK",
+        message: "Annonce getRemplacantAnnonce OK",
         user: results,
       });
     });
@@ -263,7 +263,7 @@ router.get("/getAnnonceRecruteur/:idRecruteur", function (req, res) {
 
       // Getting the 'response' from the database and sending it to our route. This is were the data is.
       res.status(200).json({
-        message: "Annonce get OK",
+        message: "Annonce getAnnonceRecruteur OK",
         annonce: results,
       });
     });
