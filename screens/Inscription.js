@@ -440,7 +440,7 @@ class Inscription extends React.Component {
               data={[
                 { id: 1, name: "Médecins remplaçants" },
                 { id: 2, name: "Médecins installées" },
-                { id: 3, name: "Etablisseents de santé" },
+                { id: 3, name: "Etablissements de santé" },
                 { id: 4, name: "Collectivités territoriales" },
               ]}
               onSelect={(typeProfil) => {
