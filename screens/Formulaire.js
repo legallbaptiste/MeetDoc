@@ -17,7 +17,6 @@ import {
   Foundation,
   FontAwesome,
 } from "@expo/vector-icons";
-import axios from "axios";
 import { setAnnonce, setEtablissement } from "../reducers/reducer";
 import Select2 from "react-native-select-two";
 

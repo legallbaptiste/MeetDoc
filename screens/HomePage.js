@@ -17,7 +17,6 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
-import Calendar from "react-native-calendario";
 import { Button } from "react-native-elements";
 import { NavigationEvents } from "react-navigation";
 

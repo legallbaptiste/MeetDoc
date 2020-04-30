@@ -147,7 +147,7 @@ class Admin extends React.Component {
               <View style={styles.settings}>
                 {console.log("data/images/" + data.cartePro + ".jpg")}
                 <Image
-                  source={require("/Users/legallbaptiste/Desktop/ReactNative/CampingSpot/data/images/carteMedecin.png")}
+                  source={require("../data/images/carteMedecin.png")}
                   style={{ width: 200, height: 200 }}
                 />
               </View>
